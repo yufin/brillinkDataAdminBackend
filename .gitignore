@@ -1,0 +1,18 @@
+.idea
+.vscode
+*/.DS_Store
+static/uploadfile
+main.exe
+go-admin
+go-cli
+config/settings.dev.yml
+config/settings.tools.dev.yml
+temp/
+!temp
+vendor
+common/middleware/demo.go
+temp/logs
+cmd/migrate/migration/version-local/*
+!cmd/migrate/migration/version-local/doc.go
+
+.run/go build  go-admin-sqlite3.run.xml
