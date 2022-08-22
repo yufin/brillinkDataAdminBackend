@@ -20,8 +20,8 @@ func _1599190683659Tables(db *gorm.DB, version string) error {
 		err := tx.Migrator().AutoMigrate(
 			new(models.SysDept),
 			new(models.SysConfig),
-			new(models.SysTables),
-			new(models.SysColumns),
+			//new(models.SysTables),
+			//new(models.SysColumns),
 			new(models.SysMenu),
 			new(models.SysLoginLog),
 			new(models.SysRequestLog),
