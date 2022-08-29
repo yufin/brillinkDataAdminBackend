@@ -22,7 +22,7 @@ func _1653450713793Test(db *gorm.DB, version string) error {
 		list = append(list, models.SysConfig{ConfigName: "皮肤样式", ConfigKey: "sys_index_skinName", ConfigValue: "skin-green", ConfigType: "Y", Remark: "主框架页-默认皮肤样式名称:蓝色 skin-blue、绿色 skin-green、紫色 skin-purple、红色 skin-red、黄色 skin-yellow", IsFrontend: false, ConfigModule: "base"})
 		list = append(list, models.SysConfig{ConfigName: "初始密码", ConfigKey: "sys_user_initPassword", ConfigValue: "123456", ConfigType: "Y", Remark: "用户管理-账号初始密码:123456", IsFrontend: false, ConfigModule: "security"})
 		list = append(list, models.SysConfig{ConfigName: "侧栏主题", ConfigKey: "sys_index_sideTheme", ConfigValue: "theme-dark", ConfigType: "Y", Remark: "主框架页-侧边栏主题:深色主题theme-dark，浅色主题theme-light", IsFrontend: false, ConfigModule: "base"})
-		list = append(list, models.SysConfig{ConfigName: "系统名称", ConfigKey: "sys_app_name", ConfigValue: "go-admin管理系统", ConfigType: "Y", Remark: "", IsFrontend: true, ConfigModule: "base"})
+		list = append(list, models.SysConfig{ConfigName: "系统名称", ConfigKey: "sys_app_name", ConfigValue: migrate.SystemName, ConfigType: "Y", Remark: "", IsFrontend: true, ConfigModule: "base"})
 		list = append(list, models.SysConfig{ConfigName: "系统logo", ConfigKey: "sys_app_logo", ConfigValue: "https://gitee.com/mydearzwj/image/raw/master/img/go-admin.png", ConfigType: "Y", Remark: "", IsFrontend: true, ConfigModule: "base"})
 
 		list = append(list, models.SysConfig{ConfigName: "站点标志", ConfigKey: "sys_site_logo", ConfigValue: "https://doc-image.zhangwj.com/img/go-admin.png", ConfigType: "Y", Remark: "logo", IsFrontend: true, ConfigModule: "base"})
