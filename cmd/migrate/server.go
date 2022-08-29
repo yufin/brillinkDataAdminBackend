@@ -33,7 +33,7 @@ var (
 		Short:   "Initialize the database",
 		Example: "go-admin migrate -c config/settings.yml",
 		Run: func(cmd *cobra.Command, args []string) {
-			Run()
+			_ = Run()
 		},
 	}
 )
@@ -49,18 +49,17 @@ func init() {
 	StartCmd.PersistentFlags().StringVarP(&Password, "password", "p", "123456", "系统超级管理员登录用户密码")
 }
 
-func Run() {
-
+func Run() error {
 	if !generate {
 		logger.Info(`start init`)
 		//1. 读取配置
 		config.Setup(
 			file.NewSource(file.WithPath(configYml)),
-			initDB,
 		)
+		return initDB()
 	} else {
 		logger.Info(`generate migration file`)
-		_ = genFile()
+		return genFile()
 	}
 }
 
@@ -82,13 +81,18 @@ func migrateModel() error {
 	migration.Migrate.Migrate()
 	return err
 }
-func initDB() {
+func initDB() error {
 	//3. 初始化数据库链接
 	database.Setup()
 	//4. 数据库迁移
 	logger.Info("数据库迁移开始")
-	_ = migrateModel()
-	logger.Info(`数据库基础数据初始化成功`)
+	err := migrateModel()
+	if err != nil {
+		logger.Info(`数据库基础数据初始化成功`)
+	} else {
+		logger.Info(`数据库基础数据初始化失败`, err)
+	}
+	return err
 }
 
 func genFile() error {

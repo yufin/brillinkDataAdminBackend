@@ -7,6 +7,7 @@ import (
 	"go-admin/app/admin/service"
 	"go-admin/app/jobs"
 	"go-admin/common/logger"
+	"go-admin/common/startup"
 	"log"
 	"net/http"
 	"os"
@@ -54,6 +55,9 @@ func init() {
 }
 
 func setup() {
+	// 检查是否是首次登陆使用
+	startup.Startup(configYml)
+
 	// 注入配置扩展项
 	config.ExtendConfig = &ext.ExtConfig
 	//1. 读取配置
@@ -96,7 +100,6 @@ func run() error {
 		ReadTimeout:  time.Duration(config.ApplicationConfig.ReadTimeout) * time.Second,
 		WriteTimeout: time.Duration(config.ApplicationConfig.WriterTimeout) * time.Second,
 	}
-
 	go func() {
 		jobs.InitJob()
 		jobs.Setup(sdk.Runtime.GetDb())
@@ -134,6 +137,11 @@ func run() error {
 				log.Fatal("listen: ", err)
 			}
 		} else {
+			//flag.Parse()
+			//err := gracehttp.Serve(srv)
+			//if err != nil {
+			//	log.Fatal("listen: ", err)
+			//}
 			if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 				log.Fatal("listen: ", err)
 			}
