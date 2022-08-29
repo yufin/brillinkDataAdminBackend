@@ -1,6 +1,7 @@
 package version
 
 import (
+	"go-admin/cmd/migrate"
 	"go-admin/cmd/migrate/migration/models"
 	"gorm.io/gorm"
 	"runtime"
@@ -61,7 +62,7 @@ func _1653450713793Test(db *gorm.DB, version string) error {
 			return err
 		}
 
-		err = tx.Model(models.SysUser{}).Create(&models.SysUser{Username: "admin", Password: "123456", Avatar: "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png", NickName: "zhangwj", Phone: "13818888888", RoleId: 1, Sex: "1", Email: "1@qq.com", DeptId: 1, PostId: 1, Status: "2"}).Error
+		err = tx.Model(models.SysUser{}).Create(&models.SysUser{Username: migrate.Username, Password: migrate.Password, Avatar: "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png", NickName: "zhangwj", Phone: "13818888888", RoleId: 1, Sex: "1", Email: "1@qq.com", DeptId: 1, PostId: 1, Status: "2"}).Error
 		if err != nil {
 			return err
 		}

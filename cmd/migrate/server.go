@@ -25,12 +25,14 @@ var (
 	generate  bool
 	goAdmin   bool
 	host      string
+	Username  string
+	Password  string
 	StartCmd  = &cobra.Command{
 		Use:     "migrate",
 		Short:   "Initialize the database",
 		Example: "go-admin migrate -c config/settings.yml",
 		Run: func(cmd *cobra.Command, args []string) {
-			run()
+			Run()
 		},
 	}
 )
@@ -41,9 +43,11 @@ func init() {
 	StartCmd.PersistentFlags().BoolVarP(&generate, "generate", "g", false, "generate migration file")
 	StartCmd.PersistentFlags().BoolVarP(&goAdmin, "goAdmin", "a", false, "generate go-admin migration file")
 	StartCmd.PersistentFlags().StringVarP(&host, "domain", "d", "*", "select tenant host")
+	StartCmd.PersistentFlags().StringVarP(&Username, "username", "u", "admin", "系统超级管理员登录用户名")
+	StartCmd.PersistentFlags().StringVarP(&Password, "password", "p", "123456", "系统超级管理员登录用户密码")
 }
 
-func run() {
+func Run() {
 
 	if !generate {
 		logger.Info(`start init`)
