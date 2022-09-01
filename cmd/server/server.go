@@ -7,7 +7,6 @@ import (
 	"go-admin/app/admin/service"
 	"go-admin/app/jobs"
 	"go-admin/common/logger"
-	"go-admin/common/startup"
 	"log"
 	"net/http"
 	"os"
@@ -55,9 +54,6 @@ func init() {
 }
 
 func setup() {
-	// 检查是否是首次登陆使用
-	startup.Startup(configYml)
-
 	// 注入配置扩展项
 	config.ExtendConfig = &ext.ExtConfig
 	//1. 读取配置

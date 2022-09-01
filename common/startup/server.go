@@ -18,70 +18,66 @@ import (
 
 var Ch = make(chan string)
 
-var isStartUpFilePath = "./config/startup.txt"
-
 func Startup(configYml string) {
-	if pathExists(isStartUpFilePath) {
-		router := gin.Default()
-		err := mime.AddExtensionType(".js", "text/javascript")
-		if err != nil {
-			return
-		}
-		err = mime.AddExtensionType(".css", "text/css; charset=UTF-8")
-		if err != nil {
-			return
-		}
-		err = mime.AddExtensionType(".html", "text/html; charset=UTF-8")
-		if err != nil {
-			return
-		}
-		router.Static("/startup", "./static/guide")
-		router.NoRoute(func(c *gin.Context) {
-			if c.Request.URL.Path == "/startup/home" || c.Request.URL.Path == "/startup/config" {
-				accept := c.Request.Header.Get("Accept")
-				flag := strings.Contains(accept, "text/html")
-				if flag {
-					content, err := ioutil.ReadFile("./static/guide/index.html")
-					if (err) != nil {
-						c.Writer.WriteHeader(404)
-						c.Writer.WriteString("Not Found")
-						return
-					}
-					c.Writer.WriteHeader(200)
-					c.Writer.Header().Add("Accept", "text/html")
-					_, err = c.Writer.Write(content)
-					if err != nil {
-						return
-					}
-					c.Writer.Flush()
-				}
-			}
-		})
-		router.POST("/api/v1/config", SetupConfig)
-		router.POST("/api/v1/migrate", DatabaseMigrate)
-		srvGuide := &http.Server{
-			Addr:    ":8080",
-			Handler: router,
-		}
-		go func() {
-			// 服务连接
-			if err := srvGuide.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-				log.Fatalf("listen: %s\n", err)
-			}
-		}()
-		err = OpenBrowser("http://localhost:8080/startup")
-		if err != nil {
-			log.Fatal(err)
-		}
-		for {
-			select {
-			case msg := <-Ch:
-				fmt.Println("已经完成:" + msg)
-				if msg == "done2" {
+	router := gin.Default()
+	err := mime.AddExtensionType(".js", "text/javascript")
+	if err != nil {
+		return
+	}
+	err = mime.AddExtensionType(".css", "text/css; charset=UTF-8")
+	if err != nil {
+		return
+	}
+	err = mime.AddExtensionType(".html", "text/html; charset=UTF-8")
+	if err != nil {
+		return
+	}
+	router.Static("/startup", "./static/guide")
+	router.NoRoute(func(c *gin.Context) {
+		if c.Request.URL.Path == "/startup/home" || c.Request.URL.Path == "/startup/config" {
+			accept := c.Request.Header.Get("Accept")
+			flag := strings.Contains(accept, "text/html")
+			if flag {
+				content, err := ioutil.ReadFile("./static/guide/index.html")
+				if (err) != nil {
+					c.Writer.WriteHeader(404)
+					c.Writer.WriteString("Not Found")
 					return
-				} else if msg == "done2errors" {
-					panic("数据库迁移失败")
 				}
+				c.Writer.WriteHeader(200)
+				c.Writer.Header().Add("Accept", "text/html")
+				_, err = c.Writer.Write(content)
+				if err != nil {
+					return
+				}
+				c.Writer.Flush()
+			}
+		}
+	})
+	router.POST("/api/v1/config", SetupConfig)
+	router.POST("/api/v1/migrate", DatabaseMigrate)
+	srvGuide := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
+	go func() {
+		// 服务连接
+		if err := srvGuide.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+	err = OpenBrowser("http://localhost:8080/startup")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for {
+		select {
+		case msg := <-Ch:
+			fmt.Println("已经完成:" + msg)
+			if msg == "done2" {
+				return
+			} else if msg == "done2errors" {
+				panic("数据库迁移失败")
 			}
 		}
 	}
