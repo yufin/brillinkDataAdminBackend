@@ -13,12 +13,14 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
 	"strings"
+	"time"
 )
 
 var Ch = make(chan string)
 
-func Startup(configYml string) {
+func Startup() {
 	router := gin.Default()
 	err := mime.AddExtensionType(".js", "text/javascript")
 	if err != nil {
@@ -41,7 +43,10 @@ func Startup(configYml string) {
 				content, err := ioutil.ReadFile("./static/guide/index.html")
 				if (err) != nil {
 					c.Writer.WriteHeader(404)
-					c.Writer.WriteString("Not Found")
+					_, err = c.Writer.WriteString("Not Found")
+					if err != nil {
+						return
+					}
 					return
 				}
 				c.Writer.WriteHeader(200)
@@ -77,7 +82,8 @@ func Startup(configYml string) {
 			if msg == "done2" {
 				return
 			} else if msg == "done2errors" {
-				panic("数据库迁移失败")
+				fmt.Println("数据库迁移失败:" + msg)
+				return
 			}
 		}
 	}
@@ -145,15 +151,18 @@ func SetupConfig(c *gin.Context) {
 	path := "./config/"
 	fileName := "settings.yml"
 	// 判断文件是否存在，如果存在就备份
+	unix := time.Now().Unix()
 	if pathExists(path + fileName) {
-		_ = os.Rename(path+"settings.yml", path+"settings.yml.bak")
+		_ = os.Rename(path+"settings.yml", path+"settings.yml."+strconv.FormatInt(unix, 10)+".bak")
 	}
 	err = template.GenCodeForString(config, template.Yml, path, fileName, fileName)
 	if err != nil {
 		c.JSON(500, gin.H{"success": false, "errMessage": "配置文件生成失败" + err.Error()})
+		go func() { Ch <- "done1error" }()
 	}
 	c.JSON(200, gin.H{"success": true})
-	Ch <- "done1"
+	go func() { Ch <- "done1" }()
+	return
 }
 
 func DatabaseMigrate(c *gin.Context) {
@@ -161,6 +170,7 @@ func DatabaseMigrate(c *gin.Context) {
 	err := c.BindJSON(&systemInfo)
 	if err != nil {
 		c.JSON(500, gin.H{"success": false, "errMessage": "配置文件生成失败" + err.Error()})
+		go func() { Ch <- "done2error" }()
 		return
 	}
 	systemInfo.Default(systemInfo.SystemName, systemInfo.Username, systemInfo.Password)
@@ -168,14 +178,10 @@ func DatabaseMigrate(c *gin.Context) {
 	err = migrate.Run()
 	if err != nil {
 		c.JSON(200, gin.H{"success": false, "errMessage": "数据库迁移失败" + err.Error()})
-		Ch <- "done2error"
+		go func() { Ch <- "done2error" }()
 	} else {
 		c.JSON(200, gin.H{"success": true})
-		Ch <- "done2"
+		go func() { Ch <- "done2" }()
 	}
-	// 安装成功后删除初始化标记文件
-	err = os.Remove("./config/startup.txt")
-	if err != nil {
-		return
-	}
+	return
 }

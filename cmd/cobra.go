@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"go-admin/cmd/install"
 	"os"
 
 	"github.com/go-admin-team/go-admin-core/sdk/pkg"
@@ -47,6 +48,7 @@ func init() {
 	rootCmd.AddCommand(version.StartCmd)
 	rootCmd.AddCommand(config.StartCmd)
 	rootCmd.AddCommand(app.StartCmd)
+	rootCmd.AddCommand(install.StartCmd)
 }
 
 //Execute : apply commands
