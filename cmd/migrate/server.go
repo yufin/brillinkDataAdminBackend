@@ -88,9 +88,9 @@ func initDB() error {
 	logger.Info("数据库迁移开始")
 	err := migrateModel()
 	if err != nil {
-		logger.Info(`数据库基础数据初始化成功`)
-	} else {
 		logger.Info(`数据库基础数据初始化失败`, err)
+	} else {
+		logger.Info(`数据库基础数据初始化成功`)
 	}
 	return err
 }
