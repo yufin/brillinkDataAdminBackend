@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/alibaba/sentinel-golang v1.0.4
 	github.com/alibaba/sentinel-golang/pkg/adapters/gin v0.0.0-20220808015021-c5f1f1d055c5
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1754
 	github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20190307165228-86c17b95fcd5
 	github.com/bitly/go-simplejson v0.5.0
 	github.com/bytedance/go-tagexpr/v2 v2.7.12
@@ -16,6 +17,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/huaweicloud/huaweicloud-sdk-go-obs v3.21.12+incompatible
+	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.0.108
 	github.com/jinzhu/now v1.1.5
 	github.com/mattn/go-isatty v0.0.14
 	github.com/mssola/user_agent v0.5.2
@@ -30,8 +32,10 @@ require (
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2
 	github.com/swaggo/gin-swagger v1.4.3
 	github.com/swaggo/swag v1.8.1
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.489
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sts v1.0.489
 	github.com/unrolled/secure v1.0.8
-	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	gorm.io/driver/mysql v1.3.5
 	gorm.io/driver/postgres v1.3.4
 	gorm.io/driver/sqlite v1.3.6
@@ -54,10 +58,6 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/denisenkom/go-mssqldb v0.12.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
-	github.com/facebookgo/grace v0.0.0-20180706040059-75cf19382434 // indirect
-	github.com/facebookgo/httpdown v0.0.0-20180706035922-5979d39b15c2 // indirect
-	github.com/facebookgo/stats v0.0.0-20151006221625-1b76add642e4 // indirect
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
@@ -96,8 +96,9 @@ require (
 	github.com/jackc/pgtype v1.10.0 // indirect
 	github.com/jackc/pgx/v4 v4.15.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/json-iterator/go v1.1.11 // indirect
+	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
@@ -108,7 +109,7 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mojocn/base64Captcha v1.3.1 // indirect
 	github.com/nsqio/go-nsq v1.0.8 // indirect
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
@@ -139,6 +140,7 @@ require (
 	golang.org/x/tools v0.1.7 // indirect
 	google.golang.org/protobuf v1.26.0-rc.1 // indirect
 	gopkg.in/AlecAivazis/survey.v1 v1.8.5 // indirect
+	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/kyokomi/emoji.v1 v1.5.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gorm.io/driver/sqlserver v1.3.2 // indirect
