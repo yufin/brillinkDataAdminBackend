@@ -10,8 +10,9 @@ import (
 // SysMenuGetPageReq 列表或者搜索使用结构体
 type SysMenuGetPageReq struct {
 	dto.Pagination `search:"-"`
-	Title          string `form:"title" search:"type:contains;column:title;table:sys_menu" comment:"菜单名称"`  // 菜单名称
-	Visible        int    `form:"visible" search:"type:exact;column:visible;table:sys_menu" comment:"显示状态"` // 显示状态
+	Title          string `form:"title" search:"type:contains;column:title;table:sys_menu" comment:"菜单名称"`        // 菜单名称
+	MenuName       string `form:"menuName" search:"type:contains;column:menu_name;table:sys_menu" comment:"菜单名称"` // 菜单名称
+	Visible        int    `form:"visible" search:"type:exact;column:visible;table:sys_menu" comment:"显示状态"`       // 显示状态
 }
 
 func (m *SysMenuGetPageReq) GetNeedSearch() interface{} {
