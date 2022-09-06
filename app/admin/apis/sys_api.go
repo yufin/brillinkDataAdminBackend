@@ -46,7 +46,6 @@ func (e SysApi) GetPage(c *gin.Context) {
 	}
 	//数据权限检查
 	p := actions.GetPermission(c)
-	//var count int64
 	list, count, err := s.GetPage(&req, p)
 	if err != nil {
 		e.Error(500, "查询失败", "")
