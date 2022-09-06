@@ -11,6 +11,8 @@ import (
 	"go-admin/app/admin/service/dto"
 	"go-admin/common/middleware"
 	"go-admin/common/service"
+	"reflect"
+	"runtime"
 )
 
 type SysPost struct {
@@ -50,7 +52,8 @@ func (e *SysPost) Insert(c *gin.Context, r *dto.SysPostInsertReq) (err error) {
 	after, _ := json.Marshal(model)
 	middleware.SetContextOperateLog(c,
 		"新增",
-		fmt.Sprintf("新增了了Post数据，ID：%v", model.GetId()),
+		runtime.FuncForPC(reflect.ValueOf(e.Remove).Pointer()).Name()+
+			fmt.Sprintf("数据，ID：%v", model.GetId()),
 		"{}",
 		string(after),
 	)
@@ -68,7 +71,8 @@ func (e *SysPost) Update(c *gin.Context, r *dto.SysPostUpdateReq) (err error) {
 	if ok {
 		middleware.SetContextOperateLog(c,
 			"修改",
-			fmt.Sprintf("更新了Post数据，ID：%v", r.GetId()),
+			runtime.FuncForPC(reflect.ValueOf(e.Remove).Pointer()).Name()+
+				fmt.Sprintf("数据，ID：%v", r.GetId()),
 			string(before),
 			string(after),
 		)
@@ -86,7 +90,8 @@ func (e *SysPost) Remove(c *gin.Context, r *dto.SysPostDeleteReq) (err error) {
 	if ok {
 		middleware.SetContextOperateLog(c,
 			"删除",
-			fmt.Sprintf("删除了Post数据，ID：%v", r.GetId()),
+			runtime.FuncForPC(reflect.ValueOf(e.Remove).Pointer()).Name()+
+				fmt.Sprintf("数据，ID：%v", r.GetId()),
 			"{}",
 			"{}",
 		)
