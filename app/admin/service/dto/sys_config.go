@@ -168,12 +168,13 @@ type UpdateSetSysConfigReq struct {
 //type UpdateSetSysConfigReq map[string]string
 
 type UpdateSetSysConfigCustomReq struct {
-	Id          int64  `json:"-"`
-	ConfigName  string `json:"configName" comment:""`
-	ConfigKey   string `json:"configKey" comment:""`
-	ConfigValue string `json:"configValue" comment:""`
+	Id          int64  `json:"id,omitempty"`
+	ConfigName  string `json:"configName"`
+	ConfigKey   string `json:"configKey"`
+	ConfigValue string `json:"configValue"`
 	IsFrontend  bool   `json:"isFrontend,omitempty"`
 	IsSecret    bool   `json:"isSecret,omitempty"`
+	IsInsert    bool   `json:"isInsert,omitempty"`
 }
 
 func (s *UpdateSetSysConfigCustomReq) Generate(model *models.SysConfig) {
@@ -184,7 +185,7 @@ func (s *UpdateSetSysConfigCustomReq) Generate(model *models.SysConfig) {
 	model.ConfigType = "N"
 	model.IsFrontend = s.IsFrontend
 	model.IsSecret = s.IsSecret
-
+	model.Id = s.Id
 }
 
 // SysConfigByKeyReq 根据Key获取配置
