@@ -144,6 +144,7 @@ func GetById[T any](service iService, get interface{}, scope ...func(db *gorm.DB
 	return model, err
 }
 
+// Insert 插入数据
 func Insert[T any](service iService, insert action[T]) (*T, error) {
 	model := new(T)
 	insert.Generate(model)
@@ -156,6 +157,7 @@ func Insert[T any](service iService, insert action[T]) (*T, error) {
 	return model, err
 }
 
+// GetAndUpdate 获取并更新数据
 func GetAndUpdate[T any](service iService, update action[T], scope ...func(db *gorm.DB) *gorm.DB) (before, after []byte, ok bool, err error) {
 	model := new(T)
 	tx := service.GetOrm().Begin()
@@ -173,7 +175,6 @@ func GetAndUpdate[T any](service iService, update action[T], scope ...func(db *g
 	tx = tx.First(&model, update.GetId())
 	before, err = json.Marshal(model)
 	update.Generate(model)
-	// TODO: 需要修改为指定字段更新，目前更新存在风险
 	tx = tx.Save(&model)
 	if tx.Error != nil {
 		err = errors.WithStack(tx.Error)
@@ -187,6 +188,7 @@ func GetAndUpdate[T any](service iService, update action[T], scope ...func(db *g
 	return before, after, true, err
 }
 
+// UpdateForReq 更新数据
 func UpdateForReq[T any](service iService, update iUpdate, scope ...func(db *gorm.DB) *gorm.DB) (before, after []byte, ok bool, err error) {
 	model := new(T)
 	db := service.GetOrm().Model(model)
@@ -205,6 +207,7 @@ func UpdateForReq[T any](service iService, update iUpdate, scope ...func(db *gor
 	return
 }
 
+// Delete 删除数据
 func Delete[T any](service iService, delete action[T], scope ...func(db *gorm.DB) *gorm.DB) (bool, error) {
 	model := new(T)
 	delete.Generate(model)
@@ -225,8 +228,8 @@ func Delete[T any](service iService, delete action[T], scope ...func(db *gorm.DB
 	return true, nil
 }
 
+// GetList 获取列表数据
 func GetList[T any](service iService, search iList, scope ...func(db *gorm.DB) *gorm.DB) (list *[]T, err error) {
-	list = new([]T)
 	db := service.GetOrm().Model(new(T))
 	for _, f := range scope {
 		db = db.Scopes(f)
@@ -237,8 +240,27 @@ func GetList[T any](service iService, search iList, scope ...func(db *gorm.DB) *
 				cDto.MakeCondition(search.GetNeedSearch()),
 			)
 	}
-	err = db.
-		Find(list).Error
+	err = db.Find(&list).Error
+	if err != nil {
+		err = errors.WithStack(err)
+		service.GetLog().Errorf("db error:%s", err)
+		return
+	}
+	return
+}
+
+func GetListOutDiff[T1, T2 any](service iService, search iList, scope ...func(db *gorm.DB) *gorm.DB) (list []T2, err error) {
+	db := service.GetOrm().Model(new(T1))
+	for _, f := range scope {
+		db = db.Scopes(f)
+	}
+	if search != nil {
+		db = db.
+			Scopes(
+				cDto.MakeCondition(search.GetNeedSearch()),
+			)
+	}
+	err = db.Find(&list).Error
 	if err != nil {
 		err = errors.WithStack(err)
 		service.GetLog().Errorf("db error:%s", err)

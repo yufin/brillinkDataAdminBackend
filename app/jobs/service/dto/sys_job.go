@@ -12,8 +12,6 @@ import (
 
 type SysJobGetPageReq struct {
 	dto.Pagination `search:"-"`
-
-	JobId          int64     `form:"jobId"  search:"type:exact;column:job_id;table:sys_job" comment:""`
 	JobName        string    `form:"jobName"  search:"type:exact;column:job_name;table:sys_job" comment:""`
 	JobGroup       string    `form:"jobGroup"  search:"type:exact;column:job_group;table:sys_job" comment:""`
 	JobType        string    `form:"jobType"  search:"type:exact;column:job_type;table:sys_job" comment:""`

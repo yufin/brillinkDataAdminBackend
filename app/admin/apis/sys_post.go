@@ -111,7 +111,7 @@ func (e SysPost) Insert(c *gin.Context) {
 	e.OK(req.GetId())
 }
 
-// Update
+// Update 修改岗位
 // @Summary 修改岗位
 // @Description 获取JSON
 // @Tags 岗位

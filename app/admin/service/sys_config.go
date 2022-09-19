@@ -2,13 +2,20 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk"
+	"github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service/dto"
 	"go-admin/common"
+	"go-admin/common/actions"
 	cDto "go-admin/common/dto"
+	"go-admin/common/middleware"
 	"go-admin/common/service"
+	"reflect"
+	"runtime"
 	"time"
 
 	"gorm.io/gorm"
@@ -19,70 +26,68 @@ type SysConfig struct {
 }
 
 // GetPage 获取SysConfig列表
-func (e *SysConfig) GetPage(c *dto.SysConfigGetPageReq, list *[]models.SysConfig, count *int64) error {
-	err := e.Orm.
-		Scopes(
-			cDto.MakeCondition(c.GetNeedSearch()),
-			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
-		).
-		Find(list).Limit(-1).Offset(-1).
-		Count(count).Error
+func (e *SysConfig) GetPage(r *dto.SysConfigGetPageReq, p *actions.DataPermission) (list *[]models.SysConfig, count *int64, err error) {
+	list, count, err = service.GetPage[models.SysConfig](e, r)
 	if err != nil {
 		err = errors.WithStack(err)
-		e.Log.Errorf("Service GetSysConfigPage error:%s", err)
-		return err
+		e.GetLog().Errorf("database operation failed:%s \r", err)
+		return
 	}
-	return nil
+	return
 }
 
 // Get 获取SysConfig对象
-func (e *SysConfig) Get(d *dto.SysConfigGetReq, model *models.SysConfig) error {
-	err := e.Orm.First(model, d.GetId()).Error
-	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		err = errors.New("查看对象不存在或无权查看")
-		e.Log.Errorf("Service GetSysConfigPage error:%s", err)
-		return err
-	}
+func (e *SysConfig) Get(r *dto.SysConfigGetReq, p *actions.DataPermission) (model *models.SysConfig, err error) {
+	model, err = service.Get[models.SysConfig](e, r, func(db *gorm.DB) *gorm.DB {
+		return db.Scopes(
+			actions.Permission(models.SysConfig{}.TableName(), p),
+		)
+	})
 	if err != nil {
 		err = errors.WithStack(err)
-		e.Log.Errorf("Service GetSysConfig error:%s", err)
-		return err
+		e.GetLog().Errorf("database operation failed:%s \r", err)
+		return
 	}
-	return nil
+	return
 }
 
 // Insert 创建SysConfig对象
-func (e *SysConfig) Insert(c *dto.SysConfigControl) error {
-	var err error
-	var data models.SysConfig
-	c.Generate(&data)
-	err = e.Orm.Create(&data).Error
+func (e *SysConfig) Insert(c *gin.Context, r *dto.SysConfigControl) (err error) {
+	model := new(models.SysConfig)
+	model, err = service.Insert[models.SysConfig](e, r)
 	if err != nil {
-		err = errors.WithStack(err)
-		e.Log.Errorf("Service InsertSysConfig error:%s", err)
-		return err
+		e.GetLog().Errorf("database operation failed:%s \r", err)
+		return
 	}
-	return nil
+	after, _ := json.Marshal(model)
+	middleware.SetContextOperateLog(c,
+		"新增",
+		runtime.FuncForPC(reflect.ValueOf(e.Remove).Pointer()).Name()+
+			fmt.Sprintf("数据，ID：%v", model.GetId()),
+		"{}",
+		string(after),
+	)
+	return
 }
 
 // Update 修改SysConfig对象
-func (e *SysConfig) Update(c *dto.SysConfigControl) error {
-	var err error
-	var model = models.SysConfig{}
-	e.Orm.First(&model, c.GetId())
-	c.Generate(&model)
-	db := e.Orm.Save(&model)
-	err = db.Error
+func (e *SysConfig) Update(c *gin.Context, r *dto.SysConfigControl) (err error) {
+	var before, after []byte
+	before, after, ok, err := service.GetAndUpdate[models.SysConfig](e, r)
 	if err != nil {
-		err = errors.WithStack(err)
-		e.Log.Errorf("Service UpdateSysConfig error:%s", err)
-		return err
+		e.GetLog().Errorf("database operation failed:%s \r", err)
+		return
 	}
-	if db.RowsAffected == 0 {
-		return errors.New("无权更新该数据")
-
+	if ok {
+		middleware.SetContextOperateLog(c,
+			"修改",
+			runtime.FuncForPC(reflect.ValueOf(e.Remove).Pointer()).Name()+
+				fmt.Sprintf("数据，ID：%v", r.GetId()),
+			string(before),
+			string(after),
+		)
 	}
-	return nil
+	return
 }
 
 // SetSysConfig 修改SysConfig对象
@@ -129,19 +134,22 @@ func (e *SysConfig) GetForSet(unCustom *[]dto.GetSetSysConfigReq, custom *[]dto.
 	return nil
 }
 
-func (e *SysConfig) UpdateForSet(c *[]dto.UpdateSetSysConfigReq) error {
-	m := *c
+// UpdateForSet 更新配置
+func (e *SysConfig) UpdateForSet(c *gin.Context, r *[]dto.UpdateSetSysConfigReq) error {
+	m := *r
 	for _, req := range m {
 		if req.ConfigKey == "custom" {
-			err := updateSetConfigWithCustom(req, e)
+			err := e.updateSetConfigWithCustom(c, req)
 			if err != nil {
 				err = errors.WithStack(err)
 				return err
 			}
 		} else {
 			var data models.SysConfig
-			if err := e.Orm.Where("config_key = ?", req.ConfigKey).
-				First(&data).Error; err != nil {
+			err := e.Orm.
+				Where("config_key = ?", req.ConfigKey).
+				First(&data).Error
+			if err != nil {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
 					err = errors.New("未找到" + req.ConfigKey + "对应的信息，或者对该数据无权处理！")
 				}
@@ -149,30 +157,50 @@ func (e *SysConfig) UpdateForSet(c *[]dto.UpdateSetSysConfigReq) error {
 				err = errors.WithStack(err)
 				return err
 			}
+			before, err := json.Marshal(&data)
+			if err != nil {
+				err = errors.WithStack(err)
+				e.Log.Errorf("数据格式化失败:%s", err)
+				return err
+			}
 			if data.ConfigValue != req.ConfigValue && req.ConfigValue != "*********" {
 				data.ConfigValue = req.ConfigValue.(string)
-				if err := e.Orm.Model(&data).Update("config_value", req.ConfigValue).Error; err != nil {
+				err := e.Orm.Model(&data).
+					Update("config_value", req.ConfigValue).
+					Error
+				if err != nil {
 					e.Log.Errorf("Service GetSysConfigPage error:%s", err)
 					err = errors.WithStack(err)
 					return err
 				}
+				after, err := json.Marshal(&data)
+				if err != nil {
+					err = errors.WithStack(err)
+					e.Log.Errorf("数据格式化失败:%s", err)
+					return err
+				}
+				middleware.SetContextOperateLog(c,
+					middleware.OperateUpdate,
+					fmt.Sprintf("更新配置数据，ID：%v", data.GetId()),
+					string(before),
+					string(after),
+				)
 			}
 		}
 	}
-
 	return nil
 }
 
 // updateSetConfigWithCustom 更新自定义参数
-func updateSetConfigWithCustom(req dto.UpdateSetSysConfigReq, e *SysConfig) error {
+func (e *SysConfig) updateSetConfigWithCustom(c *gin.Context, req dto.UpdateSetSysConfigReq) error {
 	list := req.ConfigValue
-	var configList []int64
-	err := e.Orm.Model(&models.SysConfig{}).Select("id").Where("config_module = 'custom' ").Find(&configList).Error
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		e.Log.Errorf("获取自定义配置项:%s", err)
-		err = errors.WithStack(err)
+	configList, err := service.GetListOutDiff[models.SysConfig, int64](e, nil, func(db *gorm.DB) *gorm.DB {
+		return db.Select("id").Where("config_module = 'custom' ")
+	})
+	if err != nil {
 		return err
 	}
+
 	for _, cc := range list.([]interface{}) {
 		marshal, err := json.Marshal(cc)
 		if err != nil {
@@ -186,46 +214,102 @@ func updateSetConfigWithCustom(req dto.UpdateSetSysConfigReq, e *SysConfig) erro
 			return err
 		}
 		var isGet = true
-		var d models.SysConfig
+		var oldConfig models.SysConfig
 		var newConfig models.SysConfig
-		db := e.Orm.Model(&d).Where("config_key = ? ", cus.ConfigKey).First(&d)
+		db := e.Orm.Model(&oldConfig)
+		if cus.IsInsert && cus.Id != 0 {
+			cus.Id = 0
+			db = db.Where("config_key = ? ", cus.ConfigKey)
+		} else {
+			db = db.Where("id = ?", cus.Id)
+		}
+		db = db.First(&oldConfig)
 		err = db.Error
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			e.Log.Errorf("查询配置项失败:%s", err)
 			err = errors.WithStack(err)
 			return err
 		}
+		// 如果没有找到，就新建
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			isGet = false
 			cus.Generate(&newConfig)
-			err = e.Orm.Model(&d).Create(&newConfig).Error
+			err = e.Orm.Model(&oldConfig).Create(&newConfig).Error
 			if err != nil {
+				var mysqlErr *mysql.MySQLError
+				if errors.As(err, &mysqlErr) && mysqlErr.Number == 1062 {
+					err = errors.New("配置项" + oldConfig.ConfigKey + "已存在,请更换其他键名")
+					return err
+				}
 				err = errors.WithStack(err)
 				e.Log.Errorf("新建配置项失败:%s", err)
 				return err
 			}
+			after, err := json.Marshal(&newConfig)
+			if err != nil {
+				err = errors.WithStack(err)
+				e.Log.Errorf("数据格式化失败:%s", err)
+				return err
+			}
+			middleware.SetContextOperateLog(c,
+				"创建",
+				fmt.Sprintf("创建自定义参数数据，ID：%v", newConfig.GetId()),
+				"{}",
+				string(after),
+			)
 		}
-		if d.ConfigType == "Y" {
-			err = errors.New("配置项" + d.ConfigKey + "已存在,请更换其他键名!")
+		if oldConfig.ConfigType == "Y" {
+			err = errors.New("配置项" + oldConfig.ConfigKey + "已存在,请更换其他键名!")
+			return err
+		}
+		if cus.IsInsert && oldConfig.Id != 0 {
+			err = errors.New("配置项" + oldConfig.ConfigKey + "已存在,请更换其他键名!")
 			return err
 		}
 		if isGet {
-			configList = common.DeleteSliceElms[int64](configList, d.Id)
-			cus.Generate(&d)
-			if err := e.Orm.Save(&d).Error; err != nil {
+			before, err := json.Marshal(&oldConfig)
+			if err != nil {
+				err = errors.WithStack(err)
+				e.Log.Errorf("数据格式化失败:%s", err)
+				return err
+			}
+			configList = common.DeleteSliceElms[int64](configList, oldConfig.Id)
+			cus.Generate(&oldConfig)
+			if err := e.Orm.Save(&oldConfig).Error; err != nil {
 				e.Log.Errorf("更新配置项:%s", err)
 				err = errors.WithStack(err)
 				return err
 			}
+			after, err := json.Marshal(&oldConfig)
+			if err != nil {
+				err = errors.WithStack(err)
+				e.Log.Errorf("数据格式化失败:%s", err)
+				return err
+			}
+			middleware.SetContextOperateLog(c,
+				middleware.OperateUpdate,
+				fmt.Sprintf("更新自定义参数数据，ID：%v", oldConfig.GetId()),
+				string(before),
+				string(after),
+			)
 		}
 	}
 	if len(configList) > 0 {
-		err = e.Orm.Model(&models.SysConfig{}).Where("config_module = 'custom' and id in ? ", configList).Update("deleted_at", time.Now()).Error
+		err = e.Orm.Model(&models.SysConfig{}).
+			Where("config_module = 'custom' and id in ? ", configList).
+			Update("deleted_at", time.Now()).
+			Error
 		if err != nil {
 			err = errors.WithStack(err)
 			e.Log.Errorf("删除失败:%s", err)
 			return err
 		}
+		middleware.SetContextOperateLog(c,
+			"删除",
+			fmt.Sprintf("更新自定义参数数据，ID：%v", configList),
+			"{}",
+			"{}",
+		)
 	}
 	return nil
 }
@@ -258,7 +342,6 @@ func (e *SysConfig) GetWithKey(c *dto.SysConfigByKeyReq, resp *dto.GetSysConfigB
 		e.Log.Errorf("At Service GetSysConfigByKEY Error:%s", err)
 		return err
 	}
-
 	return nil
 }
 

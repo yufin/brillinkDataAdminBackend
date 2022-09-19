@@ -101,32 +101,3 @@ func (e *SysApi) Remove(c *gin.Context, r *dto.SysApiDeleteReq, p *actions.DataP
 	}
 	return
 }
-
-// CheckStorageSysApi 创建SysApi对象
-//func (e *SysApi) CheckStorageSysApi(c *[]runtime.Router) error {
-//	for _, v := range *c {
-//		model := new(models.SysApi)
-//		err := e.Orm.Where(models.SysApi{Path: v.RelativePath, Method: v.HttpMethod}).
-//			Attrs(models.SysApi{Handle: v.Handler}).
-//			FirstOrCreate(model).Error
-//		if strings.Index(v.Handler, "go-admin/app/") != -1 {
-//			temp := strings.Split(v.Handler, "go-admin/app/")
-//			if len(temp) <= 1 {
-//				continue
-//			}
-//			projectX := strings.Split(temp[1], "/")
-//			if len(projectX) <= 1 {
-//				continue
-//			}
-//			model.Project = projectX[0]
-//			busX := strings.Split(projectX[1], ".")
-//			model.Bus = busX[1]
-//			e.Orm.Save(model)
-//		}
-//		if err != nil {
-//			err := fmt.Errorf("Service CheckStorageSysApi error: %s \r\n ", err.Error())
-//			return err
-//		}
-//	}
-//	return nil
-//}

@@ -170,9 +170,9 @@ const docTemplate = `{
                 ],
                 "description": "分页列表",
                 "tags": [
-                    "流程"
+                    "部门"
                 ],
-                "summary": "分页流程列表数据",
+                "summary": "分页部门列表数据",
                 "parameters": [
                     {
                         "type": "string",
@@ -213,9 +213,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "流程"
+                    "部门"
                 ],
-                "summary": "添加流程",
+                "summary": "添加部门",
                 "parameters": [
                     {
                         "description": "data",
@@ -244,9 +244,9 @@ const docTemplate = `{
                 ],
                 "description": "删除数据",
                 "tags": [
-                    "流程"
+                    "部门"
                 ],
-                "summary": "删除流程",
+                "summary": "删除部门",
                 "parameters": [
                     {
                         "description": "body",
@@ -268,49 +268,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/dept/clone/{deptId}": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "克隆流程",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "流程"
-                ],
-                "summary": "克隆流程",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "body",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.SysDeptUpdateReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": -1, \"message\": \"添加失败\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/dept/{deptId}": {
             "get": {
                 "security": [
@@ -320,9 +277,9 @@ const docTemplate = `{
                 ],
                 "description": "获取JSON",
                 "tags": [
-                    "流程"
+                    "部门"
                 ],
-                "summary": "获取流程数据",
+                "summary": "获取部门数据",
                 "parameters": [
                     {
                         "type": "string",
@@ -351,9 +308,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "流程"
+                    "部门"
                 ],
-                "summary": "修改流程",
+                "summary": "修改部门",
                 "parameters": [
                     {
                         "type": "integer",
@@ -2068,6 +2025,93 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/sys-api/list": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取接口列表配置菜单接口使用",
+                "tags": [
+                    "接口管理"
+                ],
+                "summary": "获取接口列表配置菜单接口使用",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "标题",
+                        "name": "title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "地址",
+                        "name": "path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "类型",
+                        "name": "action",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/antd.Pages"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.SysApi"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/sys-api/{id}": {
             "get": {
                 "security": [
@@ -2374,7 +2418,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/sys-form": {
+        "/api/v1/sys-job": {
             "get": {
                 "security": [
                     {
@@ -2388,21 +2432,63 @@ const docTemplate = `{
                 "summary": "获取列表",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "jobName",
+                        "name": "jobName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "jobGroup",
+                        "name": "jobGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "jobType",
+                        "name": "jobType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "cronExpression",
+                        "name": "cronExpression",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "invokeTarget",
+                        "name": "invokeTarget",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "args",
+                        "name": "args",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
-                        "description": "编码",
-                        "name": "formId",
+                        "description": "misfirePolicy",
+                        "name": "misfirePolicy",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "英文名",
-                        "name": "nameEn",
+                        "description": "concurrent",
+                        "name": "concurrent",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "中文名",
-                        "name": "nameCn",
+                        "description": "status",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "entryId",
+                        "name": "entryId",
                         "in": "query"
                     },
                     {
@@ -2440,7 +2526,7 @@ const docTemplate = `{
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysForm"
+                                                                "$ref": "#/definitions/models.SysJob"
                                                             }
                                                         }
                                                     }
@@ -2475,13 +2561,89 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.SysFormInsertReq"
+                            "$ref": "#/definitions/dto.SysJobInsertReq"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sys-job/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取",
+                "tags": [
+                    ""
+                ],
+                "summary": "获取",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SysJob"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "summary": "修改",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SysJobUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
                             "$ref": "#/definitions/antd.Response"
                         }
@@ -2515,82 +2677,6 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
-                        "schema": {
-                            "$ref": "#/definitions/antd.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/sys-form/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "获取",
-                "tags": [
-                    ""
-                ],
-                "summary": "获取",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id",
-                        "name": "id",
-                        "in": "path"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": 200, \"data\": [...]}",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/antd.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.SysForm"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "修改",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    ""
-                ],
-                "summary": "修改",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.SysFormUpdateReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
                             "$ref": "#/definitions/antd.Response"
                         }
@@ -3361,6 +3447,1010 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/tb-cms-article": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取列表",
+                "tags": [
+                    ""
+                ],
+                "summary": "获取列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键编码",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页面名称",
+                        "name": "title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页面标记",
+                        "name": "mark",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "引用来源",
+                        "name": "source",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "作者",
+                        "name": "author",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "分类",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "内容",
+                        "name": "content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "上传文件路径",
+                        "name": "file",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建者",
+                        "name": "createBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "更新者",
+                        "name": "updateBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/antd.Pages"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.TbCmsArticle"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "summary": "创建",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TbCmsArticleInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除",
+                "tags": [
+                    ""
+                ],
+                "summary": "删除",
+                "parameters": [
+                    {
+                        "description": "ids",
+                        "name": "ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tb-cms-article/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取",
+                "tags": [
+                    ""
+                ],
+                "summary": "获取",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.TbCmsArticle"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "summary": "修改",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TbCmsArticleUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tb-cms-friendlink": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取列表",
+                "tags": [
+                    ""
+                ],
+                "summary": "获取列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键编码",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "链接名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "链接地址",
+                        "name": "link",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建者",
+                        "name": "createBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "更新者",
+                        "name": "updateBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/antd.Pages"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.TbCmsFriendlink"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "summary": "创建",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TbCmsFriendlinkInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除",
+                "tags": [
+                    ""
+                ],
+                "summary": "删除",
+                "parameters": [
+                    {
+                        "description": "ids",
+                        "name": "ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tb-cms-friendlink/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取",
+                "tags": [
+                    ""
+                ],
+                "summary": "获取",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.TbCmsFriendlink"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "summary": "修改",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TbCmsFriendlinkUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tb-cms-menu": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取列表",
+                "tags": [
+                    ""
+                ],
+                "summary": "获取列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键编码",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页面名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "菜单类型，list列表，page详情页",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "引用表的id，或者mark",
+                        "name": "link",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "父节点",
+                        "name": "parent",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建者",
+                        "name": "createBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "更新者",
+                        "name": "updateBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/antd.Pages"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.TbCmsMenu"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "summary": "创建",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TbCmsMenuInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除",
+                "tags": [
+                    ""
+                ],
+                "summary": "删除",
+                "parameters": [
+                    {
+                        "description": "ids",
+                        "name": "ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tb-cms-menu/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取",
+                "tags": [
+                    ""
+                ],
+                "summary": "获取",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.TbCmsMenu"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "summary": "修改",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TbCmsMenuUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tb-cms-page": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取列表",
+                "tags": [
+                    ""
+                ],
+                "summary": "获取列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键编码",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页面名称",
+                        "name": "title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页面标记",
+                        "name": "mark",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "引用来源",
+                        "name": "source",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "作者",
+                        "name": "author",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "内容",
+                        "name": "content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建者",
+                        "name": "createBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "更新者",
+                        "name": "updateBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/antd.Pages"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.TbCmsPage"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "summary": "创建",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TbCmsPageInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除",
+                "tags": [
+                    ""
+                ],
+                "summary": "删除",
+                "parameters": [
+                    {
+                        "description": "ids",
+                        "name": "ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tb-cms-page/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取",
+                "tags": [
+                    ""
+                ],
+                "summary": "获取",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.TbCmsPage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    ""
+                ],
+                "summary": "修改",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TbCmsPageUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/avatar": {
             "post": {
                 "security": [
@@ -3557,184 +4647,6 @@ const docTemplate = `{
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
                             "$ref": "#/definitions/antd.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/work-order": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "分页列表",
-                "tags": [
-                    "工单"
-                ],
-                "summary": "分页工单列表数据",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "deptName",
-                        "name": "deptName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "deptId",
-                        "name": "deptId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "position",
-                        "name": "position",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": 200, \"data\": [...]}",
-                        "schema": {
-                            "$ref": "#/definitions/antd.Response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "获取JSON",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "工单"
-                ],
-                "summary": "添加工单",
-                "parameters": [
-                    {
-                        "description": "data",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.SysDeptInsertReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": -1, \"message\": \"添加失败\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "删除数据",
-                "tags": [
-                    "工单"
-                ],
-                "summary": "删除工单",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.SysDeptDeleteReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": -1, \"message\": \"删除失败\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/work-order/{deptId}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "获取JSON",
-                "tags": [
-                    "工单"
-                ],
-                "summary": "获取工单数据",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "deptId",
-                        "name": "deptId",
-                        "in": "path"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": 200, \"data\": [...]}",
-                        "schema": {
-                            "$ref": "#/definitions/antd.Response"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "获取JSON",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "工单"
-                ],
-                "summary": "修改工单",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "body",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.SysDeptUpdateReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": -1, \"message\": \"添加失败\"}",
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 }
@@ -4029,10 +4941,10 @@ const docTemplate = `{
                 "method": {
                     "type": "string"
                 },
-                "path": {
+                "name": {
                     "type": "string"
                 },
-                "title": {
+                "path": {
                     "type": "string"
                 },
                 "type": {
@@ -4057,6 +4969,9 @@ const docTemplate = `{
                 "configKey": {
                     "type": "string"
                 },
+                "configModule": {
+                    "type": "string"
+                },
                 "configName": {
                     "type": "string"
                 },
@@ -4074,7 +4989,10 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "isFrontend": {
-                    "type": "integer"
+                    "type": "boolean"
+                },
+                "isSecret": {
+                    "type": "boolean"
                 },
                 "remark": {
                     "type": "string"
@@ -4371,56 +5289,85 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.SysFormInsertReq": {
+        "dto.SysJobInsertReq": {
             "type": "object",
             "properties": {
-                "columns": {
-                    "description": "列信息",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
+                "args": {
+                    "type": "string"
+                },
+                "concurrent": {
+                    "type": "integer"
                 },
                 "createBy": {
                     "type": "integer"
                 },
-                "nameCn": {
-                    "description": "中文名",
+                "cronExpression": {
                     "type": "string"
                 },
-                "nameEn": {
-                    "description": "英文名",
+                "entryId": {
+                    "type": "integer"
+                },
+                "invokeTarget": {
                     "type": "string"
+                },
+                "jobGroup": {
+                    "type": "string"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "jobType": {
+                    "type": "integer"
+                },
+                "misfirePolicy": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
                 }
             }
         },
-        "dto.SysFormUpdateReq": {
+        "dto.SysJobUpdateReq": {
             "type": "object",
             "properties": {
-                "columns": {
-                    "description": "列信息",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
+                "args": {
+                    "type": "string"
+                },
+                "concurrent": {
+                    "type": "integer"
                 },
                 "createBy": {
                     "type": "integer"
                 },
-                "formId": {
-                    "description": "编码",
+                "cronExpression": {
+                    "type": "string"
+                },
+                "entryId": {
                     "type": "integer"
                 },
-                "nameCn": {
-                    "description": "中文名",
+                "invokeTarget": {
                     "type": "string"
                 },
-                "nameEn": {
-                    "description": "英文名",
+                "jobGroup": {
                     "type": "string"
+                },
+                "jobId": {
+                    "type": "integer"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "jobType": {
+                    "type": "integer"
+                },
+                "misfirePolicy": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -4458,10 +5405,6 @@ const docTemplate = `{
         "dto.SysMenuInsertReq": {
             "type": "object",
             "properties": {
-                "action": {
-                    "description": "请求方式",
-                    "type": "string"
-                },
                 "apis": {
                     "type": "array",
                     "items": {
@@ -4545,10 +5488,6 @@ const docTemplate = `{
         "dto.SysMenuUpdateReq": {
             "type": "object",
             "properties": {
-                "action": {
-                    "description": "请求方式",
-                    "type": "string"
-                },
                 "apis": {
                     "type": "array",
                     "items": {
@@ -4976,6 +5915,270 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.TbCmsArticleInsertReq": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "作者",
+                    "type": "string"
+                },
+                "category": {
+                    "description": "分类",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "file": {
+                    "description": "上传文件路径",
+                    "type": "string"
+                },
+                "mark": {
+                    "description": "页面标记",
+                    "type": "string"
+                },
+                "pubTime": {
+                    "description": "发布时间",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "引用来源",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "页面名称",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.TbCmsArticleUpdateReq": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "作者",
+                    "type": "string"
+                },
+                "category": {
+                    "description": "分类",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "file": {
+                    "description": "上传文件路径",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键编码",
+                    "type": "integer"
+                },
+                "mark": {
+                    "description": "页面标记",
+                    "type": "string"
+                },
+                "pubTime": {
+                    "description": "发布时间",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "引用来源",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "页面名称",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.TbCmsFriendlinkInsertReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "link": {
+                    "description": "链接地址",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "链接名称",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.TbCmsFriendlinkUpdateReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "主键编码",
+                    "type": "integer"
+                },
+                "link": {
+                    "description": "链接地址",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "链接名称",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.TbCmsMenuInsertReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "link": {
+                    "description": "引用表的id，或者mark",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "页面名称",
+                    "type": "string"
+                },
+                "parent": {
+                    "description": "父节点",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "菜单类型，list列表，page详情页",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.TbCmsMenuUpdateReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "主键编码",
+                    "type": "integer"
+                },
+                "link": {
+                    "description": "引用表的id，或者mark",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "页面名称",
+                    "type": "string"
+                },
+                "parent": {
+                    "description": "父节点",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "菜单类型，list列表，page详情页",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.TbCmsPageInsertReq": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "作者",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "mark": {
+                    "description": "页面标记",
+                    "type": "string"
+                },
+                "pubTime": {
+                    "description": "发布时间",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "引用来源",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "页面名称",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.TbCmsPageUpdateReq": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "作者",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "主键编码",
+                    "type": "integer"
+                },
+                "mark": {
+                    "description": "页面标记",
+                    "type": "string"
+                },
+                "pubTime": {
+                    "description": "发布时间",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "引用来源",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "页面名称",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.UpdateStatusReq": {
             "type": "object",
             "properties": {
@@ -5107,6 +6310,9 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "func": {
+                    "type": "string"
+                },
                 "handle": {
                     "type": "string"
                 },
@@ -5119,13 +6325,13 @@ const docTemplate = `{
                 "method": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "path": {
                     "type": "string"
                 },
                 "project": {
-                    "type": "string"
-                },
-                "title": {
                     "type": "string"
                 },
                 "type": {
@@ -5143,6 +6349,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "configKey": {
+                    "type": "string"
+                },
+                "configModule": {
                     "type": "string"
                 },
                 "configName": {
@@ -5164,7 +6373,10 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "isFrontend": {
-                    "type": "integer"
+                    "type": "boolean"
+                },
+                "isSecret": {
+                    "type": "boolean"
                 },
                 "remark": {
                     "type": "string"
@@ -5241,11 +6453,16 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SysForm": {
+        "models.SysJob": {
             "type": "object",
             "properties": {
-                "columns": {
+                "args": {
+                    "description": "目标参数",
                     "type": "string"
+                },
+                "concurrent": {
+                    "description": "是否并发",
+                    "type": "integer"
                 },
                 "createBy": {
                     "type": "integer"
@@ -5253,14 +6470,44 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "formId": {
+                "cronExpression": {
+                    "description": "cron表达式",
+                    "type": "string"
+                },
+                "dataScope": {
+                    "type": "string"
+                },
+                "entryId": {
+                    "description": "job启动时返回的id",
                     "type": "integer"
                 },
-                "nameCn": {
+                "invokeTarget": {
+                    "description": "调用目标",
                     "type": "string"
                 },
-                "nameEn": {
+                "jobGroup": {
+                    "description": "任务分组",
                     "type": "string"
+                },
+                "jobId": {
+                    "description": "编码",
+                    "type": "integer"
+                },
+                "jobName": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "jobType": {
+                    "description": "任务类型",
+                    "type": "integer"
+                },
+                "misfirePolicy": {
+                    "description": "执行策略",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -5273,9 +6520,6 @@ const docTemplate = `{
         "models.SysMenu": {
             "type": "object",
             "properties": {
-                "action": {
-                    "type": "string"
-                },
                 "apis": {
                     "type": "array",
                     "items": {
@@ -5399,6 +6643,146 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "userName": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TbCmsArticle": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "file": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mark": {
+                    "type": "string"
+                },
+                "pubTime": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TbCmsFriendlink": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TbCmsMenu": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TbCmsPage": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mark": {
+                    "type": "string"
+                },
+                "pubTime": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }

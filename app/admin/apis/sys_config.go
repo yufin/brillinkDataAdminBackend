@@ -45,14 +45,14 @@ func (e SysConfig) GetPage(c *gin.Context) {
 		return
 	}
 
-	list := make([]models.SysConfig, 0)
-	var count int64
-	err = s.GetPage(&req, &list, &count)
+	//list := make([]models.SysConfig, 0)
+	//var count int64
+	list, count, err := s.GetPage(&req, nil)
 	if err != nil {
 		e.Error(500, "查询失败", "")
 		return
 	}
-	e.PageOK(resp.Generate(&list), count, req.GetPageIndex(), req.GetPageSize())
+	e.PageOK(resp.Generate(list), *count, req.GetPageIndex(), req.GetPageSize())
 }
 
 // Get 获取配置管理
@@ -77,14 +77,13 @@ func (e SysConfig) Get(c *gin.Context) {
 		panic(err)
 		return
 	}
-	var object models.SysConfig
 
-	err = s.Get(&req, &object)
+	object, err := s.Get(&req, nil)
 	if err != nil {
 		panic(err)
 		return
 	}
-	resp.Generate(&object)
+	resp.Generate(object)
 	e.OK(resp)
 }
 
@@ -113,7 +112,7 @@ func (e SysConfig) Insert(c *gin.Context) {
 	}
 	req.SetCreateBy(user.GetUserId(c))
 
-	err = s.Insert(&req)
+	err = s.Insert(c, &req)
 	if err != nil {
 		e.Error(500, "创建失败", "")
 		return
@@ -145,7 +144,7 @@ func (e SysConfig) Update(c *gin.Context) {
 		return
 	}
 	req.SetUpdateBy(user.GetUserId(c))
-	err = s.Update(&req)
+	err = s.Update(c, &req)
 	if err != nil {
 		e.Error(500, "更新失败", "")
 		return
@@ -283,7 +282,7 @@ func (e SysConfig) Update2Set(c *gin.Context) {
 		return
 	}
 
-	err = s.UpdateForSet(&req)
+	err = s.UpdateForSet(c, &req)
 	if err != nil {
 		panic(exception.WithMsg(50000, "保存配置项失败", err))
 		return
