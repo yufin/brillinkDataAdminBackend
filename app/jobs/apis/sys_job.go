@@ -20,25 +20,19 @@ type SysJob struct {
 // @Summary 获取列表
 // @Description 获取列表
 // @Tags
-// @Param jobId query int64 false ""
-// @Param jobName query string false ""
-// @Param jobGroup query string false ""
-// @Param jobType query string false ""
-// @Param cronExpression query string false ""
-// @Param invokeTarget query string false ""
-// @Param args query string false ""
-// @Param misfirePolicy query int64 false ""
-// @Param concurrent query string false ""
-// @Param status query string false ""
-// @Param entryId query int64 false ""
-// @Param createBy query int64 false ""
-// @Param updateBy query int64 false ""
-// @Param createdAt query time.Time false ""
-// @Param updatedAt query time.Time false ""
-// @Param deletedAt query time.Time false ""
+// @Param jobName query string false "jobName"
+// @Param jobGroup query string false "jobGroup"
+// @Param jobType query string false "jobType"
+// @Param cronExpression query string false "cronExpression"
+// @Param invokeTarget query string false "invokeTarget"
+// @Param args query string false "args"
+// @Param misfirePolicy query int64 false "misfirePolicy"
+// @Param concurrent query string false "concurrent"
+// @Param status query string false "status"
+// @Param entryId query int64 false "entryId"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} antd.Response{data=antd.Page{list=[]models.SysJob}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} antd.Response{data=antd.Pages{list=[]models.SysJob}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-job [get]
 // @Security Bearer
 func (e SysJob) GetPage(c *gin.Context) {
