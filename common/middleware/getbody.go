@@ -1,12 +1,9 @@
 package middleware
 
 import (
-	"bufio"
 	"bytes"
 	"github.com/gin-gonic/gin"
-	log "github.com/go-admin-team/go-admin-core/logger"
 	"io"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -21,17 +18,8 @@ func setBody(c *gin.Context) {
 	body := ""
 	switch c.Request.Method {
 	case http.MethodPost, http.MethodPut, http.MethodGet, http.MethodDelete:
-		bf := bytes.NewBuffer(nil)
-		wt := bufio.NewWriter(bf)
-		_, err := io.Copy(wt, c.Request.Body)
-		if err != nil {
-			log.Warnf("copy body error, %s", err.Error())
-		}
-		rb, err := ioutil.ReadAll(bf)
-		if err != nil {
-			log.Warnf("ReadAll error, %s", err.Error())
-		}
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(rb))
+		rb, _ := io.ReadAll(c.Request.Body)
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(rb))
 		body = string(rb)
 	}
 	c.Set("body", body)
