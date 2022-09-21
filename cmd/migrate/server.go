@@ -2,17 +2,17 @@ package migrate
 
 import (
 	"bytes"
-	"github.com/go-admin-team/go-admin-core/logger"
-	"github.com/go-admin-team/go-admin-core/sdk"
-	"github.com/go-admin-team/go-admin-core/sdk/pkg"
 	"strconv"
 	"text/template"
 	"time"
 
 	"github.com/go-admin-team/go-admin-core/config/source/file"
+	"github.com/go-admin-team/go-admin-core/logger"
+	"github.com/go-admin-team/go-admin-core/sdk"
+	"github.com/go-admin-team/go-admin-core/sdk/config"
+	"github.com/go-admin-team/go-admin-core/sdk/pkg"
 	"github.com/spf13/cobra"
 
-	"github.com/go-admin-team/go-admin-core/sdk/config"
 	"go-admin/cmd/migrate/migration"
 	_ "go-admin/cmd/migrate/migration/version"
 	_ "go-admin/cmd/migrate/migration/version-local"
@@ -56,6 +56,7 @@ func Run() error {
 		config.Setup(
 			file.NewSource(file.WithPath(configYml)),
 		)
+		models.System.Default(SystemName, Username, Password)
 		return initDB()
 	} else {
 		logger.Info(`generate migration file`)

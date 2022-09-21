@@ -115,8 +115,12 @@ func getApiName(path, method string) string {
 	if reg.MatchString(urlPath) {
 		urlPath = reg.ReplaceAllString(path, "${1}/{${2}}") // 把:id换成{id}
 	}
-	apiTitle, _ := jsonData.Get("paths").Get(urlPath).Get(strings.ToLower(method)).Get("summary").String()
-	return apiTitle
+	apiName, _ := jsonData.Get("paths").
+		Get(urlPath).
+		Get(strings.ToLower(method)).
+		Get("summary").
+		String()
+	return apiName
 }
 
 func checkApi(routers *[]runtime.Router, db *gorm.DB) (err error) {
@@ -127,6 +131,7 @@ func checkApi(routers *[]runtime.Router, db *gorm.DB) (err error) {
 		return err
 	}
 
+	updateIds := make([]int, 0, 0)
 	for _, api := range *list {
 		bl := true
 		for _, h := range *routers {
@@ -135,22 +140,29 @@ func checkApi(routers *[]runtime.Router, db *gorm.DB) (err error) {
 			}
 		}
 		if bl {
-			err = db.Model(api).Update("is_history", true).Error
+			updateIds = append(updateIds, api.Id)
+		}
+		if api.Name == "" {
+			apiName := getApiName(api.Path, api.Method)
+			if apiName == "" || api.Name == apiName {
+				continue
+			}
+			err = db.Model(api).Update("name", apiName).Error
 			if err != nil {
 				err = errors.WithStack(err)
 				return err
 			}
 		}
-		if api.Name == "" {
-			apiTitle := getApiName(api.Path, api.Method)
-			if apiTitle == "" {
-				continue
-			}
-			err = db.Model(api).Update("title", apiTitle).Error
-			if err != nil {
-				err = errors.WithStack(err)
-				return err
-			}
+	}
+
+	if len(updateIds) > 0 {
+		err = db.Model(SysApi{}).
+			Where("id in ?", updateIds).
+			Update("is_history", true).
+			Error
+		if err != nil {
+			err = errors.WithStack(err)
+			return err
 		}
 	}
 	return

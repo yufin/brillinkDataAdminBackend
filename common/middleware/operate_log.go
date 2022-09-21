@@ -34,7 +34,7 @@ func SetContextOperateLog(c *gin.Context, typeX Operate, desc, before, after str
 	mp["type"] = typeX
 	mp["description"] = user.GetUserName(c) + desc
 	mp["userName"] = user.GetUserName(c)
-	mp["userId"] = int64(user.GetUserId(c))
+	mp["userId"] = user.GetUserId(c)
 	mp["updateBefore"] = before
 	mp["updateAfter"] = after
 	c.Set("operateLog", mp)
