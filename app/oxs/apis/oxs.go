@@ -3,7 +3,7 @@ package apis
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/sts"
 	"github.com/gin-gonic/gin"
-
+	"github.com/go-admin-team/go-admin-core/sdk"
 	"go-admin/app/oxs/models"
 	"go-admin/app/oxs/service"
 	"go-admin/common/apis"
@@ -14,63 +14,88 @@ type OXS struct {
 	apis.Api
 }
 
-func (e OXS) GetOBS(c *gin.Context) {
+func (e OXS) OXS(c *gin.Context) {
 	e.MakeContext(c)
 	s := service.OXS{}
-	res := s.GetOBS()
 
-	e.OK(models.ResponseOXS{
-		Enable:       true,
-		OxsType:      "obs",
-		Endpoint:     "端点",
-		AccessDomain: "访问域名",
-		Bucket:       "桶名称",
-		Credential:   res,
-	})
+	// 判断是否临时授权访问
+	// false 通过ak/sk访问
+	// true 通过临时授权访问
+	if sdk.Runtime.GetConfig("oxs_provisional_auth").(string) == "false" {
+		if sdk.Runtime.GetConfig("oxs_type") == "obs" {
+			e.OK(models.OXSAkSk{
+				Enable:       e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+				OxsType:      sdk.Runtime.GetConfig("oxs_type").(string),
+				Endpoint:     sdk.Runtime.GetConfig("oxs_obs_endpoint").(string),
+				AccessDomain: sdk.Runtime.GetConfig("oxs_access_domain").(string),
+				Bucket:       sdk.Runtime.GetConfig("oxs_bucket").(string),
+				AccessKey:    sdk.Runtime.GetConfig("oxs_access_key").(string),
+				SecretKey:    sdk.Runtime.GetConfig("oxs_secret_key").(string),
+			})
+		} else {
+			e.OK(models.OXSAkSk{
+				Enable:    e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+				OxsType:   sdk.Runtime.GetConfig("oxs_type").(string),
+				Region:    "oss-" + sdk.Runtime.GetConfig("oxs_region").(string),
+				Bucket:    sdk.Runtime.GetConfig("oxs_bucket").(string),
+				AccessKey: sdk.Runtime.GetConfig("oxs_access_key").(string),
+				SecretKey: sdk.Runtime.GetConfig("oxs_secret_key").(string),
+			})
+		}
+	} else {
+		switch sdk.Runtime.GetConfig("oxs_type") {
+		case "obs":
+			res := s.GetOBS()
+			e.OK(models.ResponseOXS{
+				Enable:       e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+				OxsType:      sdk.Runtime.GetConfig("oxs_type").(string),
+				Endpoint:     sdk.Runtime.GetConfig("oxs_obs_endpoint").(string),
+				AccessDomain: sdk.Runtime.GetConfig("oxs_access_domain").(string),
+				Bucket:       sdk.Runtime.GetConfig("oxs_bucket").(string),
+				Credential:   res,
+			})
+		case "oss":
+			res := s.GetOSS()
+			e.OK(models.ResponseOXS{
+				Enable:  e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+				OxsType: sdk.Runtime.GetConfig("oxs_type").(string),
+				Region:  "oss-" + sdk.Runtime.GetConfig("oxs_region").(string),
+				Bucket:  sdk.Runtime.GetConfig("oxs_bucket").(string),
+				Credential: sts.Credentials{
+					AccessKeyId:     res.Credentials.AccessKeyId,
+					Expiration:      res.Credentials.Expiration,
+					AccessKeySecret: res.Credentials.AccessKeySecret,
+					SecurityToken:   res.Credentials.SecurityToken,
+				},
+			})
+		case "cos":
+			res := s.GetCOS()
+			e.OK(models.ResponseOXS{
+				Enable:      e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+				OxsType:     sdk.Runtime.GetConfig("oxs_type").(string),
+				Region:      sdk.Runtime.GetConfig("oxs_region").(string),
+				Bucket:      sdk.Runtime.GetConfig("oxs_bucket").(string),
+				Credential:  res.Response.Credentials,
+				ExpiredTime: res.Response.ExpiredTime,
+			})
+		case "kodo":
+			res := s.GetKodo()
+			e.OK(models.ResponseOXS{
+				Enable:  e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+				OxsType: sdk.Runtime.GetConfig("oxs_type").(string),
+				Region:  sdk.Runtime.GetConfig("oxs_region").(string),
+				Bucket:  sdk.Runtime.GetConfig("oxs_bucket").(string),
+				Token:   res,
+			})
+		}
+	}
 }
 
-func (e OXS) GetOSS(c *gin.Context) {
-	e.MakeContext(c)
-	s := service.OXS{}
-	res := s.GetOSS()
-	e.OK(models.ResponseOXS{
-		Enable:  true,
-		OxsType: "oss",
-		Region:  "区域",
-		Bucket:  "go-quark",
-		Credential: sts.Credentials{
-			AccessKeyId:     res.Credentials.AccessKeyId,
-			Expiration:      res.Credentials.Expiration,
-			AccessKeySecret: res.Credentials.AccessKeySecret,
-			SecurityToken:   res.Credentials.SecurityToken,
-		},
-	})
-}
-
-func (e OXS) GetCOS(c *gin.Context) {
-	e.MakeContext(c)
-	s := service.OXS{}
-	res, _ := s.GetCOS()
-	e.OK(models.ResponseOXS{
-		Enable:      true,
-		OxsType:     "cos",
-		Region:      "ap-nanjing",
-		Bucket:      "桶名称",
-		Credential:  res.Response.Credentials,
-		ExpiredTime: res.Response.ExpiredTime,
-	})
-}
-
-func (e OXS) GetKodo(c *gin.Context) {
-	e.MakeContext(c)
-	s := service.OXS{}
-	res, _ := s.GetKodo()
-	e.OK(models.ResponseOXS{
-		Enable:       true,
-		OxsType:      "kodo",
-		Region:       "区域",
-		AccessDomain: "访问域名",
-		Bucket:       "桶名称",
-		Token:        res,
-	})
+// IfBool 转行布尔值
+func (e OXS) IfBool(value string) bool {
+	if value == "true" {
+		return true
+	} else {
+		return false
+	}
 }

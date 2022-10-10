@@ -43,3 +43,24 @@ type Statement struct {
 	Action   []string `json:"action"`
 	Resource []string `json:"resource"`
 }
+
+type OXSAkSk struct {
+	// 开关
+	Enable bool `json:"enable"`
+	// 对象存储类型
+	OxsType string `json:"oxsType"`
+	// 端点 Endpoint 华为
+	Endpoint string `json:"endpoint"`
+	// 地区 Region 阿里 腾讯 七牛
+	Region string `json:"region"`
+	// 访问域名
+	AccessDomain string `json:"accessDomain"`
+	AccessKey    string `json:"accessKey"`
+	SecretKey    string `json:"secretKey"`
+	// 阿里 华为 腾讯
+	Bucket string `json:"bucket"`
+	// 七牛 UseCdnDomain 表示是否使用 cdn 加速域名，为布尔值，true 表示使用，默认为 false。
+	UseCdnDomain bool `json:"useCdnDomain"`
+	// 七牛 UseHttpsDomain 是否使用https域名
+	UseHttpsDomain bool `json:"useHttpsDomain"`
+}

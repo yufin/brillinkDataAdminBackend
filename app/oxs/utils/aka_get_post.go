@@ -10,7 +10,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -43,12 +42,7 @@ func PostRequest(model interface{}, url string) (body []byte, token string) {
 	// 返回华为云 Token 出去
 	token = resp.Header.Get("X-Subject-Token")
 	//关闭请求
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Printf("关闭body失败，失败信息%s\n", err.Error())
-		}
-	}(resp.Body)
+	defer resp.Body.Close()
 
 	// 返回 body 出去
 	return body, token
