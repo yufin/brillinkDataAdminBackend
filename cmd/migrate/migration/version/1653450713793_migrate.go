@@ -40,8 +40,8 @@ func _1653450713793Test(db *gorm.DB, version string) error {
 		list = append(list, models.SysConfig{ConfigName: "⻆⾊ARN", ConfigKey: "obx_oss_role_arn", ConfigType: "Y", IsFrontend: false, ConfigModule: "oxs"})
 		list = append(list, models.SysConfig{ConfigName: "RAM⻆⾊名称", ConfigKey: "obx_oss_role_session_name", ConfigType: "Y", IsFrontend: false, ConfigModule: "oxs"})
 		list = append(list, models.SysConfig{ConfigName: "持续时间", ConfigKey: "oxs_duration_seconds", ConfigType: "Y", IsFrontend: false, ConfigModule: "oxs"})
-		list = append(list, models.SysConfig{ConfigName: "IAM主账号", ConfigKey: "oxs_obs_main_username", ConfigType: "Y", IsFrontend: false, ConfigModule: "oxs", IsSecret: true})
-		list = append(list, models.SysConfig{ConfigName: "IAM子账号", ConfigKey: "oxs_obs_iam_username", ConfigType: "Y", IsFrontend: false, ConfigModule: "oxs", IsSecret: true})
+		list = append(list, models.SysConfig{ConfigName: "IAM主账号", ConfigKey: "oxs_obs_main_username", ConfigType: "Y", IsFrontend: false, ConfigModule: "oxs"})
+		list = append(list, models.SysConfig{ConfigName: "IAM子账号", ConfigKey: "oxs_obs_iam_username", ConfigType: "Y", IsFrontend: false, ConfigModule: "oxs"})
 		list = append(list, models.SysConfig{ConfigName: "IAM子密码", ConfigKey: "oxs_obs_iam_password", ConfigType: "Y", IsFrontend: false, ConfigModule: "oxs", IsSecret: true})
 		list = append(list, models.SysConfig{ConfigName: "端点", ConfigKey: "oxs_obs_endpoint", ConfigType: "Y", IsFrontend: false, ConfigModule: "oxs", IsSecret: true})
 
