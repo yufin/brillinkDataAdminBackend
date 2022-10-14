@@ -16,82 +16,156 @@ type OXS struct {
 
 func (e OXS) OXS(c *gin.Context) {
 	e.MakeContext(c)
-	s := service.OXS{}
-
-	// 判断是否临时授权访问
-	// false 通过ak/sk访问
-	// true 通过临时授权访问
-	if sdk.Runtime.GetConfig("oxs_provisional_auth").(string) == "false" {
-		if sdk.Runtime.GetConfig("oxs_type") == "obs" {
-			e.OK(models.OXSAkSk{
-				Enable:       e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
-				OxsType:      sdk.Runtime.GetConfig("oxs_type").(string),
-				Endpoint:     sdk.Runtime.GetConfig("oxs_obs_endpoint").(string),
-				AccessDomain: sdk.Runtime.GetConfig("oxs_access_domain").(string),
-				Bucket:       sdk.Runtime.GetConfig("oxs_bucket").(string),
-				AccessKey:    sdk.Runtime.GetConfig("oxs_access_key").(string),
-				SecretKey:    sdk.Runtime.GetConfig("oxs_secret_key").(string),
-			})
-		} else {
-			e.OK(models.OXSAkSk{
-				Enable:    e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
-				OxsType:   sdk.Runtime.GetConfig("oxs_type").(string),
-				Region:    "oss-" + sdk.Runtime.GetConfig("oxs_region").(string),
-				Bucket:    sdk.Runtime.GetConfig("oxs_bucket").(string),
-				AccessKey: sdk.Runtime.GetConfig("oxs_access_key").(string),
-				SecretKey: sdk.Runtime.GetConfig("oxs_secret_key").(string),
-			})
-		}
-	} else {
-		switch sdk.Runtime.GetConfig("oxs_type") {
-		case "obs":
-			res := s.GetOBS()
-			e.OK(models.ResponseOXS{
-				Enable:       e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
-				OxsType:      sdk.Runtime.GetConfig("oxs_type").(string),
-				Endpoint:     sdk.Runtime.GetConfig("oxs_obs_endpoint").(string),
-				AccessDomain: sdk.Runtime.GetConfig("oxs_access_domain").(string),
-				Bucket:       sdk.Runtime.GetConfig("oxs_bucket").(string),
-				Credential:   res,
-			})
-		case "oss":
-			res := s.GetOSS()
-			e.OK(models.ResponseOXS{
-				Enable:  e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
-				OxsType: sdk.Runtime.GetConfig("oxs_type").(string),
-				Region:  "oss-" + sdk.Runtime.GetConfig("oxs_region").(string),
-				Bucket:  sdk.Runtime.GetConfig("oxs_bucket").(string),
-				Credential: sts.Credentials{
-					AccessKeyId:     res.Credentials.AccessKeyId,
-					Expiration:      res.Credentials.Expiration,
-					AccessKeySecret: res.Credentials.AccessKeySecret,
-					SecurityToken:   res.Credentials.SecurityToken,
-				},
-			})
-		case "cos":
-			res := s.GetCOS()
-			e.OK(models.ResponseOXS{
-				Enable:      e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
-				OxsType:     sdk.Runtime.GetConfig("oxs_type").(string),
-				Region:      sdk.Runtime.GetConfig("oxs_region").(string),
-				Bucket:      sdk.Runtime.GetConfig("oxs_bucket").(string),
-				Credential:  res.Response.Credentials,
-				ExpiredTime: res.Response.ExpiredTime,
-			})
-		case "kodo":
-			res := s.GetKodo()
-			e.OK(models.ResponseOXS{
-				Enable:  e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
-				OxsType: sdk.Runtime.GetConfig("oxs_type").(string),
-				Region:  sdk.Runtime.GetConfig("oxs_region").(string),
-				Bucket:  sdk.Runtime.GetConfig("oxs_bucket").(string),
-				Token:   res,
-			})
-		}
+	switch sdk.Runtime.GetConfig("oxs_type") {
+	case "obs":
+		e.GetOBS(c)
+	case "oss":
+		e.GetOSS(c)
+	case "cos":
+		e.GetCOS(c)
+	case "kodo":
+		e.GetKodo(c)
 	}
 }
 
-// IfBool 转行布尔值
+// GetOBS 华为云对象存储
+func (e OXS) GetOBS(c *gin.Context) {
+	e.MakeContext(c)
+	// 判断是否临时授权访问
+	// false 通过ak/sk访问
+	// true 通过临时授权访问
+	if e.IfBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)) == false {
+		e.OK(models.OXSAkSk{
+			Enable:          e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+			ProvisionalAuth: e.IfBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)),
+			OxsType:         sdk.Runtime.GetConfig("oxs_type").(string),
+			Endpoint:        sdk.Runtime.GetConfig("oxs_obs_endpoint").(string),
+			AccessDomain:    sdk.Runtime.GetConfig("oxs_access_domain").(string),
+			Bucket:          sdk.Runtime.GetConfig("oxs_bucket").(string),
+			AccessKey:       sdk.Runtime.GetConfig("oxs_access_key").(string),
+			SecretKey:       sdk.Runtime.GetConfig("oxs_secret_key").(string),
+		})
+	} else {
+		s := service.OXS{}
+		status, message, res := s.GetOBS()
+		e.OK(models.ResponseOXS{
+			Enable:          e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+			ProvisionalAuth: e.IfBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)),
+			OxsType:         sdk.Runtime.GetConfig("oxs_type").(string),
+			Endpoint:        sdk.Runtime.GetConfig("oxs_obs_endpoint").(string),
+			AccessDomain:    sdk.Runtime.GetConfig("oxs_access_domain").(string),
+			Bucket:          sdk.Runtime.GetConfig("oxs_bucket").(string),
+			Credential:      res,
+			Status:          status,
+			Message:         message,
+		})
+	}
+
+}
+
+// GetOSS 阿里云对象存储
+func (e OXS) GetOSS(c *gin.Context) {
+	e.MakeContext(c)
+	// 判断是否临时授权访问
+	// false 通过ak/sk访问
+	// true 通过临时授权访问
+	if e.IfBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)) == false {
+		e.OK(models.OXSAkSk{
+			Enable:          e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+			ProvisionalAuth: e.IfBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)),
+			OxsType:         sdk.Runtime.GetConfig("oxs_type").(string),
+			Region:          "oss-" + sdk.Runtime.GetConfig("oxs_region").(string),
+			Bucket:          sdk.Runtime.GetConfig("oxs_bucket").(string),
+			AccessKey:       sdk.Runtime.GetConfig("oxs_access_key").(string),
+			SecretKey:       sdk.Runtime.GetConfig("oxs_secret_key").(string),
+		})
+	} else {
+		s := service.OXS{}
+		status, message, res := s.GetOSS()
+		//e.Custom(models.ResponseOXS{
+		//	Enable:          e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+		//	ProvisionalAuth: e.IfBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)),
+		//	OxsType:         sdk.Runtime.GetConfig("oxs_type").(string),
+		//	Region:          "oss-" + sdk.Runtime.GetConfig("oxs_region").(string),
+		//	Bucket:          sdk.Runtime.GetConfig("oxs_bucket").(string),
+		//	Credential: sts.Credentials{
+		//		AccessKeyId:     res.Credentials.AccessKeyId,
+		//		Expiration:      res.Credentials.Expiration,
+		//		AccessKeySecret: res.Credentials.AccessKeySecret,
+		//		SecurityToken:   res.Credentials.SecurityToken,
+		//	},
+		//	Status:  status,
+		//	Message: message,
+		//})
+		e.Custom(gin.H{
+			"enable":          e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+			"provisionalAuth": e.IfBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)),
+			"oxsType":         sdk.Runtime.GetConfig("oxs_type").(string),
+			"region":          "oss-" + sdk.Runtime.GetConfig("oxs_region").(string),
+			"bucket":          sdk.Runtime.GetConfig("oxs_bucket").(string),
+			"credential": sts.Credentials{
+				AccessKeyId:     res.Credentials.AccessKeyId,
+				Expiration:      res.Credentials.Expiration,
+				AccessKeySecret: res.Credentials.AccessKeySecret,
+				SecurityToken:   res.Credentials.SecurityToken,
+			},
+			"status":  status,
+			"message": message,
+		})
+	}
+
+}
+
+// GetCOS 腾讯云对象存储
+func (e OXS) GetCOS(c *gin.Context) {
+	e.MakeContext(c)
+	// 判断是否临时授权访问
+	// false 通过ak/sk访问
+	// true 通过临时授权访问
+	if e.IfBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)) == false {
+		e.OK(models.OXSAkSk{
+			Enable:          e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+			ProvisionalAuth: e.IfBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)),
+			OxsType:         sdk.Runtime.GetConfig("oxs_type").(string),
+			Region:          sdk.Runtime.GetConfig("oxs_region").(string),
+			Bucket:          sdk.Runtime.GetConfig("oxs_bucket").(string),
+			AccessKey:       sdk.Runtime.GetConfig("oxs_access_key").(string),
+			SecretKey:       sdk.Runtime.GetConfig("oxs_secret_key").(string),
+		})
+	} else {
+		s := service.OXS{}
+		status, _, res := s.GetCOS()
+		e.OK(models.ResponseOXS{
+			Enable:          e.IfBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
+			ProvisionalAuth: e.IfBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)),
+			OxsType:         sdk.Runtime.GetConfig("oxs_type").(string),
+			Region:          sdk.Runtime.GetConfig("oxs_region").(string),
+			Bucket:          sdk.Runtime.GetConfig("oxs_bucket").(string),
+			Credential:      res.Response.Credentials,
+			ExpiredTime:     res.Response.ExpiredTime,
+			Status:          status,
+			//Message: string(message),
+		})
+	}
+
+}
+
+// GetKodo 七牛云对象存储
+func (e OXS) GetKodo(c *gin.Context) {
+	e.MakeContext(c)
+	s := service.OXS{}
+	res := s.GetKodo()
+	e.OK(models.ResponseOXS{
+		Enable:       true,
+		OxsType:      sdk.Runtime.GetConfig("oxs_type").(string),
+		Region:       sdk.Runtime.GetConfig("oxs_region").(string),
+		AccessDomain: sdk.Runtime.GetConfig("oxs_access_domain").(string),
+		Bucket:       sdk.Runtime.GetConfig("oxs_bucket").(string),
+		Token:        res,
+	})
+}
+
+// IfBool 判断布尔值
 func (e OXS) IfBool(value string) bool {
 	if value == "true" {
 		return true

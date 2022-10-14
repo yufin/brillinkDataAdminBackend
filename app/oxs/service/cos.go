@@ -17,7 +17,7 @@ import (
 	"strconv"
 )
 
-func (e OXS) GetCOS() *v20180813.GetFederationTokenResponse {
+func (e OXS) GetCOS() (status bool, message string, result *v20180813.GetFederationTokenResponse) {
 	// 实例化一个认证对象，入参需要传入腾讯云账户secretId，secretKey,此处还需注意密钥对的保密
 	// 密钥可前往https://console.cloud.tencent.com/cam/capi网站进行获取
 	credential := common.NewCredential(
@@ -71,7 +71,5 @@ func (e OXS) GetCOS() *v20180813.GetFederationTokenResponse {
 	// 输出json格式的字符串回包
 	//fmt.Printf("%s", response.ToJsonString())
 
-	fmt.Println()
-
-	return response
+	return true, "", response
 }
