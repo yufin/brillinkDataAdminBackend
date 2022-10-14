@@ -12,13 +12,15 @@ import (
 	"github.com/go-admin-team/go-admin-core/sdk"
 )
 
-func (e OXS) GetOSS() *sts.AssumeRoleResponse {
+func (e OXS) GetOSS() (status bool, message string, result *sts.AssumeRoleResponse) {
 	//构建一个阿里云客户端, 用于发起请求。
 	//设置调用者（RAM用户或RAM角色）的AccessKey ID和AccessKey Secret。
 	//第一个参数就是bucket所在位置，可查看oss对象储存控制台的概况获取
 	//第二个参数就是步骤一获取的AccessKey ID
 	//第三个参数就是步骤一获取的AccessKey Secret
 	client, err := sts.NewClientWithAccessKey(sdk.Runtime.GetConfig("oxs_region").(string), sdk.Runtime.GetConfig("oxs_access_key").(string), sdk.Runtime.GetConfig("oxs_secret_key").(string))
+	//if err != nil {
+	//}
 
 	//构建请求对象。
 	request := sts.CreateAssumeRoleRequest()
@@ -31,8 +33,26 @@ func (e OXS) GetOSS() *sts.AssumeRoleResponse {
 	//发起请求，并得到响应。
 	response, err := client.AssumeRole(request)
 	if err != nil {
-		fmt.Print(err.Error())
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		fmt.Println("aaaaa")
+		//return false, "请检查阿里云OSS相关账号信息", nil
+		//fmt.Print(err.Error())
+	} else {
+		fmt.Println("bbbbb")
+		return true, "", response
 	}
-
-	return response
+	fmt.Println("ccccccc")
+	return true, "", nil
 }

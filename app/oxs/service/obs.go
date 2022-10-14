@@ -7,21 +7,31 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
+	"go-admin/app/oxs/models"
 	"go-admin/app/oxs/utils"
 	"strconv"
 )
 
-func (e OXS) GetOBS() *model.Credential {
-	token := e.KeystoneCreateUserTokenByPassword()
-	credential := e.CreateTemporaryAccessKeyByAgency(token)
+func (e OXS) GetOBS() (status bool, message string, credential *model.Credential) {
+	var obsErr models.OBSErr
+	body, token := e.KeystoneCreateUserTokenByPassword()
+	json.Unmarshal(body, &obsErr)
+	if obsErr.Error.Code == 401 {
+		fmt.Printf("华为云对象存储配置错误: %v", obsErr.Error.Message)
+		return false, obsErr.Error.Message, nil
+	} else {
+		aaa := e.CreateTemporaryAccessKeyByAgency(token)
+		return true, "", aaa.Credential
+	}
 
-	return credential.Credential
+	return false, "", nil
 }
 
 // KeystoneCreateUserTokenByPassword 获取IAM用户Token(使用密码)
-func (e OXS) KeystoneCreateUserTokenByPassword() string {
+func (e OXS) KeystoneCreateUserTokenByPassword() (body []byte, token string) {
 	nameDomain := sdk.Runtime.GetConfig("oxs_obs_main_username").(string)
 	domainScope := &model.AuthScopeDomain{
 		Name: &nameDomain,
@@ -55,9 +65,9 @@ func (e OXS) KeystoneCreateUserTokenByPassword() string {
 		Auth: authbody,
 	}
 
-	_, XSubjectToken := utils.PostRequest(request, "https://iam.cn-east-2.myhuaweicloud.com/v3/auth/tokens")
+	body, XSubjectToken := utils.PostRequest(request, "https://iam.cn-east-2.myhuaweicloud.com/v3/auth/tokens")
 
-	return XSubjectToken
+	return body, XSubjectToken
 }
 
 // CreateTemporaryAccessKeyByAgency 通过委托获取临时访问密钥
