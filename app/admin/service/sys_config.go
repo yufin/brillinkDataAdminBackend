@@ -110,7 +110,7 @@ func (e *SysConfig) SetSysConfig(c *[]dto.GetSetSysConfigReq) error {
 			if db.RowsAffected == 0 {
 				return errors.New("无权更新该数据")
 			}
-			sdk.Runtime.SetConfig(model.ConfigKey, model.ConfigValue)
+			sdk.Runtime.SetConfig(req.ConfigKey, req.ConfigValue)
 		}
 	}
 	return nil
@@ -176,6 +176,7 @@ func (e *SysConfig) UpdateForSet(c *gin.Context, r *[]dto.UpdateSetSysConfigReq)
 					err = errors.WithStack(err)
 					return err
 				}
+				sdk.Runtime.SetConfig(req.ConfigKey, req.ConfigValue)
 				after, err := json.Marshal(&data)
 				if err != nil {
 					err = errors.WithStack(err)
@@ -190,7 +191,6 @@ func (e *SysConfig) UpdateForSet(c *gin.Context, r *[]dto.UpdateSetSysConfigReq)
 				)
 			}
 		}
-		sdk.Runtime.SetConfig(req.ConfigKey, req.ConfigValue)
 	}
 	return nil
 }
