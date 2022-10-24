@@ -61,6 +61,7 @@ jobs:
         # 重启的脚本，根据自身情况做相应改动，一般要做的是migrate数据库以及重启服务器
         script: |
           sudo docker rm -f go-admin-antd-api
+          sudo docker login --username=${{ secrets.DOCKER_USERNAME }} registry.ap-northeast-1.aliyuncs.com --password=${{ secrets.DOCKER_PASSWORD }}
           sudo docker run -d -p 8888:8888 --name go-admin-antd-api ${{ env.IMAGE_NAME_TAG }}
 
 
