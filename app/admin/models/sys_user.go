@@ -47,7 +47,7 @@ func (e *SysUser) GetId() interface{} {
 	return e.UserId
 }
 
-//加密
+// Encrypt 加密
 func (e *SysUser) Encrypt() (err error) {
 	if e.Password == "" {
 		return
