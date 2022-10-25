@@ -125,7 +125,7 @@ func LoginLogToDB(c *gin.Context, status string, msg string, username string) {
 	ua := user_agent.New(c.Request.UserAgent())
 	l["ipaddr"] = c.ClientIP() // common.GetClientIP(c)
 	log.Info("config.ExtConfig.AMap.Key", config.ExtConfig.AMap.Key)
-	l["loginLocation"] = pkg.GetLocation(c.ClientIP(), config.ExtConfig.AMap.Key)
+	l["loginLocation"] = "" //pkg.GetLocation(c.ClientIP(), config.ExtConfig.AMap.Key)
 	l["loginTime"] = pkg.GetCurrentTime()
 	l["status"] = status
 	l["remark"] = c.Request.UserAgent()
