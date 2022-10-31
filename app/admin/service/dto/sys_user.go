@@ -85,13 +85,11 @@ func (s *UpdateSysUserPwdReq) GetId() interface{} {
 	return s.UserId
 }
 
-func (s *UpdateSysUserPwdReq) Generate() interface{} {
-	mp := make(map[string]interface{}, 2)
+func (s *UpdateSysUserPwdReq) Generate(model *models.SysUser) {
 	if s.UserId != 0 {
-		mp["user_id"] = s.UserId
+		model.UserId = int(s.UserId)
 	}
-	mp["password"] = s.Password
-	return &mp
+	model.Password = s.Password
 }
 
 type UpdateSysUserAvatarReq struct {

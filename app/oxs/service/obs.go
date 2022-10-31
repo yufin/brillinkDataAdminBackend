@@ -1,37 +1,38 @@
+/**
+* @Author: Akiraka
+* @Date: 2022/8/17 10:09
+ */
+
 package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
-	"github.com/pkg/errors"
+	"go-admin/app/oxs/models"
 	"go-admin/app/oxs/utils"
+	"strconv"
 )
 
-func (e OXS) GetOBS() *model.Credential {
-	token, err := e.KeystoneCreateUserTokenByPassword()
-	if err != nil {
-		return nil
+func (e OXS) GetOBS() (status bool, message string, credential *model.Credential) {
+	var obsErr models.OBSErr
+	body, token := e.KeystoneCreateUserTokenByPassword()
+	json.Unmarshal(body, &obsErr)
+	if obsErr.Error.Code == 401 {
+		fmt.Printf("华为云对象存储配置错误: %v", obsErr.Error.Message)
+		return false, obsErr.Error.Message, nil
+	} else {
+		aaa := e.CreateTemporaryAccessKeyByAgency(token)
+		return true, "", aaa.Credential
 	}
-	credential, err := e.CreateTemporaryAccessKeyByAgency(token)
-	if err != nil {
-		return nil
-	}
-	return credential.Credential
+
+	return false, "", nil
 }
 
 // KeystoneCreateUserTokenByPassword 获取IAM用户Token(使用密码)
-func (e OXS) KeystoneCreateUserTokenByPassword() (string, error) {
-	nameDomain, ok := sdk.Runtime.GetConfig("oxs_obs_username").(string)
-	if !ok {
-		err := errors.New("获取 COS 的 oxs_obs_username 失败")
-		return "", err
-	}
-	oxsObsPassword, ok := sdk.Runtime.GetConfig("oxs_obs_password").(string)
-	if !ok {
-		err := errors.New("获取 OBS 的 oxs_obs_password 失败")
-		return "", err
-	}
+func (e OXS) KeystoneCreateUserTokenByPassword() (body []byte, token string) {
+	nameDomain := sdk.Runtime.GetConfig("oxs_obs_main_username").(string)
 	domainScope := &model.AuthScopeDomain{
 		Name: &nameDomain,
 	}
@@ -39,12 +40,12 @@ func (e OXS) KeystoneCreateUserTokenByPassword() (string, error) {
 		Domain: domainScope,
 	}
 	domainUser := &model.PwdPasswordUserDomain{
-		Name: nameDomain, //"填写 子账号 或者主账号",
+		Name: sdk.Runtime.GetConfig("oxs_obs_main_username").(string),
 	}
 	userPassword := &model.PwdPasswordUser{
 		Domain:   domainUser,
-		Name:     nameDomain, //"填写 子账号 或者主账号",
-		Password: oxsObsPassword,
+		Name:     sdk.Runtime.GetConfig("oxs_obs_iam_username").(string),
+		Password: sdk.Runtime.GetConfig("oxs_obs_iam_password").(string),
 	}
 	passwordIdentity := &model.PwdPassword{
 		User: userPassword,
@@ -64,20 +65,19 @@ func (e OXS) KeystoneCreateUserTokenByPassword() (string, error) {
 		Auth: authbody,
 	}
 
-	_, XSubjectToken := utils.PostRequest(request, "https://iam.cn-east-2.myhuaweicloud.com/v3/auth/tokens")
+	body, XSubjectToken := utils.PostRequest(request, "https://iam.cn-east-2.myhuaweicloud.com/v3/auth/tokens")
 
-	return XSubjectToken, nil
+	return body, XSubjectToken
 }
 
 // CreateTemporaryAccessKeyByAgency 通过委托获取临时访问密钥
-func (e OXS) CreateTemporaryAccessKeyByAgency(XSubjectToken string) (model.CreateTemporaryAccessKeyByTokenResponse, error) {
-	expires, ok := sdk.Runtime.GetConfig("oxs_duration_seconds").(uint64)
-	if !ok {
-		err := errors.New("获取 COS 的 oxs_duration_seconds 失败")
-		return model.CreateTemporaryAccessKeyByTokenResponse{}, err
-	}
+func (e OXS) CreateTemporaryAccessKeyByAgency(XSubjectToken string) model.CreateTemporaryAccessKeyByTokenResponse {
+
+	// 字符串转 int类型
+	durationSeconds, _ := strconv.Atoi(sdk.Runtime.GetConfig("oxs_duration_seconds").(string))
+
 	// 通过 Token 获取临时访问秘钥
-	durationSecondsToken := int32(expires)
+	durationSecondsToken := int32(durationSeconds)
 	tokenIdentity := &model.IdentityToken{
 		Id:              &XSubjectToken,
 		DurationSeconds: &durationSecondsToken,
@@ -89,19 +89,16 @@ func (e OXS) CreateTemporaryAccessKeyByAgency(XSubjectToken string) (model.Creat
 		Methods: listMethodsIdentity,
 		Token:   tokenIdentity,
 	}
-	authBody := &model.TokenAuth{
+	authbody := &model.TokenAuth{
 		Identity: identityAuth,
 	}
 	request := &model.CreateTemporaryAccessKeyByTokenRequestBody{
-		Auth: authBody,
+		Auth: authbody,
 	}
 	res, _ := utils.PostRequest(request, "https://iam.cn-east-2.myhuaweicloud.com/v3.0/OS-CREDENTIAL/securitytokens")
 	// 序列化结果
 	var credential model.CreateTemporaryAccessKeyByTokenResponse
-	err := json.Unmarshal(res, &credential)
-	if err != nil {
-		return model.CreateTemporaryAccessKeyByTokenResponse{}, err
-	}
+	json.Unmarshal(res, &credential)
 
-	return credential, nil
+	return credential
 }

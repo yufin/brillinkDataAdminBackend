@@ -303,9 +303,6 @@ func (e SysUser) ResetPwd(c *gin.Context) {
 
 	//数据权限检查
 	p := actions.GetPermission(c)
-	if user.GetUserId(c) == 1 {
-		req.Password = "123456"
-	}
 	err = s.ResetPwd(c, &req, p)
 	if err != nil {
 		panic(exception.New(exception.UpdateUserResetPwdFail, err))
@@ -339,9 +336,6 @@ func (e SysUser) UpdatePwd(c *gin.Context) {
 	req.UserId = user.GetUserId(c)
 	// 数据权限检查
 	p := actions.GetPermission(c)
-	if req.UserId == 1 {
-		req.Password = "123456"
-	}
 	err = s.UpdatePwd(c, &req, p)
 	if err != nil {
 		panic(exception.New(exception.UpdateUserPwdFail, err))

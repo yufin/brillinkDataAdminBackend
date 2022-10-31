@@ -49,7 +49,6 @@ func (s *SysDictDataInsertReq) Generate(model *models.SysDictData) {
 	model.ListClass = s.ListClass
 	model.IsDefault = s.IsDefault
 	model.Status = s.Status
-	model.Default = s.Default
 	model.Remark = s.Remark
 }
 
@@ -82,7 +81,6 @@ func (s *SysDictDataUpdateReq) Generate(model *models.SysDictData) {
 	model.ListClass = s.ListClass
 	model.IsDefault = s.IsDefault
 	model.Status = s.Status
-	model.Default = s.Default
 	model.Remark = s.Remark
 }
 

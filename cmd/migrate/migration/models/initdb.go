@@ -33,6 +33,11 @@ func ExecSql(db *gorm.DB, filePath string) error {
 		logger.Error("数据库基础数据初始化脚本读取失败！原因:", err.Error())
 		return err
 	}
+	if sql == "" {
+		logger.Warn("数据库基础数据初始化脚本为空！")
+		return nil
+	}
+
 	sqlList := strings.Split(sql, ";")
 	for i := 0; i < len(sqlList)-1; i++ {
 		if strings.Contains(sqlList[i], "--") {

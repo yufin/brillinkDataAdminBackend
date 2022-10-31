@@ -10,7 +10,6 @@ type DictData struct {
 	ListClass string `gorm:"size:128;" json:"listClass"`                            //
 	IsDefault string `gorm:"size:8;" json:"isDefault"`                              //
 	Status    int    `gorm:"size:4;" json:"status"`                                 //状态
-	Default   string `gorm:"size:8;" json:"default"`                                //
 	Remark    string `gorm:"size:255;" json:"remark"`                               //备注
 	ControlBy
 	ModelTime

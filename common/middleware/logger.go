@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"encoding/json"
-	gaConfig "go-admin/config"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,8 +11,6 @@ import (
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"github.com/go-admin-team/go-admin-core/sdk/config"
-	"github.com/go-admin-team/go-admin-core/sdk/pkg"
-
 	"go-admin/common/global"
 	"go-admin/common/jwtauth/user"
 )
@@ -68,7 +65,7 @@ func SetDBOperLog(c *gin.Context, latencyTime time.Duration) {
 	l["_fullPath"] = c.FullPath()
 	l["operUrl"] = c.Request.RequestURI
 	l["operIp"] = c.ClientIP()
-	l["operLocation"] = pkg.GetLocation(c.ClientIP(), gaConfig.ExtConfig.AMap.Key)
+	l["operLocation"] = "" //pkg.GetLocation(c.ClientIP(), gaConfig.ExtConfig.AMap.Key)
 	l["operName"] = user.GetUserName(c)
 	l["requestMethod"] = c.Request.Method
 	l["operHeaders"] = InterfaceToString(c.Request.Header)

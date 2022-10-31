@@ -192,30 +192,19 @@ func (e *SysUser) UpdateStatus(c *gin.Context, r *dto.UpdateSysUserStatusReq, p 
 func (e *SysUser) ResetPwd(c *gin.Context, r *dto.ResetSysUserPwdReq, p *actions.DataPermission) error {
 	var err error
 	var model models.SysUser
-	db := e.Orm.Scopes(
-		actions.Permission(model.TableName(), p),
-	).First(&model, r.GetId())
-	if err = db.Error; err != nil {
-		err = errors.WithStack(err)
-		return err
-	}
-	if db.RowsAffected == 0 {
-		return errors.New("无权更新该数据")
-	}
-	before, _ := json.Marshal(model)
-	r.Generate(&model)
-	err = e.Orm.Save(&model).Error
+	before, after, ok, err := service.GetAndUpdate[models.SysUser](e, r)
 	if err != nil {
-		err = errors.WithStack(err)
+		e.GetLog().Errorf("database operation failed:%s \r", err)
 		return err
 	}
-	after, _ := json.Marshal(model)
-	middleware.SetContextOperateLog(c,
-		"修改",
-		fmt.Sprintf("重置用户密码，ID：%v", model.UserId),
-		string(before),
-		string(after),
-	)
+	if ok {
+		middleware.SetContextOperateLog(c,
+			"修改",
+			fmt.Sprintf("重置用户密码，ID：%v", model.UserId),
+			string(before),
+			string(after),
+		)
+	}
 	return nil
 }
 
@@ -273,9 +262,8 @@ func (e *SysUser) UpdatePwd(c *gin.Context, r *dto.UpdateSysUserPwdReq, p *actio
 		err = errors.Wrap(err, "账号密码不正确")
 		return
 	}
-	before, after, ok, err := service.UpdateForReq[models.SysUser](e, r, func(db *gorm.DB) *gorm.DB {
-		return db.Where("user_id = ?", r.GetId())
-	})
+
+	before, after, ok, err := service.GetAndUpdate[models.SysUser](e, r)
 	if err != nil {
 		e.GetLog().Errorf("database operation failed:%s \r", err)
 		return
