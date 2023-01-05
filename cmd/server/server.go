@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service"
-	"go-admin/app/jobs"
 	"go-admin/common/logger"
 	"log"
 	"net/http"
@@ -96,10 +95,9 @@ func run() error {
 		ReadTimeout:  time.Duration(config.ApplicationConfig.ReadTimeout) * time.Second,
 		WriteTimeout: time.Duration(config.ApplicationConfig.WriterTimeout) * time.Second,
 	}
-	go func() {
-		jobs.InitJob()
-		jobs.Setup(sdk.Runtime.GetDb())
-	}()
+	for _, f := range sdk.Runtime.GetBefore() {
+		f()
+	}
 
 	sysConfig := service.SysConfig{}
 	err := sysConfig.GetAll(sdk.Runtime.GetDbByKey("*"))
