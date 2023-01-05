@@ -73,7 +73,7 @@ func Startup() {
 	}()
 	err = OpenBrowser("http://localhost:8080/startup")
 	if err != nil {
-		log.Fatal(err)
+		log.Info("open browser error: ", err)
 	}
 	for {
 		select {
@@ -101,10 +101,10 @@ func pathExists(path string) bool {
 }
 
 // 不同平台启动指令不同
-var commands = map[string]string{
-	"windows": "explorer",
-	"darwin":  "open",
-	"linux":   "xdg-open",
+var commands = map[string][]string{
+	"windows": {"cmd", "/c", "start"},
+	"darwin":  {"open"},
+	"linux":   {"xdg-open"},
 }
 
 func OpenBrowser(uri string) error {
@@ -114,7 +114,8 @@ func OpenBrowser(uri string) error {
 		return fmt.Errorf("don't know how to open things on %s platform", runtime.GOOS)
 	}
 
-	cmd := exec.Command(run, uri)
+	run = append(run, uri)
+	cmd := exec.Command(run[0], run[1:]...)
 	return cmd.Run()
 }
 
