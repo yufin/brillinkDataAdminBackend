@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service"
 	"go-admin/common/logger"
@@ -159,7 +160,7 @@ func run() error {
 }
 
 func tip() {
-	usageStr := `欢迎使用 ` + pkg.Green(`go-admin `+global.Version) + ` 可以使用 ` + pkg.Red(`-h`) + ` 查看命令`
+	usageStr := `欢迎使用 ` + pkg.Green(`go-admin-pro `+global.Version) + ` 可以使用 ` + pkg.Red(`-h`) + ` 查看命令`
 	fmt.Printf("%s \n\n", usageStr)
 }
 
@@ -182,8 +183,8 @@ func initRouter() {
 	}
 	//r.Use(middleware.Metrics())
 	r.Use(common.Sentinel()).
-		Use(common.RequestId(pkg.TrafficKey)) //.
-	//Use(api.SetRequestLogger)
+		Use(common.RequestId(pkg.TrafficKey)).
+		Use(api.SetRequestLogger)
 
 	common.InitMiddleware(r)
 }
