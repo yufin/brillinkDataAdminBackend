@@ -130,11 +130,6 @@ func run() error {
 				log.Fatal("listen: ", err)
 			}
 		} else {
-			//flag.Parse()
-			//err := gracehttp.Serve(srv)
-			//if err != nil {
-			//	log.Fatal("listen: ", err)
-			//}
 			if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 				log.Fatal("listen: ", err)
 			}
