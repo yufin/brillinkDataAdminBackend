@@ -15,19 +15,16 @@ import (
 	"strconv"
 )
 
-func (e OXS) GetOBS() (status bool, message string, credential *model.Credential) {
+func (e OXS) GetOBS() (status bool, credential *model.Credential) {
 	var obsErr models.OBSErr
 	body, token := e.KeystoneCreateUserTokenByPassword()
 	json.Unmarshal(body, &obsErr)
 	if obsErr.Error.Code == 401 {
 		fmt.Printf("华为云对象存储配置错误: %v", obsErr.Error.Message)
-		return false, obsErr.Error.Message, nil
-	} else {
-		aaa := e.CreateTemporaryAccessKeyByAgency(token)
-		return true, "", aaa.Credential
+		return false, nil
 	}
 
-	return false, "", nil
+	return true, e.CreateTemporaryAccessKeyByAgency(token).Credential
 }
 
 // KeystoneCreateUserTokenByPassword 获取IAM用户Token(使用密码)
