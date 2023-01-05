@@ -82,7 +82,6 @@ func run() error {
 	}
 
 	initRouter()
-	sdk.Runtime.SetQueueAdapter(sdk.Runtime.GetMemoryQueue(""))
 
 	sdk.Runtime.SetAppRouters(router.InitRouter)
 	for _, f := range sdk.Runtime.GetAppRouters() {
