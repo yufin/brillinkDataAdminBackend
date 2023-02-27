@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"github.com/go-admin-team/go-admin-core/sdk"
 	"go-admin/common/exception"
 	"net/http"
 
@@ -113,6 +114,10 @@ func (e SysUser) Insert(c *gin.Context) {
 		return
 	}
 	// 设置创建人
+	req.Password = sdk.Runtime.GetConfig("sys_user_initPassword").(string)
+	if req.Password == "" {
+		req.Password = "123456"
+	}
 	req.SetCreateBy(user.GetUserId(c))
 	err = s.Insert(c, &req)
 	if err != nil {

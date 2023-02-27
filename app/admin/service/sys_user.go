@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service/dto"
+	"go-admin/common/exception"
 	"go-admin/common/middleware"
 	"gorm.io/gorm"
 
@@ -70,8 +71,7 @@ func (e *SysUser) Insert(c *gin.Context, r *dto.SysUserInsertReq) error {
 		return err
 	}
 	if i > 0 {
-		err = errors.Wrap(err, "用户名已存在!")
-		return err
+		panic(exception.WithMsg(5000, "用户名已存在!", err))
 	}
 	r.Generate(&data)
 	err = e.Orm.Create(&data).Error
