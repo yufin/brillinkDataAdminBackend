@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
-	"github.com/go-admin-team/go-admin-core/sdk/pkg"
 	"go-admin/common/global"
 	"go-admin/common/jwtauth/user"
 	"go-admin/utils"
@@ -38,7 +37,7 @@ func SetContextAbnormalLog(c *gin.Context, abInfo, abSource, abFunc, stackTrace 
 	mp["body"], _ = c.Get("body")                       // 请求数据
 	mp["stackTrace"] = stackTrace                       // 堆栈追踪
 	c.Set("abnormalLog", mp)
-	utils.SendWechatAlertWithErr(c.GetHeader(pkg.TrafficKey), c.Request.Method, c.Request.RequestURI, c.ClientIP(), abInfo, abSource, abFunc)
+	utils.SendWechatAlertWithErr(c, abInfo, abSource, abFunc)
 }
 
 // SetLog 写入操作日志表

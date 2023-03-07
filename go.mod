@@ -12,8 +12,8 @@ require (
 	github.com/casbin/casbin/v2 v2.54.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.8.1
-	github.com/go-admin-team/go-admin-core v1.5.2-0.20221221125458-4124c7ca3093
-	github.com/go-admin-team/go-admin-core/sdk v1.5.2-0.20221221125458-4124c7ca3093
+	github.com/go-admin-team/go-admin-core v1.5.2-0.20230307133407-419e92b7a97a
+	github.com/go-admin-team/go-admin-core/sdk v1.5.2-0.20230307133407-419e92b7a97a
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/uuid v1.3.0

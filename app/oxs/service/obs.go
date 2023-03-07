@@ -8,6 +8,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
 	"go-admin/app/oxs/models"
@@ -15,21 +16,21 @@ import (
 	"strconv"
 )
 
-func (e OXS) GetOBS() (status bool, credential *model.Credential) {
+func (e OXS) GetOBS(c *gin.Context) (status bool, credential *model.Credential) {
 	var obsErr models.OBSErr
-	body, token := e.KeystoneCreateUserTokenByPassword()
+	body, token := e.KeystoneCreateUserTokenByPassword(c)
 	json.Unmarshal(body, &obsErr)
 	if obsErr.Error.Code == 401 {
 		fmt.Printf("华为云对象存储配置错误: %v", obsErr.Error.Message)
 		return false, nil
 	}
 
-	return true, e.CreateTemporaryAccessKeyByAgency(token).Credential
+	return true, e.CreateTemporaryAccessKeyByAgency(c, token).Credential
 }
 
 // KeystoneCreateUserTokenByPassword 获取IAM用户Token(使用密码)
-func (e OXS) KeystoneCreateUserTokenByPassword() (body []byte, token string) {
-	nameDomain := sdk.Runtime.GetConfig("oxs_obs_main_username").(string)
+func (e OXS) KeystoneCreateUserTokenByPassword(c *gin.Context) (body []byte, token string) {
+	nameDomain := sdk.Runtime.GetConfig(c.Request.Host, "oxs_obs_main_username").(string)
 	domainScope := &model.AuthScopeDomain{
 		Name: &nameDomain,
 	}
@@ -37,12 +38,12 @@ func (e OXS) KeystoneCreateUserTokenByPassword() (body []byte, token string) {
 		Domain: domainScope,
 	}
 	domainUser := &model.PwdPasswordUserDomain{
-		Name: sdk.Runtime.GetConfig("oxs_obs_main_username").(string),
+		Name: sdk.Runtime.GetConfig(c.Request.Host, "oxs_obs_main_username").(string),
 	}
 	userPassword := &model.PwdPasswordUser{
 		Domain:   domainUser,
-		Name:     sdk.Runtime.GetConfig("oxs_obs_iam_username").(string),
-		Password: sdk.Runtime.GetConfig("oxs_obs_iam_password").(string),
+		Name:     sdk.Runtime.GetConfig(c.Request.Host, "oxs_obs_iam_username").(string),
+		Password: sdk.Runtime.GetConfig(c.Request.Host, "oxs_obs_iam_password").(string),
 	}
 	passwordIdentity := &model.PwdPassword{
 		User: userPassword,
@@ -68,10 +69,10 @@ func (e OXS) KeystoneCreateUserTokenByPassword() (body []byte, token string) {
 }
 
 // CreateTemporaryAccessKeyByAgency 通过委托获取临时访问密钥
-func (e OXS) CreateTemporaryAccessKeyByAgency(XSubjectToken string) model.CreateTemporaryAccessKeyByTokenResponse {
+func (e OXS) CreateTemporaryAccessKeyByAgency(c *gin.Context, XSubjectToken string) model.CreateTemporaryAccessKeyByTokenResponse {
 
 	// 字符串转 int类型
-	durationSeconds, _ := strconv.Atoi(sdk.Runtime.GetConfig("oxs_duration_seconds").(string))
+	durationSeconds, _ := strconv.Atoi(sdk.Runtime.GetConfig(c.Request.Host, "oxs_duration_seconds").(string))
 
 	// 通过 Token 获取临时访问秘钥
 	durationSecondsToken := int32(durationSeconds)

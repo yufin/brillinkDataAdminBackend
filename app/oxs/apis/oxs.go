@@ -14,7 +14,7 @@ type OXS struct {
 
 func (e OXS) OXS(c *gin.Context) {
 	e.MakeContext(c)
-	switch sdk.Runtime.GetConfig("oxs_type") {
+	switch sdk.Runtime.GetConfig(c.Request.Host, "oxs_type") {
 	case "obs":
 		e.GetOBS(c)
 	case "oss":

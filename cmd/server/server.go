@@ -100,7 +100,7 @@ func run() error {
 	}
 
 	sysConfig := service.SysConfig{}
-	err := sysConfig.GetAll(sdk.Runtime.GetDbByKey("*"))
+	err := sysConfig.GetAll(sdk.Runtime.GetDb())
 	if err != nil {
 		log.Printf("GetStreamMessage error, %s \n", err.Error())
 	}

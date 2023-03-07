@@ -8,6 +8,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
@@ -17,18 +18,18 @@ import (
 	"strconv"
 )
 
-func (e OXS) GetCOS() (status bool, result *v20180813.GetFederationTokenResponse) {
+func (e OXS) GetCOS(c *gin.Context) (status bool, result *v20180813.GetFederationTokenResponse) {
 	// 实例化一个认证对象，入参需要传入腾讯云账户secretId，secretKey,此处还需注意密钥对的保密
 	// 密钥可前往https://console.cloud.tencent.com/cam/capi网站进行获取
 	credential := common.NewCredential(
-		sdk.Runtime.GetConfig("oxs_access_key").(string),
-		sdk.Runtime.GetConfig("oxs_secret_key").(string),
+		sdk.Runtime.GetConfig(c.Request.Host, "oxs_access_key").(string),
+		sdk.Runtime.GetConfig(c.Request.Host, "oxs_secret_key").(string),
 	)
 	// 实例化一个client选项，可选的，没有特殊需求可以跳过
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.Endpoint = "sts.tencentcloudapi.com"
 	// 实例化要请求产品的client对象,clientProfile是可选的
-	client, _ := v20180813.NewClient(credential, sdk.Runtime.GetConfig("oxs_region").(string), cpf)
+	client, _ := v20180813.NewClient(credential, sdk.Runtime.GetConfig(c.Request.Host, "oxs_region").(string), cpf)
 
 	// 实例化一个请求对象,每个接口都会对应一个request对象
 	request := v20180813.NewGetFederationTokenRequest()
@@ -56,7 +57,7 @@ func (e OXS) GetCOS() (status bool, result *v20180813.GetFederationTokenResponse
 	request.Policy = common.StringPtr(string(policyJson))
 
 	// 字符串转 uint类型
-	durationSeconds, _ := strconv.ParseUint(sdk.Runtime.GetConfig("oxs_duration_seconds").(string), 10, 64)
+	durationSeconds, _ := strconv.ParseUint(sdk.Runtime.GetConfig(c.Request.Host, "oxs_duration_seconds").(string), 10, 64)
 
 	request.DurationSeconds = common.Uint64Ptr(durationSeconds)
 	// 返回的resp是一个GetFederationTokenResponse的实例，与请求对象对应
