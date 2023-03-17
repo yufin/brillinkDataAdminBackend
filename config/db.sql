@@ -394,7 +394,7 @@ INSERT INTO sys_menu (menu_id, menu_name, title, icon, path, paths, menu_type, p
 
 INSERT INTO sys_menu_api_rule (sys_menu_menu_id, sys_api_id) VALUES (24, 27);
 INSERT INTO sys_menu_api_rule (sys_menu_menu_id, sys_api_id) VALUES (25, 28);
-INSERT INTO sys_menu_api_rule (sys_menu_menu_id, sys_api_id) VALUES (69, 28);
+-- INSERT INTO sys_menu_api_rule (sys_menu_menu_id, sys_api_id) VALUES (69, 28);
 INSERT INTO sys_menu_api_rule (sys_menu_menu_id, sys_api_id) VALUES (22, 39);
 INSERT INTO sys_menu_api_rule (sys_menu_menu_id, sys_api_id) VALUES (14, 41);
 INSERT INTO sys_menu_api_rule (sys_menu_menu_id, sys_api_id) VALUES (23, 44);
