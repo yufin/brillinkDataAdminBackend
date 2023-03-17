@@ -2,8 +2,10 @@ package utils
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/logger"
 	"github.com/go-admin-team/go-admin-core/sdk"
+	"github.com/go-admin-team/go-admin-core/sdk/pkg"
 	"github.com/go-resty/resty/v2"
 	"github.com/pkg/errors"
 )
@@ -42,18 +44,18 @@ func SendWechatAlert(url, msg string) {
 	fmt.Println(resp.Request.Body)
 }
 
-func SendWechatAlertWithErr(requestId, method, uri, ip, abInfo, abSource, abFunc string) {
-	url, ok := sdk.Runtime.GetConfig("sys_wechat_webhook").(string)
+func SendWechatAlertWithErr(c *gin.Context, abInfo, abSource, abFunc string) {
+	url, ok := sdk.Runtime.GetConfig(c.Request.Host, "sys_wechat_webhook").(string)
 	if !ok || url == "" {
 		logger.Warn(errors.New("config sys_wechat_webhook value is nil"))
 		return
 	}
 	var m MarkdownMsg
 	m.Msgtype = "markdown"
-	m.Markdown.Content = "接口请求错误反馈请求id:<font color=\"warning\">" + requestId + "</font>，请相关同事注意。\n         " +
-		">请求方式:<font color=\"warning\">" + method + "</font>\n" +
-		">请求地址:<font color=\"warning\">" + uri + "</font>\n" +
-		">IP信息:<font color=\"warning\">" + ip + "</font>\n" +
+	m.Markdown.Content = "接口请求错误反馈请求id:<font color=\"warning\">" + c.GetHeader(pkg.TrafficKey) + "</font>，请相关同事注意。\n         " +
+		">请求方式:<font color=\"warning\">" + c.Request.Method + "</font>\n" +
+		">请求地址:<font color=\"warning\">" + c.Request.RequestURI + "</font>\n" +
+		">IP信息:<font color=\"warning\">" + c.ClientIP() + "</font>\n" +
 		">异常信息:<font color=\"comment\">" + abInfo + "</font>\n" +
 		">异常来源:<font color=\"comment\">" + abSource + "</font>\n" +
 		">异常方法:<font color=\"comment\">" + abFunc + "</font>"

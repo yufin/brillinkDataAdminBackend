@@ -59,7 +59,7 @@ func (e *SysConfig) Insert(c *gin.Context, r *dto.SysConfigControl) (err error) 
 		e.GetLog().Errorf("database operation failed:%s \r", err)
 		return
 	}
-	sdk.Runtime.SetConfig(r.ConfigKey, r.ConfigValue)
+	sdk.Runtime.SetConfig(c.Request.RequestURI, r.ConfigKey, r.ConfigValue)
 	after, _ := json.Marshal(model)
 	middleware.SetContextOperateLog(c,
 		"新增",
@@ -79,7 +79,7 @@ func (e *SysConfig) Update(c *gin.Context, r *dto.SysConfigControl) (err error) 
 		e.GetLog().Errorf("database operation failed:%s \r", err)
 		return
 	}
-	sdk.Runtime.SetConfig(r.ConfigKey, r.ConfigValue)
+	sdk.Runtime.SetConfig(c.Request.RequestURI, r.ConfigKey, r.ConfigValue)
 	if ok {
 		middleware.SetContextOperateLog(c,
 			"修改",
@@ -92,29 +92,29 @@ func (e *SysConfig) Update(c *gin.Context, r *dto.SysConfigControl) (err error) 
 	return
 }
 
-// SetSysConfig 修改SysConfig对象
-func (e *SysConfig) SetSysConfig(c *[]dto.GetSetSysConfigReq) error {
-	var err error
-	for _, req := range *c {
-		var model = models.SysConfig{}
-		e.Orm.Where("config_key = ?", req.ConfigKey).First(&model)
-		if model.Id != 0 {
-			req.Generate(&model)
-			db := e.Orm.Save(&model)
-			err = db.Error
-			if err != nil {
-				err = errors.WithStack(err)
-				e.Log.Errorf("Service SetSysConfig error:%s", err)
-				return err
-			}
-			if db.RowsAffected == 0 {
-				return errors.New("无权更新该数据")
-			}
-			sdk.Runtime.SetConfig(req.ConfigKey, req.ConfigValue)
-		}
-	}
-	return nil
-}
+//// SetSysConfig 修改SysConfig对象
+//func (e *SysConfig) SetSysConfig(c *[]dto.GetSetSysConfigReq) error {
+//	var err error
+//	for _, req := range *c {
+//		var model = models.SysConfig{}
+//		e.Orm.Where("config_key = ?", req.ConfigKey).First(&model)
+//		if model.Id != 0 {
+//			req.Generate(&model)
+//			db := e.Orm.Save(&model)
+//			err = db.Error
+//			if err != nil {
+//				err = errors.WithStack(err)
+//				e.Log.Errorf("Service SetSysConfig error:%s", err)
+//				return err
+//			}
+//			if db.RowsAffected == 0 {
+//				return errors.New("无权更新该数据")
+//			}
+//			sdk.Runtime.SetConfig(c.Request.RequestURI,req.ConfigKey, req.ConfigValue)
+//		}
+//	}
+//	return nil
+//}
 
 func (e *SysConfig) GetForSet(unCustom *[]dto.GetSetSysConfigReq, custom *[]dto.GetSetSysConfigCustomResp) error {
 	var err error
@@ -176,7 +176,7 @@ func (e *SysConfig) UpdateForSet(c *gin.Context, r *[]dto.UpdateSetSysConfigReq)
 					err = errors.WithStack(err)
 					return err
 				}
-				sdk.Runtime.SetConfig(req.ConfigKey, req.ConfigValue)
+				sdk.Runtime.SetConfig(c.Request.RequestURI, req.ConfigKey, req.ConfigValue)
 				after, err := json.Marshal(&data)
 				if err != nil {
 					err = errors.WithStack(err)
@@ -255,7 +255,7 @@ func (e *SysConfig) updateSetConfigWithCustom(c *gin.Context, req dto.UpdateSetS
 				e.Log.Errorf("数据格式化失败:%s", err)
 				return err
 			}
-			sdk.Runtime.SetConfig(newConfig.ConfigKey, newConfig.ConfigValue)
+			sdk.Runtime.SetConfig(c.Request.RequestURI, newConfig.ConfigKey, newConfig.ConfigValue)
 			middleware.SetContextOperateLog(c,
 				"创建",
 				fmt.Sprintf("创建自定义参数数据，ID：%v", newConfig.GetId()),
@@ -285,7 +285,7 @@ func (e *SysConfig) updateSetConfigWithCustom(c *gin.Context, req dto.UpdateSetS
 				err = errors.WithStack(err)
 				return err
 			}
-			sdk.Runtime.SetConfig(oldConfig.ConfigKey, oldConfig.ConfigValue)
+			sdk.Runtime.SetConfig(c.Request.RequestURI, oldConfig.ConfigKey, oldConfig.ConfigValue)
 			after, err := json.Marshal(&oldConfig)
 			if err != nil {
 				err = errors.WithStack(err)
@@ -366,17 +366,20 @@ func (e *SysConfig) GetWithKeyList(c *dto.SysConfigGetToSysAppReq, list *[]model
 	return nil
 }
 
-func (e *SysConfig) GetAll(orm *gorm.DB) error {
+func (e *SysConfig) GetAll(mp map[string]*gorm.DB) error {
 	var err error
 	var list []models.SysConfig
-	err = orm.Model(models.SysConfig{}).Find(&list).Error
-	if err != nil {
-		err = errors.WithStack(err)
-		e.Log.Errorf("At Service GetSysConfigByKEY Error:%s", err)
-		return err
+	for key, db := range mp {
+		err = db.Model(models.SysConfig{}).Find(&list).Error
+		if err != nil {
+			err = errors.WithStack(err)
+			e.Log.Errorf("At Service GetSysConfigByKEY Error:%s", err)
+			return err
+		}
+		for _, config := range list {
+			sdk.Runtime.SetConfig(key, config.ConfigKey, config.ConfigValue)
+		}
 	}
-	for _, config := range list {
-		sdk.Runtime.SetConfig(config.ConfigKey, config.ConfigValue)
-	}
+
 	return err
 }

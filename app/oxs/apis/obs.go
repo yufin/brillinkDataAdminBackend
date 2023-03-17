@@ -19,28 +19,28 @@ func (e OXS) GetOBS(c *gin.Context) {
 	// 判断是否临时授权访问
 	// false 通过ak/sk访问
 	// true 通过临时授权访问
-	if utils.StringToBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)) == false {
+	if utils.StringToBool(sdk.Runtime.GetConfig(c.Request.Host, "oxs_provisional_auth").(string)) == false {
 		e.OK(models.ResponseOBSAccessSecret{
-			Enable:          utils.StringToBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
-			ProvisionalAuth: utils.StringToBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)),
-			OxsType:         sdk.Runtime.GetConfig("oxs_type").(string),
-			Endpoint:        sdk.Runtime.GetConfig("oxs_obs_endpoint").(string),
-			AccessDomain:    sdk.Runtime.GetConfig("oxs_access_domain").(string),
-			Bucket:          sdk.Runtime.GetConfig("oxs_bucket").(string),
-			AccessKey:       sdk.Runtime.GetConfig("oxs_access_key").(string),
-			SecretKey:       sdk.Runtime.GetConfig("oxs_secret_key").(string),
+			Enable:          utils.StringToBool(sdk.Runtime.GetConfig(c.Request.Host, "oxs_enable").(string)),
+			ProvisionalAuth: utils.StringToBool(sdk.Runtime.GetConfig(c.Request.Host, "oxs_provisional_auth").(string)),
+			OxsType:         sdk.Runtime.GetConfig(c.Request.Host, "oxs_type").(string),
+			Endpoint:        sdk.Runtime.GetConfig(c.Request.Host, "oxs_obs_endpoint").(string),
+			AccessDomain:    sdk.Runtime.GetConfig(c.Request.Host, "oxs_access_domain").(string),
+			Bucket:          sdk.Runtime.GetConfig(c.Request.Host, "oxs_bucket").(string),
+			AccessKey:       sdk.Runtime.GetConfig(c.Request.Host, "oxs_access_key").(string),
+			SecretKey:       sdk.Runtime.GetConfig(c.Request.Host, "oxs_secret_key").(string),
 		})
 	} else {
 		s := service.OXS{}
-		status, res := s.GetOBS()
+		status, res := s.GetOBS(c)
 		if status == true {
 			e.OK(models.ResponseOBS{
-				Enable:          utils.StringToBool(sdk.Runtime.GetConfig("oxs_enable").(string)),
-				ProvisionalAuth: utils.StringToBool(sdk.Runtime.GetConfig("oxs_provisional_auth").(string)),
-				OxsType:         sdk.Runtime.GetConfig("oxs_type").(string),
-				Endpoint:        sdk.Runtime.GetConfig("oxs_obs_endpoint").(string),
-				AccessDomain:    sdk.Runtime.GetConfig("oxs_access_domain").(string),
-				Bucket:          sdk.Runtime.GetConfig("oxs_bucket").(string),
+				Enable:          utils.StringToBool(sdk.Runtime.GetConfig(c.Request.Host, "oxs_enable").(string)),
+				ProvisionalAuth: utils.StringToBool(sdk.Runtime.GetConfig(c.Request.Host, "oxs_provisional_auth").(string)),
+				OxsType:         sdk.Runtime.GetConfig(c.Request.Host, "oxs_type").(string),
+				Endpoint:        sdk.Runtime.GetConfig(c.Request.Host, "oxs_obs_endpoint").(string),
+				AccessDomain:    sdk.Runtime.GetConfig(c.Request.Host, "oxs_access_domain").(string),
+				Bucket:          sdk.Runtime.GetConfig(c.Request.Host, "oxs_bucket").(string),
 				Credential:      res,
 				Status:          status,
 			})

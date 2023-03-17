@@ -6,6 +6,7 @@
 package service
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"go-admin/common/service"
 )
@@ -14,26 +15,26 @@ type OXS struct {
 	service.Service
 }
 
-func (e OXS) OXS() string {
-	sdk.Runtime.GetConfig("        \"oxs_provisional_auth\": \"false\",\n")
+func (e OXS) OXS(c *gin.Context) string {
+	sdk.Runtime.GetConfig(c.Request.Host, "        \"oxs_provisional_auth\": \"false\",\n")
 
-	if sdk.Runtime.GetConfig("oxs_provisional_auth") == "true" {
-		switch sdk.Runtime.GetConfig("oxs_type") {
+	if sdk.Runtime.GetConfig(c.Request.Host, "oxs_provisional_auth") == "true" {
+		switch sdk.Runtime.GetConfig(c.Request.Host, "oxs_type") {
 		case "obs":
 		case "oss":
 		case "cos":
 		case "kodo":
 		}
 	} else {
-		switch sdk.Runtime.GetConfig("oxs_type") {
+		switch sdk.Runtime.GetConfig(c.Request.Host, "oxs_type") {
 		case "obs":
-			e.GetOBS()
+			e.GetOBS(c)
 		case "oss":
-			e.GetOSS()
+			e.GetOSS(c)
 		case "cos":
-			e.GetCOS()
+			e.GetCOS(c)
 		case "kodo":
-			e.GetKodo()
+			e.GetKodo(c)
 		}
 	}
 

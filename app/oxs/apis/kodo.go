@@ -16,13 +16,13 @@ import (
 func (e OXS) GetKodo(c *gin.Context) {
 	e.MakeContext(c)
 	s := service.OXS{}
-	res := s.GetKodo()
+	res := s.GetKodo(c)
 	e.OK(models.ResponseKODO{
 		Enable:       true,
-		OxsType:      sdk.Runtime.GetConfig("oxs_type").(string),
-		Region:       sdk.Runtime.GetConfig("oxs_region").(string),
-		AccessDomain: sdk.Runtime.GetConfig("oxs_access_domain").(string),
-		Bucket:       sdk.Runtime.GetConfig("oxs_bucket").(string),
+		OxsType:      sdk.Runtime.GetConfig(c.Request.Host, "oxs_type").(string),
+		Region:       sdk.Runtime.GetConfig(c.Request.Host, "oxs_region").(string),
+		AccessDomain: sdk.Runtime.GetConfig(c.Request.Host, "oxs_access_domain").(string),
+		Bucket:       sdk.Runtime.GetConfig(c.Request.Host, "oxs_bucket").(string),
 		Token:        res,
 		Status:       true,
 	})

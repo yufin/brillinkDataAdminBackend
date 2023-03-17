@@ -16,3 +16,4 @@ cmd/migrate/migration/version-local/*
 !cmd/migrate/migration/version-local/doc.go
 
 .run/go build  go-admin-sqlite3.run.xml
+*.sum
