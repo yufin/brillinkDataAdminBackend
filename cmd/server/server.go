@@ -121,6 +121,8 @@ func run() error {
 			}
 		}
 	}
+
+	common.CasbinExcludeInit(sdk.Runtime.GetDb())
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
