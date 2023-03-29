@@ -31,7 +31,8 @@ func (e LinkApi) ExpandNetFromSource(c *gin.Context) {
 	if err != nil {
 		limit = 50
 	}
-	result := service.GetPathFromSource(c.Request.Context(), c.Query("sourceId"), depth, limit)
+	result := service.ExpandPathFromSource(
+		c.Request.Context(), c.Query("sourceId"), depth, limit)
 	if len(result) == 0 {
 		var null *int = nil
 		e.OK(null)

@@ -20,6 +20,8 @@ func Setup() {
 	for k := range toolsConfig.DatabasesConfig {
 		setupSimpleDatabase(k, toolsConfig.DatabasesConfig[k])
 	}
+
+	initNeo4jDriver()
 }
 
 func setupSimpleDatabase(host string, c *toolsConfig.Database) {

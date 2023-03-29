@@ -52,3 +52,15 @@ func SerializeTreeNode(neoNode neo4j.Node) TreeNode {
 		Data:     data,
 	}
 }
+
+func SerializeTreeNodeFromPath(neoPath neo4j.Path) TreeNode {
+	var root TreeNode
+	for i, node := range neoPath.Nodes {
+		if i == 0 {
+			root = SerializeTreeNode(node)
+		} else {
+			root.Children = append(root.Children, SerializeTreeNode(node))
+		}
+	}
+	return root
+}

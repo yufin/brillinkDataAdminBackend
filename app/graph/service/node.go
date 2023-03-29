@@ -37,22 +37,3 @@ func GetChildrenById(ctx context.Context, id string, expectRel []string) []neo4j
 	}
 	return resp
 }
-
-func GetPathFromSource(ctx context.Context, sourceId string, depth int, limit int) []neo4j.Path {
-	cypher := fmt.Sprintf(
-		"MATCH (startNode {id: $sourceId}) "+
-			"WITH startNode "+
-			"MATCH path = (startNode)-[ *%v]-(endNode) "+
-			"RETURN path limit $limit", depth)
-
-	param := map[string]any{"sourceId": sourceId, "limit": limit}
-	result := models.CypherQuery(ctx, cypher, param)
-	var resp []neo4j.Path
-	for _, path := range result {
-		path, found := path.Get("path")
-		if found {
-			resp = append(resp, path.(neo4j.Path))
-		}
-	}
-	return resp
-}

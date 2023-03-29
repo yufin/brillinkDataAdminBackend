@@ -6,7 +6,6 @@ import (
 	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service"
-	modelsGraph "go-admin/app/graph/models"
 	"go-admin/common/logger"
 	"log"
 	"net/http"
@@ -153,8 +152,8 @@ func run() error {
 	fmt.Printf("%s Shutting down Server ... \r\n", pkg.GetCurrentTimeStr())
 
 	// customized: 添加关闭neo4j方法
-	if modelsGraph.Neo4jDriverP != nil {
-		if err := (*modelsGraph.Neo4jDriverP).Close(ctx); err != nil {
+	if database.Neo4jDriverP != nil {
+		if err := (*database.Neo4jDriverP).Close(ctx); err != nil {
 			log.Println("Neo4j Driver Closed")
 		}
 	}
