@@ -22,6 +22,7 @@ require (
 	github.com/jinzhu/now v1.1.5
 	github.com/mattn/go-isatty v0.0.14
 	github.com/mssola/user_agent v0.5.2
+	github.com/neo4j/neo4j-go-driver/v5 v5.6.0
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.11.0

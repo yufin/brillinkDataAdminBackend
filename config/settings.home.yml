@@ -1,0 +1,38 @@
+settings:
+  application:
+    enabledp: true
+    host: 0.0.0.0
+    mode: dev
+    name: testApp
+    port: 8888
+    readtimeout: 100
+    writertimeout: 200
+  database:
+    driver: mysql
+    source: root:adminpassword@tcp(localhost:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+  gen:
+    dbname: go_admin
+    frontpath: ../go-admin-ui/src
+  jwt:
+    secret: go-admin
+    timeout: 3600
+  logger:
+    # 日志存放路径
+    path: temp/logs
+    # 日志输出，file：文件，default：命令行，其他：命令行
+    stdout: '' #控制台日志，启用后，不输出到文件
+    # 日志等级, trace, debug, info, warn, error, fatal
+    level: trace
+    # 数据库日志开关
+    enableddb: true
+  queue:
+    memory:
+      poolSize: 100
+  extend:
+    graph:
+      neo4j:
+        uri: neo4j://192.168.31.158:7687
+        username: neo4j
+        password: password
+    amap:
+      key: 
