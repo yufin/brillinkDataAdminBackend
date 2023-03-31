@@ -43,7 +43,7 @@ func (e LabelApi) GetChildrenNode(c *gin.Context) {
 	children := service.GetChildrenById(c.Request.Context(), id, constant.LabelExpectRels)
 	resp := make([]dto.TreeNode, 0)
 	for _, child := range children {
-		resp = append(resp, dto.SerializeTreeNode(child))
+		resp = append(resp, *dto.SerializeTreeNode(child))
 	}
 	e.OK(resp)
 }
@@ -138,14 +138,18 @@ func (e LabelApi) GetLabelTitleAutoCompleteByKeyWord(c *gin.Context) {
 	e.OK(paginatedResp)
 }
 
-func (e LabelApi) GetPathToRoot(c *gin.Context) {
+func (e LabelApi) GetPathBetween(c *gin.Context) {
 	err := e.MakeContext(c).Errors
 	if err != nil {
 		e.Logger.Error(err)
 		return
 	}
-	id := c.Query("nodeId")
+	targetId := c.Query("targetId")
+	sourceId := c.DefaultQuery("sourceId", constant.LabelRootId)
 	filterStmt := "WHERE all(rel in relationships(p) WHERE not type(rel) in ['TRADING'])"
-	path := service.GetPathBetween(c.Request.Context(), constant.LabelRootId, id, filterStmt)
-	e.OK(path)
+	neoPath := service.GetPathBetween(c.Request.Context(), sourceId, targetId, filterStmt)
+	if len(neoPath) != 0 {
+		resp := dto.SerializeTreeFromPath(&neoPath)
+		e.OK(resp)
+	}
 }

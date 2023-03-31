@@ -3,6 +3,7 @@ package dto
 import (
 	"encoding/json"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"strings"
 )
 
 type LinkNode struct {
@@ -94,25 +95,29 @@ func SerializeEdge(neoRel neo4j.Relationship) Edge {
 	}
 }
 
-func SerializeNetFromPath(neoPath *[]neo4j.Path) Net {
+func SerializeNetFromPath(pNeoPath *[]neo4j.Path) Net {
 	nodes := make([]LinkNode, 0)
 	edges := make([]Edge, 0)
+	var nodeIds []string
 
-	for _, path := range *neoPath {
+	for _, path := range *pNeoPath {
 
 		for _, neoNode := range path.Nodes {
-			nodes = append(nodes, SerializeLinkNode(neoNode))
+			if !strings.Contains(strings.Join(nodeIds, ","), neoNode.Props["id"].(string)) {
+				nodes = append(nodes, SerializeLinkNode(neoNode))
+				nodeIds = append(nodeIds, neoNode.Props["id"].(string))
+			}
 		}
 
 		for _, neoRel := range path.Relationships {
 			edge := SerializeEdge(neoRel)
-			startNodeP := GetNodeByElementId(&path.Nodes, neoRel.StartElementId)
-			endNodeP := GetNodeByElementId(&path.Nodes, neoRel.EndElementId)
-			if startNodeP != nil {
-				edge.SourceId = (*startNodeP).Props["id"].(string)
+			pStartNode := GetNodeByElementId(&path.Nodes, neoRel.StartElementId)
+			pEndNode := GetNodeByElementId(&path.Nodes, neoRel.EndElementId)
+			if pStartNode != nil {
+				edge.SourceId = (*pStartNode).Props["id"].(string)
 			}
-			if endNodeP != nil {
-				edge.TargetId = (*endNodeP).Props["id"].(string)
+			if pEndNode != nil {
+				edge.TargetId = (*pEndNode).Props["id"].(string)
 			}
 			edges = append(edges, edge)
 		}
