@@ -8,9 +8,13 @@ import (
 	"go-admin/app/graph/util"
 )
 
+// GetNodeById returns the node By given id.
 func GetNodeById(ctx context.Context, id string) []neo4j.Node {
 	cypher := "MATCH (n {id: $id}) RETURN n;"
-	result := models.CypherQuery(ctx, cypher, map[string]any{"id": id})
+	result, err := models.CypherQuery(ctx, cypher, map[string]any{"id": id})
+	if err != nil {
+		return nil
+	}
 
 	nodeArr := make([]neo4j.Node, 0)
 	if len(result) == 0 {
@@ -23,11 +27,15 @@ func GetNodeById(ctx context.Context, id string) []neo4j.Node {
 	return append(nodeArr, n.(neo4j.Node))
 }
 
+// GetChildrenById returns the children of a node By given id, expect relationship constrained by expectRel.
 func GetChildrenById(ctx context.Context, id string, expectRel []string) []neo4j.Node {
-	expectRelStmt := util.GetRelConstraintStmt(expectRel, "r", true)
+	expectRelStmt := util.GetUnexpectRelConstraintStmt(expectRel, "r", true)
 	cypher := fmt.Sprintf(
 		"MATCH (n{id: $id})-[r]->(m) %s return m;", expectRelStmt)
-	result := models.CypherQuery(ctx, cypher, map[string]any{"id": id})
+	result, err := models.CypherQuery(ctx, cypher, map[string]any{"id": id})
+	if err != nil {
+		return nil
+	}
 	var resp []neo4j.Node
 	for _, child := range result {
 		childNode, found := child.Get("m")

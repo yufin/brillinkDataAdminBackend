@@ -56,6 +56,27 @@ func (e LinkApi) GetRootNode(c *gin.Context) {
 		e.OK(null)
 		return
 	}
+	if len(nodeArr) == 1 {
+		var null *int = nil
+		e.OK(null)
+		return
+	}
+	e.OK(dto.SerializeLinkNode(nodeArr[0]))
+}
+
+func (e LinkApi) GetNodeById(c *gin.Context) {
+	err := e.MakeContext(c).Errors
+	if err != nil {
+		e.Logger.Error(err)
+		return
+	}
+	id := c.Query("id")
+	nodeArr := service.GetNodeById(c.Request.Context(), id)
+	if len(nodeArr) == 0 {
+		var null *int = nil
+		e.OK(null)
+		return
+	}
 	e.OK(dto.SerializeLinkNode(nodeArr[0]))
 }
 

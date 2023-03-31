@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func GetLabelsConstraintStmt(labels []string) string {
+func GetExpectLabelsConstraintStmt(labels []string) string {
 	if len(labels) == 0 {
 		return ""
 	}
@@ -16,7 +16,7 @@ func GetLabelsConstraintStmt(labels []string) string {
 	return sb.String()
 }
 
-func GetRelConstraintStmt(expectRel []string, relKey string, expect bool) string {
+func GetUnexpectRelConstraintStmt(expectRel []string, relKey string, expect bool) string {
 	if len(expectRel) == 0 {
 		return ""
 	}
