@@ -16,6 +16,9 @@ var Neo4jDriverP *neo4j.DriverWithContext = nil
 //}
 
 func initNeo4jDriver() {
+	if !extConfig.ExtConfig.Graph.Neo4j.Activate {
+		return
+	}
 	log.Info(pkg.Green("Neo4J Driver initializing...."))
 	neo4jDriver, err := neo4j.NewDriverWithContext(
 		extConfig.ExtConfig.Graph.Neo4j.Uri,

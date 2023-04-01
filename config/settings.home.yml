@@ -31,6 +31,7 @@ settings:
   extend:
     graph:
       neo4j:
+        activate: false
         uri: neo4j://192.168.31.158:7687
         username: neo4j
         password: password

@@ -17,3 +17,6 @@ import "go-admin/cmd"
 func main() {
 	cmd.Execute()
 }
+
+// cmd note
+// -a true # 同步接口信息

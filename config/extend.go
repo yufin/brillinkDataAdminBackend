@@ -23,6 +23,7 @@ type Graph struct {
 }
 
 type Neo4j struct {
+	Activate bool
 	Uri      string
 	Username string
 	Password string
