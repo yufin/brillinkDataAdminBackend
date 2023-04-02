@@ -2,6 +2,8 @@ module go-admin
 
 go 1.18
 
+//go 1.20
+
 require (
 	github.com/alibaba/sentinel-golang v1.0.4
 	github.com/alibaba/sentinel-golang/pkg/adapters/gin v0.0.0-20220808015021-c5f1f1d055c5
