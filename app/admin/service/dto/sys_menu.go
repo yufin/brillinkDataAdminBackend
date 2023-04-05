@@ -50,7 +50,7 @@ func (s *SysMenuInsertReq) Generate(model *models.SysMenu) {
 	model.Path = s.Path
 	model.Paths = s.Paths
 	model.MenuType = s.MenuType
-	model.SysApi = s.SysApi
+	model.SysApi = &s.SysApi
 	model.Permission = s.Permission
 	model.ParentId = s.ParentId
 	model.NoCache = s.NoCache
@@ -102,7 +102,7 @@ func (s *SysMenuUpdateReq) Generate(model *models.SysMenu) {
 	model.Path = s.Path
 	model.Paths = s.Paths
 	model.MenuType = s.MenuType
-	model.SysApi = s.SysApi
+	model.SysApi = &s.SysApi
 	model.Permission = s.Permission
 	model.ParentId = s.ParentId
 	model.NoCache = s.NoCache

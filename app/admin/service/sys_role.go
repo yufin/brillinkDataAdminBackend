@@ -93,7 +93,7 @@ func (e *SysRole) Insert(c *gin.Context, r *dto.SysRoleInsertReq, cb *casbin.Syn
 	var polices = make([][]string, 0)
 	mp := make(map[string]int, 0)
 	for _, menu := range *dataMenu {
-		for _, api := range menu.SysApi {
+		for _, api := range *menu.SysApi {
 			if _, ok := mp[data.RoleKey+api.Path+api.Method]; !ok {
 				mp[data.RoleKey+api.Path+api.Method] = 1
 				polices = append(polices, []string{data.RoleKey, api.Path, api.Method})
@@ -160,7 +160,7 @@ func (e *SysRole) Update(c *gin.Context, r *dto.SysRoleUpdateReq, cb *casbin.Syn
 	var policys = make([][]string, 0)
 	mp := make(map[string]int, 0)
 	for _, menu := range mList {
-		for _, api := range menu.SysApi {
+		for _, api := range *menu.SysApi {
 			if _, ok := mp[model.RoleKey+api.Path+api.Method]; !ok {
 				mp[model.RoleKey+api.Path+api.Method] = 1
 				policys = append(policys, []string{model.RoleKey, api.Path, api.Method})

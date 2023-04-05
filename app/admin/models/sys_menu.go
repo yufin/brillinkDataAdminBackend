@@ -18,7 +18,7 @@ type SysMenu struct {
 	Sort       int       `json:"sort" gorm:"size:11;"`
 	Visible    bool      `json:"visible" gorm:"size:1;"`
 	IsFrame    string    `json:"isFrame" gorm:"size:1;DEFAULT:0;"`
-	SysApi     []SysApi  `json:"sysApi" gorm:"many2many:sys_menu_api_rule"`
+	SysApi     *[]SysApi `json:"sysApi" gorm:"many2many:sys_menu_api_rule"`
 	Apis       []int     `json:"apis" gorm:"-"`
 	DataScope  string    `json:"dataScope" gorm:"-"`
 	Params     string    `json:"params" gorm:"-"`
