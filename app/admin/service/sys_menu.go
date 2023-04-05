@@ -146,7 +146,7 @@ func (e *SysMenu) Update(c *gin.Context, r *dto.SysMenuUpdateReq) *SysMenu {
 	oldPath := model.Paths
 	before, _ := json.Marshal(model)
 	tx.Where("id in ?", r.Apis).Find(&alist)
-	err = tx.Model(&model).Association("SysApi").Delete(model.SysApi)
+	err = tx.Model(&model).Association("SysApi").Delete(&model.SysApi)
 	if err != nil {
 		err = errors.WithStack(err)
 		e.Log.Errorf("delete policy error:%s", err)
