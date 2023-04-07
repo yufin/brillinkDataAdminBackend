@@ -1,18 +1,24 @@
 package dto
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"go-admin/app/graph/constant"
+	"go-admin/app/graph/service"
+	"go-admin/app/graph/util"
 )
 
 type TreeNode struct {
-	Id       string         `json:"entityId"`
-	RandomId string         `json:"id"`
-	Title    string         `json:"title"`
-	Labels   []string       `json:"labels"`
-	Data     map[string]any `json:"data"`
-	Children []*TreeNode    `json:"children"`
+	Id            string         `json:"entityId"`
+	RandomId      string         `json:"id"`
+	Title         string         `json:"title"`
+	Labels        []string       `json:"labels"`
+	Data          map[string]any `json:"data"`
+	ChildrenCount int64          `json:"childrenCount"`
+	Children      []*TreeNode    `json:"children"`
 }
 
 func (t *TreeNode) SetChild(parentId string, neoChild neo4j.Node) bool {
@@ -75,12 +81,22 @@ func SerializeTreeNode(neoNode neo4j.Node) *TreeNode {
 		data[k] = v
 	}
 
+	total := func(id string) int64 {
+		treeExpectNodeLabelStmt := util.GetRelConstraintStmt(constant.LabelExpectRels, "r", true)
+		cypherCountChildren := fmt.Sprintf(
+			"MATCH (n {id: $id})-[r]->(c) %s return count(c) as total;", treeExpectNodeLabelStmt)
+		result, _ := service.CountChildren(
+			context.Background(), cypherCountChildren, "total", map[string]any{"id": id})
+		return result
+	}(neoNode.Props["id"].(string))
+
 	return &TreeNode{
-		Id:       neoNode.Props["id"].(string),
-		RandomId: uuid.New().String(),
-		Title:    title,
-		Labels:   neoNode.Labels,
-		Data:     data,
+		Id:            neoNode.Props["id"].(string),
+		RandomId:      uuid.New().String(),
+		Title:         title,
+		Labels:        neoNode.Labels,
+		ChildrenCount: total,
+		Data:          data,
 	}
 }
 

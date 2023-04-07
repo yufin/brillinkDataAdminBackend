@@ -7,7 +7,7 @@ import (
 )
 
 // GetCompanyTitleAutoComplete Return a list of company title that match the keyword(keyWord is Company.title or Company.titleShort)
-func GetCompanyTitleAutoComplete(ctx context.Context, keyWord string, pageSize int, pageNum int) []any {
+func GetCompanyTitleAutoComplete(ctx context.Context, keyWord string, pageSize int, pageNum int) ([]any, error) {
 	cypher := fmt.Sprintf("match (:Label)-[:ATTACH_TO]-(n:Company) "+
 		"where n.title =~ '(?i).*%s.*'or n.titleShort =~ '(?i).*%s.*' "+
 		"with DISTINCT n, CASE WHEN n.title IS NOT NULL THEN n.title ELSE n.titleShort END AS title "+
@@ -17,28 +17,28 @@ func GetCompanyTitleAutoComplete(ctx context.Context, keyWord string, pageSize i
 
 	result, err := models.CypherQuery(ctx, cypher, map[string]any{"skip": pageSize * (pageNum - 1), "limit": pageSize})
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	r, _ := result[0].Get("propList")
-	return r.([]any)
+	return r.([]any), nil
 }
 
 // CountCompanyTitleAutoComplete Return the number of company title that match the keyword(keyWord is Company.title or Company.titleShort)
-func CountCompanyTitleAutoComplete(ctx context.Context, keyWord string) int64 {
+func CountCompanyTitleAutoComplete(ctx context.Context, keyWord string) (int64, error) {
 	cypher := fmt.Sprintf("match (:Label)-[:ATTACH_TO]-(n:Company) "+
 		"where n.title =~ '(?i).*%s.*'or n.titleShort =~ '(?i).*%s.*' "+
 		"with DISTINCT n "+
 		"return count(n) as total", keyWord, keyWord)
 	result, err := models.CypherQuery(ctx, cypher, map[string]any{})
 	if err != nil {
-		return -1
+		return -1, err
 	}
 	total, _ := result[0].Get("total")
-	return total.(int64)
+	return total.(int64), nil
 }
 
 // GetLabelTitleAutoComplete Return a list of label title that match the keyword(keyWord is Label.title)
-func GetLabelTitleAutoComplete(ctx context.Context, keyWord string, pageSize int, pageNum int) []any {
+func GetLabelTitleAutoComplete(ctx context.Context, keyWord string, pageSize int, pageNum int) ([]any, error) {
 	cypher := fmt.Sprintf("match ()-[:CLASSIFY_OF]->(n:Label) "+
 		"where n.title =~ '(?i).*%s.*' "+
 		"with DISTINCT n "+
@@ -47,22 +47,22 @@ func GetLabelTitleAutoComplete(ctx context.Context, keyWord string, pageSize int
 		"return propList", keyWord)
 	result, err := models.CypherQuery(ctx, cypher, map[string]any{"skip": pageSize * (pageNum - 1), "limit": pageSize})
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	r, _ := result[0].Get("propList")
-	return r.([]any)
+	return r.([]any), nil
 }
 
 // CountLabelTitleAutoComplete Return the number of label title that match the keyword(keyWord is Label.title)
-func CountLabelTitleAutoComplete(ctx context.Context, keyWord string) int64 {
+func CountLabelTitleAutoComplete(ctx context.Context, keyWord string) (int64, error) {
 	cypher := fmt.Sprintf("match ()-[:CLASSIFY_OF]->(n:Label) "+
 		"where n.title =~ '(?i).*%s.*' "+
 		"with DISTINCT n "+
 		"return count(n) as total", keyWord)
 	result, err := models.CypherQuery(ctx, cypher, map[string]any{})
 	if err != nil {
-		return -1
+		return -1, err
 	}
 	total, _ := result[0].Get("total")
-	return total.(int64)
+	return total.(int64), nil
 }

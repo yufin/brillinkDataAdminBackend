@@ -5,19 +5,28 @@ import (
 	"strings"
 )
 
-func GetExpectLabelsConstraintStmt(labels []string) string {
-	if len(labels) == 0 {
+func GetLabelsConstraintStmt(constraintLabels []string, nodeKey string, expect bool) string {
+	if len(constraintLabels) == 0 {
 		return ""
 	}
-	var sb strings.Builder
-	for _, label := range labels {
-		sb.WriteString(":" + label)
+	var expectStmt string
+	if expect {
+		expectStmt = ""
+	} else {
+		expectStmt = "NOT "
 	}
+	var sb strings.Builder
+	labelsArr := make([]string, 0)
+	for _, label := range constraintLabels {
+		labelsArr = append(labelsArr, fmt.Sprintf("'%s'", label))
+	}
+	labelsStmt := strings.Join(labelsArr, ",")
+	sb.WriteString(fmt.Sprintf("WHERE any(label IN labels(%s) WHERE %slabel IN [%s]) ", nodeKey, expectStmt, labelsStmt))
 	return sb.String()
 }
 
-func GetUnexpectRelConstraintStmt(expectRel []string, relKey string, expect bool) string {
-	if len(expectRel) == 0 {
+func GetRelConstraintStmt(constraintRel []string, relKey string, expect bool) string {
+	if len(constraintRel) == 0 {
 		return ""
 	}
 	var expectStmt string
@@ -27,8 +36,8 @@ func GetUnexpectRelConstraintStmt(expectRel []string, relKey string, expect bool
 		expectStmt = "NOT"
 	}
 	var sb strings.Builder
-	relsArray := make([]string, 0, len(expectRel))
-	for _, rel := range expectRel {
+	relsArray := make([]string, 0)
+	for _, rel := range constraintRel {
 		relsArray = append(relsArray, fmt.Sprintf("'%s'", rel))
 	}
 	relsStmt := strings.Join(relsArray, ", ")

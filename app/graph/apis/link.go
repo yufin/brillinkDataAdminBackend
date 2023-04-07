@@ -7,6 +7,7 @@ import (
 	"go-admin/app/graph/service/dto"
 	"go-admin/common/apis"
 	"math"
+	"net/http"
 	"strconv"
 )
 
@@ -33,8 +34,12 @@ func (e LinkApi) ExpandNetFromSource(c *gin.Context) {
 	if err != nil {
 		limit = 50
 	}
-	result := service.ExpandPathFromSource(
+	result, err := service.ExpandPathFromSource(
 		c.Request.Context(), c.DefaultQuery("sourceId", constant.LinkRootId), depth, limit)
+	if err != nil {
+		e.Error(http.StatusInternalServerError, err.Error(), "1")
+		return
+	}
 	if len(result) == 0 {
 		var null *int = nil
 		e.OK(null)
@@ -50,13 +55,12 @@ func (e LinkApi) GetRootNode(c *gin.Context) {
 		e.Logger.Error(err)
 		return
 	}
-	nodeArr := service.GetNodeById(c.Request.Context(), constant.LinkRootId)
-	if len(nodeArr) == 0 {
-		var null *int = nil
-		e.OK(null)
+	nodeArr, err := service.GetNodeById(c.Request.Context(), constant.LinkRootId)
+	if err != nil {
+		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return
 	}
-	if len(nodeArr) == 1 {
+	if len(nodeArr) == 0 {
 		var null *int = nil
 		e.OK(null)
 		return
@@ -71,7 +75,11 @@ func (e LinkApi) GetNodeById(c *gin.Context) {
 		return
 	}
 	id := c.Query("id")
-	nodeArr := service.GetNodeById(c.Request.Context(), id)
+	nodeArr, err := service.GetNodeById(c.Request.Context(), id)
+	if err != nil {
+		e.Error(http.StatusInternalServerError, err.Error(), "1")
+		return
+	}
 	if len(nodeArr) == 0 {
 		var null *int = nil
 		e.OK(null)
@@ -86,7 +94,7 @@ func (e LinkApi) GetNetToChildren(c *gin.Context) {
 		e.Logger.Error(err)
 		return
 	}
-	id := c.Query("sourceId")
+	id := c.Query("id")
 	pageSize := c.DefaultQuery("pageSize", "50")
 	pageNum := c.DefaultQuery("pageNum", "1")
 	pageSizeInt, errConv := strconv.Atoi(pageSize)
@@ -97,17 +105,47 @@ func (e LinkApi) GetNetToChildren(c *gin.Context) {
 	if errConv != nil {
 		pageNumInt = 1
 	}
-	neoPath, total := service.GetPathToChildren(c.Request.Context(), id, pageSizeInt, pageNumInt)
+	neoPath, total, err := service.GetPathToChildren(c.Request.Context(), id, pageSizeInt, pageNumInt)
+	if err != nil {
+		e.Error(http.StatusInternalServerError, err.Error(), "1")
+		return
+	}
 	if len(neoPath) == 0 {
 		var null *int = nil
 		e.OK(null)
 		return
 	}
 	resp := dto.SerializeNetFromPath(&neoPath)
-	e.OK(dto.PaginatedResp{
-		TotalPage: int(math.Ceil(float64(total) / float64(pageSizeInt))),
-		PageNum:   pageNumInt,
-		PageSize:  len(resp.Edges),
-		Data:      resp,
-	})
+	e.PageOK(resp, int64(math.Ceil(float64(total)/float64(pageSizeInt))), pageNumInt, pageSizeInt)
+}
+
+func (e LinkApi) GetNetToParents(c *gin.Context) {
+	err := e.MakeContext(c).Errors
+	if err != nil {
+		e.Logger.Error(err)
+		return
+	}
+	id := c.Query("id")
+	pageSize := c.DefaultQuery("pageSize", "50")
+	pageNum := c.DefaultQuery("pageNum", "1")
+	pageSizeInt, errConv := strconv.Atoi(pageSize)
+	if errConv != nil {
+		pageSizeInt = 10
+	}
+	pageNumInt, errConv := strconv.Atoi(pageNum)
+	if errConv != nil {
+		pageNumInt = 1
+	}
+	neoPath, total, err := service.GetPathToParents(c.Request.Context(), id, pageSizeInt, pageNumInt)
+	if err != nil {
+		e.Error(http.StatusInternalServerError, err.Error(), "1")
+		return
+	}
+	if len(neoPath) == 0 {
+		var null *int = nil
+		e.OK(null)
+		return
+	}
+	resp := dto.SerializeNetFromPath(&neoPath)
+	e.PageOK(resp, int64(math.Ceil(float64(total)/float64(pageSizeInt))), pageNumInt, pageSizeInt)
 }

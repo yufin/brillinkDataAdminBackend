@@ -35,7 +35,7 @@ settings:
     graph:
       neo4j:
         activate: true
-        uri: neo4j://192.168.44.169:7687
+        uri: neo4j://10.0.203.73:7687
         username: neo4j
         password: password
     amap:

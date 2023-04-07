@@ -298,14 +298,10 @@ definitions:
     type: object
   dto.SysDictDataDeleteReq:
     properties:
-      createBy:
-        type: integer
       ids:
         items:
           type: integer
         type: array
-      updateBy:
-        type: integer
     type: object
   dto.SysDictDataGetAllResp:
     properties:
@@ -538,7 +534,7 @@ definitions:
         type: integer
       sysApi:
         items:
-          $ref: '#/definitions/models.SysApi'
+          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
         type: array
       title:
         description: 显示名称
@@ -598,7 +594,7 @@ definitions:
         type: integer
       sysApi:
         items:
-          $ref: '#/definitions/models.SysApi'
+          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
         type: array
       title:
         description: 显示名称
@@ -711,11 +707,11 @@ definitions:
         type: string
       sysDept:
         items:
-          $ref: '#/definitions/models.SysDept'
+          $ref: '#/definitions/go-admin_app_admin_models.SysDept'
         type: array
       sysMenu:
         items:
-          $ref: '#/definitions/models.SysMenu'
+          $ref: '#/definitions/go-admin_app_admin_models.SysMenu'
         type: array
       updateBy:
         type: integer
@@ -759,11 +755,11 @@ definitions:
         type: string
       sysDept:
         items:
-          $ref: '#/definitions/models.SysDept'
+          $ref: '#/definitions/go-admin_app_admin_models.SysDept'
         type: array
       sysMenu:
         items:
-          $ref: '#/definitions/models.SysMenu'
+          $ref: '#/definitions/go-admin_app_admin_models.SysMenu'
         type: array
       updateBy:
         type: integer
@@ -1056,25 +1052,7 @@ definitions:
         description: 用户ID
         type: integer
     type: object
-  handler.Login:
-    properties:
-      code:
-        type: string
-      password:
-        type: string
-      type:
-        type: string
-      username:
-        type: string
-      uuid:
-        type: string
-    required:
-    - code
-    - password
-    - username
-    - uuid
-    type: object
-  models.SysAbnormalLog:
+  go-admin_app_admin_models.SysAbnormalLog:
     properties:
       abFunc:
         type: string
@@ -1111,7 +1089,7 @@ definitions:
       userName:
         type: string
     type: object
-  models.SysApi:
+  go-admin_app_admin_models.SysApi:
     properties:
       bus:
         type: string
@@ -1142,7 +1120,7 @@ definitions:
       updatedAt:
         type: string
     type: object
-  models.SysConfig:
+  go-admin_app_admin_models.SysConfig:
     properties:
       configKey:
         type: string
@@ -1171,11 +1149,11 @@ definitions:
       updatedAt:
         type: string
     type: object
-  models.SysDept:
+  go-admin_app_admin_models.SysDept:
     properties:
       children:
         items:
-          $ref: '#/definitions/models.SysDept'
+          $ref: '#/definitions/go-admin_app_admin_models.SysDept'
         type: array
       createBy:
         type: integer
@@ -1216,7 +1194,93 @@ definitions:
       updatedAt:
         type: string
     type: object
-  models.SysJob:
+  go-admin_app_admin_models.SysMenu:
+    properties:
+      apis:
+        items:
+          type: integer
+        type: array
+      breadcrumb:
+        type: string
+      children:
+        items:
+          $ref: '#/definitions/go-admin_app_admin_models.SysMenu'
+        type: array
+      component:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      dataScope:
+        type: string
+      icon:
+        type: string
+      is_select:
+        type: boolean
+      isFrame:
+        type: string
+      menuId:
+        type: integer
+      menuName:
+        type: string
+      menuType:
+        type: string
+      noCache:
+        type: boolean
+      params:
+        type: string
+      parentId:
+        type: integer
+      path:
+        type: string
+      paths:
+        type: string
+      permission:
+        type: string
+      roleId:
+        type: integer
+      sort:
+        type: integer
+      sysApi:
+        items:
+          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
+        type: array
+      title:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      visible:
+        type: boolean
+    type: object
+  go-admin_app_admin_models.SysOperateLog:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      description:
+        type: string
+      logId:
+        type: integer
+      type:
+        type: string
+      updateAfter:
+        type: string
+      updateBefore:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+    type: object
+  go-admin_app_jobs_models.SysJob:
     properties:
       args:
         description: 目标参数
@@ -1262,91 +1326,23 @@ definitions:
       updatedAt:
         type: string
     type: object
-  models.SysMenu:
+  handler.Login:
     properties:
-      apis:
-        items:
-          type: integer
-        type: array
-      breadcrumb:
+      code:
         type: string
-      children:
-        items:
-          $ref: '#/definitions/models.SysMenu'
-        type: array
-      component:
+      password:
         type: string
-      createBy:
-        type: integer
-      createdAt:
-        type: string
-      dataScope:
-        type: string
-      icon:
-        type: string
-      is_select:
-        type: boolean
-      isFrame:
-        type: string
-      menuId:
-        type: integer
-      menuName:
-        type: string
-      menuType:
-        type: string
-      noCache:
-        type: boolean
-      params:
-        type: string
-      parentId:
-        type: integer
-      path:
-        type: string
-      paths:
-        type: string
-      permission:
-        type: string
-      roleId:
-        type: integer
-      sort:
-        type: integer
-      sysApi:
-        items:
-          $ref: '#/definitions/models.SysApi'
-        type: array
-      title:
-        type: string
-      updateBy:
-        type: integer
-      updatedAt:
-        type: string
-      visible:
-        type: boolean
-    type: object
-  models.SysOperateLog:
-    properties:
-      createBy:
-        type: integer
-      createdAt:
-        type: string
-      description:
-        type: string
-      logId:
-        type: integer
       type:
         type: string
-      updateAfter:
+      username:
         type: string
-      updateBefore:
+      uuid:
         type: string
-      updateBy:
-        type: integer
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      userName:
-        type: string
+    required:
+    - code
+    - password
+    - username
+    - uuid
     type: object
   models.TbCmsArticle:
     properties:
@@ -2759,7 +2755,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/models.SysAbnormalLog'
+                          $ref: '#/definitions/go-admin_app_admin_models.SysAbnormalLog'
                         type: array
                     type: object
               type: object
@@ -2784,7 +2780,7 @@ paths:
             - $ref: '#/definitions/antd.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SysAbnormalLog'
+                  $ref: '#/definitions/go-admin_app_admin_models.SysAbnormalLog'
               type: object
       security:
       - Bearer: []
@@ -2851,7 +2847,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/models.SysApi'
+                          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
                         type: array
                     type: object
               type: object
@@ -2876,7 +2872,7 @@ paths:
             - $ref: '#/definitions/antd.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SysApi'
+                  $ref: '#/definitions/go-admin_app_admin_models.SysApi'
               type: object
       security:
       - Bearer: []
@@ -2945,7 +2941,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/models.SysApi'
+                          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
                         type: array
                     type: object
               type: object
@@ -3015,7 +3011,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/models.SysApi'
+                          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
                         type: array
                     type: object
               type: object
@@ -3154,7 +3150,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/models.SysJob'
+                          $ref: '#/definitions/go-admin_app_jobs_models.SysJob'
                         type: array
                     type: object
               type: object
@@ -3220,7 +3216,7 @@ paths:
             - $ref: '#/definitions/antd.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SysJob'
+                  $ref: '#/definitions/go-admin_app_jobs_models.SysJob'
               type: object
       security:
       - Bearer: []
@@ -3404,7 +3400,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/models.SysOperateLog'
+                          $ref: '#/definitions/go-admin_app_admin_models.SysOperateLog'
                         type: array
                     type: object
               type: object
@@ -3429,7 +3425,7 @@ paths:
             - $ref: '#/definitions/antd.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SysOperateLog'
+                  $ref: '#/definitions/go-admin_app_admin_models.SysOperateLog'
               type: object
       security:
       - Bearer: []

@@ -1808,7 +1808,7 @@
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysAbnormalLog"
+                                                                "$ref": "#/definitions/go-admin_app_admin_models.SysAbnormalLog"
                                                             }
                                                         }
                                                     }
@@ -1888,7 +1888,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.SysAbnormalLog"
+                                            "$ref": "#/definitions/go-admin_app_admin_models.SysAbnormalLog"
                                         }
                                     }
                                 }
@@ -1970,7 +1970,7 @@
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysApi"
+                                                                "$ref": "#/definitions/go-admin_app_admin_models.SysApi"
                                                             }
                                                         }
                                                     }
@@ -2088,7 +2088,7 @@
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysApi"
+                                                                "$ref": "#/definitions/go-admin_app_admin_models.SysApi"
                                                             }
                                                         }
                                                     }
@@ -2135,7 +2135,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.SysApi"
+                                            "$ref": "#/definitions/go-admin_app_admin_models.SysApi"
                                         }
                                     }
                                 }
@@ -2251,7 +2251,7 @@
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysApi"
+                                                                "$ref": "#/definitions/go-admin_app_admin_models.SysApi"
                                                             }
                                                         }
                                                     }
@@ -2517,7 +2517,7 @@
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysJob"
+                                                                "$ref": "#/definitions/go-admin_app_jobs_models.SysJob"
                                                             }
                                                         }
                                                     }
@@ -2598,7 +2598,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.SysJob"
+                                            "$ref": "#/definitions/go-admin_app_jobs_models.SysJob"
                                         }
                                     }
                                 }
@@ -2898,7 +2898,7 @@
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysOperateLog"
+                                                                "$ref": "#/definitions/go-admin_app_admin_models.SysOperateLog"
                                                             }
                                                         }
                                                     }
@@ -2978,7 +2978,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.SysOperateLog"
+                                            "$ref": "#/definitions/go-admin_app_admin_models.SysOperateLog"
                                         }
                                     }
                                 }
@@ -5101,17 +5101,11 @@
         "dto.SysDictDataDeleteReq": {
             "type": "object",
             "properties": {
-                "createBy": {
-                    "type": "integer"
-                },
                 "ids": {
                     "type": "array",
                     "items": {
                         "type": "integer"
                     }
-                },
-                "updateBy": {
-                    "type": "integer"
                 }
             }
         },
@@ -5460,7 +5454,7 @@
                 "sysApi": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysApi"
+                        "$ref": "#/definitions/go-admin_app_admin_models.SysApi"
                     }
                 },
                 "title": {
@@ -5543,7 +5537,7 @@
                 "sysApi": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysApi"
+                        "$ref": "#/definitions/go-admin_app_admin_models.SysApi"
                     }
                 },
                 "title": {
@@ -5711,13 +5705,13 @@
                 "sysDept": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysDept"
+                        "$ref": "#/definitions/go-admin_app_admin_models.SysDept"
                     }
                 },
                 "sysMenu": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysMenu"
+                        "$ref": "#/definitions/go-admin_app_admin_models.SysMenu"
                     }
                 },
                 "updateBy": {
@@ -5780,13 +5774,13 @@
                 "sysDept": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysDept"
+                        "$ref": "#/definitions/go-admin_app_admin_models.SysDept"
                     }
                 },
                 "sysMenu": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysMenu"
+                        "$ref": "#/definitions/go-admin_app_admin_models.SysMenu"
                     }
                 },
                 "updateBy": {
@@ -6207,33 +6201,7 @@
                 }
             }
         },
-        "handler.Login": {
-            "type": "object",
-            "required": [
-                "code",
-                "password",
-                "username",
-                "uuid"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                },
-                "uuid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.SysAbnormalLog": {
+        "go-admin_app_admin_models.SysAbnormalLog": {
             "type": "object",
             "properties": {
                 "abFunc": {
@@ -6289,7 +6257,7 @@
                 }
             }
         },
-        "models.SysApi": {
+        "go-admin_app_admin_models.SysApi": {
             "type": "object",
             "properties": {
                 "bus": {
@@ -6336,7 +6304,7 @@
                 }
             }
         },
-        "models.SysConfig": {
+        "go-admin_app_admin_models.SysConfig": {
             "type": "object",
             "properties": {
                 "configKey": {
@@ -6380,13 +6348,13 @@
                 }
             }
         },
-        "models.SysDept": {
+        "go-admin_app_admin_models.SysDept": {
             "type": "object",
             "properties": {
                 "children": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysDept"
+                        "$ref": "#/definitions/go-admin_app_admin_models.SysDept"
                     }
                 },
                 "createBy": {
@@ -6444,7 +6412,137 @@
                 }
             }
         },
-        "models.SysJob": {
+        "go-admin_app_admin_models.SysMenu": {
+            "type": "object",
+            "properties": {
+                "apis": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "breadcrumb": {
+                    "type": "string"
+                },
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-admin_app_admin_models.SysMenu"
+                    }
+                },
+                "component": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "dataScope": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "isFrame": {
+                    "type": "string"
+                },
+                "is_select": {
+                    "type": "boolean"
+                },
+                "menuId": {
+                    "type": "integer"
+                },
+                "menuName": {
+                    "type": "string"
+                },
+                "menuType": {
+                    "type": "string"
+                },
+                "noCache": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "type": "string"
+                },
+                "parentId": {
+                    "type": "integer"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "paths": {
+                    "type": "string"
+                },
+                "permission": {
+                    "type": "string"
+                },
+                "roleId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "sysApi": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/go-admin_app_admin_models.SysApi"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "visible": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "go-admin_app_admin_models.SysOperateLog": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "logId": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updateAfter": {
+                    "type": "string"
+                },
+                "updateBefore": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userName": {
+                    "type": "string"
+                }
+            }
+        },
+        "go-admin_app_jobs_models.SysJob": {
             "type": "object",
             "properties": {
                 "args": {
@@ -6508,132 +6606,28 @@
                 }
             }
         },
-        "models.SysMenu": {
+        "handler.Login": {
             "type": "object",
+            "required": [
+                "code",
+                "password",
+                "username",
+                "uuid"
+            ],
             "properties": {
-                "apis": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "breadcrumb": {
+                "code": {
                     "type": "string"
                 },
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.SysMenu"
-                    }
-                },
-                "component": {
+                "password": {
                     "type": "string"
-                },
-                "createBy": {
-                    "type": "integer"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "dataScope": {
-                    "type": "string"
-                },
-                "icon": {
-                    "type": "string"
-                },
-                "isFrame": {
-                    "type": "string"
-                },
-                "is_select": {
-                    "type": "boolean"
-                },
-                "menuId": {
-                    "type": "integer"
-                },
-                "menuName": {
-                    "type": "string"
-                },
-                "menuType": {
-                    "type": "string"
-                },
-                "noCache": {
-                    "type": "boolean"
-                },
-                "params": {
-                    "type": "string"
-                },
-                "parentId": {
-                    "type": "integer"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "paths": {
-                    "type": "string"
-                },
-                "permission": {
-                    "type": "string"
-                },
-                "roleId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "integer"
-                },
-                "sysApi": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.SysApi"
-                    }
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updateBy": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "visible": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.SysOperateLog": {
-            "type": "object",
-            "properties": {
-                "createBy": {
-                    "type": "integer"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "logId": {
-                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
                 },
-                "updateAfter": {
+                "username": {
                     "type": "string"
                 },
-                "updateBefore": {
-                    "type": "string"
-                },
-                "updateBy": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "userName": {
+                "uuid": {
                     "type": "string"
                 }
             }

@@ -22,15 +22,36 @@ func (e LabelApi) GetNodeById(c *gin.Context) {
 		return
 	}
 	id := c.Query("id")
-	nodeArr := service.GetNodeById(c.Request.Context(), id)
-	if len(nodeArr) == 1 {
-		e.OK(dto.SerializeTreeNode(nodeArr[0]))
-	} else if len(nodeArr) > 1 {
-		e.Error(http.StatusConflict, "More than one node found", "2")
-	} else {
+	nodeArr, err := service.GetNodeById(c.Request.Context(), id)
+	if err != nil {
+		e.Error(http.StatusInternalServerError, err.Error(), "1")
+		return
+	}
+	if len(nodeArr) == 0 {
 		var null *int = nil
 		e.OK(null)
+		return
 	}
+	e.OK(dto.SerializeTreeNode(nodeArr[0]))
+}
+
+func (e LabelApi) GetLabelRootNode(c *gin.Context) {
+	err := e.MakeContext(c).Errors
+	if err != nil {
+		e.Logger.Error(err)
+		return
+	}
+	nodeArr, err := service.GetNodeById(c.Request.Context(), constant.LabelRootId)
+	if err != nil {
+		e.Error(http.StatusNoContent, err.Error(), "1")
+		return
+	}
+	if len(nodeArr) == 0 {
+		var null *int = nil
+		e.OK(null)
+		return
+	}
+	e.OK(dto.SerializeTreeNode(nodeArr[0]))
 }
 
 func (e LabelApi) GetChildrenNode(c *gin.Context) {
@@ -40,22 +61,31 @@ func (e LabelApi) GetChildrenNode(c *gin.Context) {
 		return
 	}
 	id := c.Query("id")
-	children := service.GetChildrenById(c.Request.Context(), id, constant.LabelExpectRels)
+	var (
+		pageSize int
+		pageNum  int
+		errConv  error
+	)
+	pageSize, errConv = strconv.Atoi(c.DefaultQuery("pageSize", "20"))
+	if errConv != nil {
+		pageSize = 20
+	}
+	pageNum, errConv = strconv.Atoi(c.DefaultQuery("pageNum", "1"))
+	if err != nil {
+		pageNum = 1
+	}
+	pageNum = int(math.Max(1, float64(pageNum)))
+	pageSize = int(math.Max(1, float64(pageSize)))
+	children, count, err := service.GetChildrenById(c.Request.Context(), id, pageSize, pageNum, constant.LabelExpectRels)
+	if err != nil {
+		e.Error(http.StatusInternalServerError, err.Error(), "1")
+		return
+	}
 	resp := make([]dto.TreeNode, 0)
 	for _, child := range children {
 		resp = append(resp, *dto.SerializeTreeNode(child))
 	}
-	e.OK(resp)
-}
-
-func (e LabelApi) GetLabelRootNode(c *gin.Context) {
-	err := e.MakeContext(c).Errors
-	if err != nil {
-		e.Logger.Error(err)
-		return
-	}
-	nodeArr := service.GetNodeById(c.Request.Context(), constant.LabelRootId)
-	e.OK(dto.SerializeTreeNode(nodeArr[0]))
+	e.PageOK(resp, int64(math.Ceil(float64(count)/float64(pageSize))), pageNum, len(resp))
 }
 
 func (e LabelApi) GetCompanyTitleAutoCompleteByKeyWord(c *gin.Context) {
@@ -79,19 +109,40 @@ func (e LabelApi) GetCompanyTitleAutoCompleteByKeyWord(c *gin.Context) {
 	}
 	pageNum = int(math.Max(1, float64(pageNum)))
 	pageSize = int(math.Max(1, float64(pageSize)))
-	title := c.Query("title")
-	cRes := make(chan []any)
-	cTotal := make(chan int64)
+	title := c.Query("keyWord")
+	cRes := make(chan struct {
+		result []any
+		err    error
+	})
+	cTotal := make(chan struct {
+		result int64
+		err    error
+	})
 	go func() {
-		total := service.CountCompanyTitleAutoComplete(c.Request.Context(), title)
-		cTotal <- total
+		rTotal, err := service.CountCompanyTitleAutoComplete(c.Request.Context(), title)
+		cTotal <- struct {
+			result int64
+			err    error
+		}{result: rTotal, err: err}
 	}()
 	go func() {
-		res := service.GetCompanyTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
-		cRes <- res
+		res, err := service.GetCompanyTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
+		cRes <- struct {
+			result []any
+			err    error
+		}{result: res, err: err}
 	}()
 	titleList := <-cRes
-	e.PageOK(titleList, int64(math.Ceil(float64(<-cTotal)/float64(pageSize))), pageNum, len(titleList))
+	total := <-cTotal
+	if total.err != nil {
+		e.Error(http.StatusInternalServerError, total.err.Error(), "1")
+		return
+	}
+	if titleList.err != nil {
+		e.Error(http.StatusInternalServerError, titleList.err.Error(), "1")
+		return
+	}
+	e.PageOK(titleList.result, int64(math.Ceil(float64(total.result)/float64(pageSize))), pageNum, len(titleList.result))
 }
 
 func (e LabelApi) GetLabelTitleAutoCompleteByKeyWord(c *gin.Context) {
@@ -115,19 +166,40 @@ func (e LabelApi) GetLabelTitleAutoCompleteByKeyWord(c *gin.Context) {
 	}
 	pageNum = int(math.Max(1, float64(pageNum)))
 	pageSize = int(math.Max(1, float64(pageSize)))
-	title := c.Query("title")
-	cRes := make(chan []any)
-	cTotal := make(chan int64)
+	title := c.Query("keyWord")
+	cRes := make(chan struct {
+		result []any
+		err    error
+	})
+	cTotal := make(chan struct {
+		result int64
+		err    error
+	})
 	go func() {
-		total := service.CountLabelTitleAutoComplete(c.Request.Context(), title)
-		cTotal <- total
+		rTotal, err := service.CountLabelTitleAutoComplete(c.Request.Context(), title)
+		cTotal <- struct {
+			result int64
+			err    error
+		}{result: rTotal, err: err}
 	}()
 	go func() {
-		res := service.GetLabelTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
-		cRes <- res
+		res, err := service.GetLabelTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
+		cRes <- struct {
+			result []any
+			err    error
+		}{result: res, err: err}
 	}()
 	titleList := <-cRes
-	e.PageOK(titleList, int64(math.Ceil(float64(<-cTotal)/float64(pageSize))), pageNum, len(titleList))
+	total := <-cTotal
+	if total.err != nil {
+		e.Error(http.StatusInternalServerError, total.err.Error(), "1")
+		return
+	}
+	if titleList.err != nil {
+		e.Error(http.StatusInternalServerError, titleList.err.Error(), "1")
+		return
+	}
+	e.PageOK(titleList.result, int64(math.Ceil(float64(total.result)/float64(pageSize))), pageNum, len(titleList.result))
 }
 
 // GetPathBetween 获取两个节点之间的TreeNode, sourceId默认为LabelRootId
@@ -140,7 +212,11 @@ func (e LabelApi) GetPathBetween(c *gin.Context) {
 	targetId := c.Query("targetId")
 	sourceId := c.DefaultQuery("sourceId", constant.LabelRootId)
 	filterStmt := "WHERE all(rel in relationships(p) WHERE not type(rel) in ['TRADING'])"
-	neoPath := service.GetPathBetween(c.Request.Context(), sourceId, targetId, filterStmt)
+	neoPath, err := service.GetPathBetween(c.Request.Context(), sourceId, targetId, filterStmt)
+	if err != nil {
+		e.Error(http.StatusInternalServerError, err.Error(), "1")
+		return
+	}
 	if len(neoPath) != 0 {
 		resp := dto.SerializeTreeFromPath(&neoPath)
 		e.OK(resp)
@@ -153,7 +229,6 @@ func (e LabelApi) FuzzyMatchLabelsFromSourceByTitle(c *gin.Context) {
 		e.Logger.Error(err)
 		return
 	}
-
 	var (
 		pageSize int
 		pageNum  int
@@ -167,31 +242,55 @@ func (e LabelApi) FuzzyMatchLabelsFromSourceByTitle(c *gin.Context) {
 	if err != nil {
 		pageNum = 1
 	}
-	title := c.Query("title")
+	title := c.Query("keyWord")
 
-	cMatched := make(chan []any)
-	cTotal := make(chan int64)
+	cMatched := make(chan struct {
+		result []any
+		err    error
+	})
+	cTotal := make(chan struct {
+		result int64
+		err    error
+	})
 	go func() {
-		rMatched := service.GetLabelTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
-		cMatched <- rMatched
+		rMatched, err := service.GetLabelTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
+		cMatched <- struct {
+			result []any
+			err    error
+		}{result: rMatched, err: err}
 	}()
 	go func() {
-		rTotal := service.CountLabelTitleAutoComplete(c.Request.Context(), title)
-		cTotal <- rTotal
+		rTotal, err := service.CountLabelTitleAutoComplete(c.Request.Context(), title)
+		cTotal <- struct {
+			result int64
+			err    error
+		}{result: rTotal, err: err}
 	}()
 
 	matched := <-cMatched
 	total := <-cTotal
-	if len(matched) == 0 {
-		e.PageOK(nil, total, pageNum, 0)
+	if total.err != nil {
+		e.Error(http.StatusInternalServerError, total.err.Error(), "1")
+		return
+	}
+	if matched.err != nil {
+		e.Error(http.StatusInternalServerError, matched.err.Error(), "1")
+		return
+	}
+	if len(matched.result) == 0 {
+		e.PageOK(nil, total.result, pageNum, 0)
 		return
 	}
 	ids := make([]string, 0)
-	for _, item := range matched {
+	for _, item := range matched.result {
 		ids = append(ids, item.(map[string]any)["id"].(string))
 	}
-	resp := service.GetPathFromSourceByIds(c.Request.Context(), constant.LabelRootId, ids, []string{"Label"}, constant.LabelExpectRels)
-	e.PageOK(dto.SerializeTreeFromPath(&resp), int64(math.Ceil(float64(total)/float64(pageSize))), pageNum, len(matched))
+	resp, err := service.GetPathFromSourceByIds(c.Request.Context(), constant.LabelRootId, ids, []string{"Label"}, constant.LabelExpectRels)
+	if err != nil {
+		e.Error(http.StatusInternalServerError, err.Error(), "1")
+		return
+	}
+	e.PageOK(dto.SerializeTreeFromPath(&resp), int64(math.Ceil(float64(total.result)/float64(pageSize))), pageNum, len(matched.result))
 }
 
 func (e LabelApi) FuzzyMatchCompanyFromSourceByTitle(c *gin.Context) {
@@ -206,37 +305,61 @@ func (e LabelApi) FuzzyMatchCompanyFromSourceByTitle(c *gin.Context) {
 		pageNum  int
 		errConv  error
 	)
-	pageSize, errConv = strconv.Atoi(c.DefaultQuery("pageSize", "20"))
+	pageSize, errConv = strconv.Atoi(c.DefaultQuery("pageSize", "10"))
 	if errConv != nil {
-		pageSize = 20
+		pageSize = 10
 	}
 	pageNum, errConv = strconv.Atoi(c.DefaultQuery("pageNum", "1"))
 	if err != nil {
 		pageNum = 1
 	}
-	title := c.Query("title")
+	title := c.Query("keyWord")
 
-	cMatched := make(chan []any)
-	cTotal := make(chan int64)
+	cMatched := make(chan struct {
+		result []any
+		err    error
+	})
+	cTotal := make(chan struct {
+		result int64
+		err    error
+	})
 	go func() {
-		rMatched := service.GetCompanyTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
-		cMatched <- rMatched
+		rMatched, err := service.GetCompanyTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
+		cMatched <- struct {
+			result []any
+			err    error
+		}{result: rMatched, err: err}
 	}()
 	go func() {
-		rTotal := service.CountCompanyTitleAutoComplete(c.Request.Context(), title)
-		cTotal <- rTotal
+		rTotal, err := service.CountCompanyTitleAutoComplete(c.Request.Context(), title)
+		cTotal <- struct {
+			result int64
+			err    error
+		}{result: rTotal, err: err}
 	}()
 
 	matched := <-cMatched
+	if matched.err != nil {
+		e.Error(http.StatusInternalServerError, matched.err.Error(), "1")
+		return
+	}
 	total := <-cTotal
-	if len(matched) == 0 {
-		e.PageOK(nil, total, pageNum, 0)
+	if total.err != nil {
+		e.Error(http.StatusInternalServerError, total.err.Error(), "1")
+		return
+	}
+	if len(matched.result) == 0 {
+		e.PageOK(nil, total.result, pageNum, 0)
 		return
 	}
 	ids := make([]string, 0)
-	for _, item := range matched {
+	for _, item := range matched.result {
 		ids = append(ids, item.(map[string]any)["id"].(string))
 	}
-	resp := service.GetPathFromSourceByIds(c.Request.Context(), constant.LabelRootId, ids, []string{"Company"}, constant.LabelExpectRels)
-	e.PageOK(dto.SerializeTreeFromPath(&resp), int64(math.Ceil(float64(total)/float64(pageSize))), pageNum, len(matched))
+	resp, err := service.GetPathFromSourceByIds(c.Request.Context(), constant.LabelRootId, ids, []string{"Company"}, constant.LabelExpectRels)
+	if err != nil {
+		e.Error(http.StatusInternalServerError, err.Error(), "1")
+		return
+	}
+	e.PageOK(dto.SerializeTreeFromPath(&resp), int64(math.Ceil(float64(total.result)/float64(pageSize))), pageNum, len(matched.result))
 }
