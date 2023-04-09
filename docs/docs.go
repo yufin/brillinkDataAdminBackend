@@ -4652,6 +4652,535 @@ const docTemplate = `{
                 }
             }
         },
+        "/dev-api/v1/graph/link/net/children": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/网状图"
+                ],
+                "summary": "通过id检索节点的子节点",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Node id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page size",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page number",
+                        "name": "pageNum",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Net"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/link/net/expand": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/网状图"
+                ],
+                "summary": "通过给定节点和给定延伸层数检索延伸出的关联子节点，",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Depth of expansion",
+                        "name": "depth",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Limit of each depth",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Source node id",
+                        "name": "sourceId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Net"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/link/net/parents": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/网状图"
+                ],
+                "summary": "通过id检索节点的父节点",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Node id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page size",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page number",
+                        "name": "pageNum",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Net"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/link/node": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/网状图"
+                ],
+                "summary": "通过id检索节点",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Node id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LinkNode"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/link/node/root": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/网状图"
+                ],
+                "summary": "获取网状图的根节点",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LinkNode"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/tree/node": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/树状图"
+                ],
+                "summary": "通过id检索单个节点",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Node ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TreeNode"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/tree/node/children": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/树状图"
+                ],
+                "summary": "检索给定节点的子节点",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Node ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "pageNum",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TreeNode"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/tree/node/company/title/autoComplete": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/树状图"
+                ],
+                "summary": "通过给定的关键词检索模糊匹配的公司名称列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Keyword to search for",
+                        "name": "keyWord",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "pageNum",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/tree/node/label/title/autoComplete": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/树状图"
+                ],
+                "summary": "通过给定的关键词检索模糊匹配的标签名称列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Keyword to search for",
+                        "name": "keyWord",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "pageNum",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/tree/node/root": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/树状图"
+                ],
+                "summary": "查询标签树的根节点",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TreeNode"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/tree/path/between": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/树状图"
+                ],
+                "summary": "获取标签数图中两个节点之间的路径",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Source label ID, default to root label ID",
+                        "name": "sourceId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Target label ID",
+                        "name": "targetId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/tree/path/company/title/fuzzyMatch": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/树状图"
+                ],
+                "summary": "通过公司名称关键词模糊匹配公司节点",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Source label ID, default to root label ID",
+                        "name": "sourceId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Target label ID",
+                        "name": "targetId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dev-api/v1/graph/tree/path/label/title/fuzzyMatch": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱/树状图"
+                ],
+                "summary": "通过标签名称关键词模糊匹配标签节点",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Source label ID, default to root label ID",
+                        "name": "sourceId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Target label ID",
+                        "name": "targetId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/logout": {
             "post": {
                 "security": [
@@ -4763,6 +5292,27 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.Edge": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "id": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.Geographic": {
             "type": "object",
             "properties": {
@@ -4782,6 +5332,44 @@ const docTemplate = `{
                 },
                 "configValue": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.LinkNode": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "id": {
+                    "type": "string"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.Net": {
+            "type": "object",
+            "properties": {
+                "edges": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Edge"
+                    }
+                },
+                "nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.LinkNode"
+                    }
                 }
             }
         },
@@ -6173,6 +6761,39 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.TreeNode": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TreeNode"
+                    }
+                },
+                "childrenCount": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "entityId": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.UpdateStatusReq": {
             "type": "object",
             "properties": {
@@ -7057,12 +7678,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "2.0.0",
+	Version:          "1.0.0",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "GraphAdmin后端API文档",
-	Description:      "",
+	Title:            "GraphAdmin",
+	Description:      "朗链图数据权限管理系统的接口文档",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

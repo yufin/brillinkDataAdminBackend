@@ -64,6 +64,20 @@ definitions:
       label:
         type: string
     type: object
+  dto.Edge:
+    properties:
+      data:
+        additionalProperties: {}
+        type: object
+      id:
+        type: string
+      label:
+        type: string
+      source:
+        type: string
+      target:
+        type: string
+    type: object
   dto.Geographic:
     properties:
       city:
@@ -77,6 +91,31 @@ definitions:
         type: string
       configValue:
         type: string
+    type: object
+  dto.LinkNode:
+    properties:
+      data:
+        additionalProperties: {}
+        type: object
+      id:
+        type: string
+      labels:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  dto.Net:
+    properties:
+      edges:
+        items:
+          $ref: '#/definitions/dto.Edge'
+        type: array
+      nodes:
+        items:
+          $ref: '#/definitions/dto.LinkNode'
+        type: array
     type: object
   dto.PassWord:
     properties:
@@ -1027,6 +1066,28 @@ definitions:
       updateBy:
         type: integer
     type: object
+  dto.TreeNode:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/dto.TreeNode'
+        type: array
+      childrenCount:
+        type: integer
+      data:
+        additionalProperties: {}
+        type: object
+      entityId:
+        type: string
+      id:
+        type: string
+      labels:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
   dto.UpdateStatusReq:
     properties:
       createBy:
@@ -1616,14 +1677,12 @@ definitions:
     type: object
 info:
   contact: {}
-  description: |-
-    基于Gin + Vue + Element UI的前后端分离权限管理系统的接口文档
-    添加qq群: 521386980 进入技术交流群 请先star，谢谢！
+  description: 朗链图数据权限管理系统的接口文档
   license:
     name: MIT
     url: https://github.com/go-admin-team/go-admin/blob/master/LICENSE.md
-  title: go-admin API
-  version: 2.0.0
+  title: GraphAdmin
+  version: 1.0.0
 paths:
   /api/v1/app-config:
     get:
@@ -4428,6 +4487,352 @@ paths:
       summary: 修改用户状态
       tags:
       - 用户
+  /dev-api/v1/graph/link/net/children:
+    get:
+      parameters:
+      - description: Node id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: Page size
+        in: query
+        name: pageSize
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: pageNum
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Net'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 通过id检索节点的子节点
+      tags:
+      - 图谱/网状图
+  /dev-api/v1/graph/link/net/expand:
+    get:
+      parameters:
+      - description: Depth of expansion
+        in: query
+        name: depth
+        required: true
+        type: string
+      - description: Limit of each depth
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: Source node id
+        in: query
+        name: sourceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Net'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 通过给定节点和给定延伸层数检索延伸出的关联子节点，
+      tags:
+      - 图谱/网状图
+  /dev-api/v1/graph/link/net/parents:
+    get:
+      parameters:
+      - description: Node id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: Page size
+        in: query
+        name: pageSize
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: pageNum
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Net'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 通过id检索节点的父节点
+      tags:
+      - 图谱/网状图
+  /dev-api/v1/graph/link/node:
+    get:
+      parameters:
+      - description: Node id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LinkNode'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 通过id检索节点
+      tags:
+      - 图谱/网状图
+  /dev-api/v1/graph/link/node/root:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LinkNode'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 获取网状图的根节点
+      tags:
+      - 图谱/网状图
+  /dev-api/v1/graph/tree/node:
+    get:
+      parameters:
+      - description: Node ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TreeNode'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 通过id检索单个节点
+      tags:
+      - 图谱/树状图
+  /dev-api/v1/graph/tree/node/children:
+    get:
+      parameters:
+      - description: Node ID
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      - description: Page number
+        in: query
+        name: pageNum
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TreeNode'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 检索给定节点的子节点
+      tags:
+      - 图谱/树状图
+  /dev-api/v1/graph/tree/node/company/title/autoComplete:
+    get:
+      parameters:
+      - description: Keyword to search for
+        in: query
+        name: keyWord
+        required: true
+        type: string
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      - description: Page number
+        in: query
+        name: pageNum
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: object
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 通过给定的关键词检索模糊匹配的公司名称列表
+      tags:
+      - 图谱/树状图
+  /dev-api/v1/graph/tree/node/label/title/autoComplete:
+    get:
+      parameters:
+      - description: Keyword to search for
+        in: query
+        name: keyWord
+        required: true
+        type: string
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      - description: Page number
+        in: query
+        name: pageNum
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: object
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 通过给定的关键词检索模糊匹配的标签名称列表
+      tags:
+      - 图谱/树状图
+  /dev-api/v1/graph/tree/node/root:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TreeNode'
+        "204":
+          description: No Content
+          schema:
+            type: string
+      summary: 查询标签树的根节点
+      tags:
+      - 图谱/树状图
+  /dev-api/v1/graph/tree/path/between:
+    get:
+      parameters:
+      - description: Source label ID, default to root label ID
+        in: query
+        name: sourceId
+        type: string
+      - description: Target label ID
+        in: query
+        name: targetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 获取标签数图中两个节点之间的路径
+      tags:
+      - 图谱/树状图
+  /dev-api/v1/graph/tree/path/company/title/fuzzyMatch:
+    get:
+      parameters:
+      - description: Source label ID, default to root label ID
+        in: query
+        name: sourceId
+        type: string
+      - description: Target label ID
+        in: query
+        name: targetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 通过公司名称关键词模糊匹配公司节点
+      tags:
+      - 图谱/树状图
+  /dev-api/v1/graph/tree/path/label/title/fuzzyMatch:
+    get:
+      parameters:
+      - description: Source label ID, default to root label ID
+        in: query
+        name: sourceId
+        type: string
+      - description: Target label ID
+        in: query
+        name: targetId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 通过标签名称关键词模糊匹配标签节点
+      tags:
+      - 图谱/树状图
   /logout:
     post:
       consumes:

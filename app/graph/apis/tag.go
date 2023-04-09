@@ -15,6 +15,15 @@ type LabelApi struct {
 	apis.Api
 }
 
+// GetNodeById handles GET requests to retrieve a single node by its ID.
+// This method is used by go-swagger.
+// @Tags 图谱/树状图
+// @Summary 通过id检索单个节点
+// @Produce json
+// @Param id query string true "Node ID"
+// @Success 200 {object} dto.TreeNode
+// @Failure 500 {object} string
+// @Router /dev-api/v1/graph/tree/node [get]
 func (e LabelApi) GetNodeById(c *gin.Context) {
 	err := e.MakeContext(c).Errors
 	if err != nil {
@@ -35,6 +44,14 @@ func (e LabelApi) GetNodeById(c *gin.Context) {
 	e.OK(dto.SerializeTreeNode(nodeArr[0]))
 }
 
+// GetLabelRootNode handles GET requests to retrieve the root node of the label tree.
+// This method is used by go-swagger.
+// @Tags 图谱/树状图
+// @Summary 查询标签树的根节点
+// @Produce json
+// @Success 200 {object} dto.TreeNode
+// @Failure 204 {object} string
+// @Router /dev-api/v1/graph/tree/node/root [get]
 func (e LabelApi) GetLabelRootNode(c *gin.Context) {
 	err := e.MakeContext(c).Errors
 	if err != nil {
@@ -54,6 +71,17 @@ func (e LabelApi) GetLabelRootNode(c *gin.Context) {
 	e.OK(dto.SerializeTreeNode(nodeArr[0]))
 }
 
+// GetChildrenNode handles GET requests to retrieve the children nodes of a given node.
+// This method is used by go-swagger.
+// @Tags 图谱/树状图
+// @Summary 检索给定节点的子节点
+// @Produce json
+// @Param id query string true "Node ID"
+// @Param pageSize query int false "Page size"
+// @Param pageNum query int false "Page number"
+// @Success 200 {array} dto.TreeNode
+// @Failure 500 {object} string
+// @Router /dev-api/v1/graph/tree/node/children [get]
 func (e LabelApi) GetChildrenNode(c *gin.Context) {
 	err := e.MakeContext(c).Errors
 	if err != nil {
@@ -88,6 +116,17 @@ func (e LabelApi) GetChildrenNode(c *gin.Context) {
 	e.PageOK(resp, int64(math.Ceil(float64(count)/float64(pageSize))), pageNum, len(resp))
 }
 
+// GetCompanyTitleAutoCompleteByKeyWord handles GET requests to retrieve a list of company titles that match a given keyword for autocomplete purposes.
+// This method is used by go-swagger.
+// @Tags 图谱/树状图
+// @Summary 通过给定的关键词检索模糊匹配的公司名称列表
+// @Produce json
+// @Param keyWord query string true "Keyword to search for"
+// @Param pageSize query int false "Page size"
+// @Param pageNum query int false "Page number"
+// @Success 200 {array} any
+// @Failure 500 {object} string
+// @Router /dev-api/v1/graph/tree/node/company/title/autoComplete [get]
 func (e LabelApi) GetCompanyTitleAutoCompleteByKeyWord(c *gin.Context) {
 	err := e.MakeContext(c).Errors
 	if err != nil {
@@ -145,6 +184,17 @@ func (e LabelApi) GetCompanyTitleAutoCompleteByKeyWord(c *gin.Context) {
 	e.PageOK(titleList.result, int64(math.Ceil(float64(total.result)/float64(pageSize))), pageNum, len(titleList.result))
 }
 
+// GetLabelTitleAutoCompleteByKeyWord handles GET requests to retrieve a list of label titles that match a given keyword for autocomplete purposes.
+// This method is used by go-swagger.
+// @Tags 图谱/树状图
+// @Summary 通过给定的关键词检索模糊匹配的标签名称列表
+// @Produce json
+// @Param keyWord query string true "Keyword to search for"
+// @Param pageSize query int false "Page size"
+// @Param pageNum query int false "Page number"
+// @Success 200 {array} any
+// @Failure 500 {object} string
+// @Router /dev-api/v1/graph/tree/node/label/title/autoComplete [get]
 func (e LabelApi) GetLabelTitleAutoCompleteByKeyWord(c *gin.Context) {
 	err := e.MakeContext(c).Errors
 	if err != nil {
@@ -202,7 +252,15 @@ func (e LabelApi) GetLabelTitleAutoCompleteByKeyWord(c *gin.Context) {
 	e.PageOK(titleList.result, int64(math.Ceil(float64(total.result)/float64(pageSize))), pageNum, len(titleList.result))
 }
 
-// GetPathBetween 获取两个节点之间的TreeNode, sourceId默认为LabelRootId
+// GetPathBetween handles GET requests to retrieve the path between two labels.
+// @Tags 图谱/树状图
+// @Summary 获取标签数图中两个节点之间的路径
+// @Produce json
+// @Param sourceId query string false "Source label ID, default to root label ID"
+// @Param targetId query string true "Target label ID"
+// @Success 200 {object} any
+// @Failure 500 {object} string
+// @Router /dev-api/v1/graph/tree/path/between [get]
 func (e LabelApi) GetPathBetween(c *gin.Context) {
 	err := e.MakeContext(c).Errors
 	if err != nil {
@@ -223,7 +281,17 @@ func (e LabelApi) GetPathBetween(c *gin.Context) {
 	}
 }
 
-func (e LabelApi) FuzzyMatchLabelsFromSourceByTitle(c *gin.Context) {
+// FuzzyMatchTagsFromSourceByTitle fuzzy match Tags from source by title
+// This annotation is used by go-swagger.
+// @Tags 图谱/树状图
+// @Summary 通过标签名称关键词模糊匹配标签节点
+// @Produce json
+// @Param sourceId query string false "Source label ID, default to root label ID"
+// @Param targetId query string true "Target label ID"
+// @Success 200 {object} any
+// @Failure 500 {object} string
+// @Router /dev-api/v1/graph/tree/path/label/title/fuzzyMatch [get]
+func (e LabelApi) FuzzyMatchTagsFromSourceByTitle(c *gin.Context) {
 	err := e.MakeContext(c).Errors
 	if err != nil {
 		e.Logger.Error(err)
@@ -293,6 +361,16 @@ func (e LabelApi) FuzzyMatchLabelsFromSourceByTitle(c *gin.Context) {
 	e.PageOK(dto.SerializeTreeFromPath(&resp), int64(math.Ceil(float64(total.result)/float64(pageSize))), pageNum, len(matched.result))
 }
 
+// FuzzyMatchCompanyFromSourceByTitle fuzzy match company from source by title
+// This method is used by go-swagger.
+// @Tags 图谱/树状图
+// @Summary 通过公司名称关键词模糊匹配公司节点
+// @Produce json
+// @Param sourceId query string false "Source label ID, default to root label ID"
+// @Param targetId query string true "Target label ID"
+// @Success 200 {object} any
+// @Failure 500 {object} string
+// @Router /dev-api/v1/graph/tree/path/company/title/fuzzyMatch [get]
 func (e LabelApi) FuzzyMatchCompanyFromSourceByTitle(c *gin.Context) {
 	err := e.MakeContext(c).Errors
 	if err != nil {

@@ -21,17 +21,17 @@ func registerNodeRouter(v1 *gin.RouterGroup) {
 		rLabel.GET("/node/company/title/autoComplete", labelApi.GetCompanyTitleAutoCompleteByKeyWord) // get company title auto complete by keyword
 		rLabel.GET("/path/company/title/fuzzyMatch", labelApi.FuzzyMatchCompanyFromSourceByTitle)     // get company fuzzy matched treeNode by title
 		rLabel.GET("/node/label/title/autoComplete", labelApi.GetLabelTitleAutoCompleteByKeyWord)     // get label title auto complete by keyword
-		rLabel.GET("/path/label/title/fuzzyMatch", labelApi.FuzzyMatchLabelsFromSourceByTitle)        // get label fuzzy matched treeNode by title
+		rLabel.GET("/path/label/title/fuzzyMatch", labelApi.FuzzyMatchTagsFromSourceByTitle)          // get label fuzzy matched treeNode by title
 	}
 
 	linkApi := apis.LinkApi{}
 	rLink := v1.Group("/graph/link")
 	{
-		rLink.GET("/node/root", linkApi.GetRootNode)      // get root node
-		rLink.GET("/node", linkApi.GetNodeById)           // get node by id
-		rLink.GET("/expand", linkApi.ExpandNetFromSource) // expand net from source by given id constraint by depth
-		rLink.GET("/children", linkApi.GetNetToChildren)  // return children in struct Net of a node by given id
-		rLink.GET("/parents", linkApi.GetNetToParents)    // return children in struct Net of a node by given id
+		rLink.GET("/node/root", linkApi.GetRootNode)          // get root node
+		rLink.GET("/node", linkApi.GetNodeById)               // get node by id
+		rLink.GET("/net/children", linkApi.GetNetToChildren)  // return children in struct Net of a node by given id
+		rLink.GET("/net/parents", linkApi.GetNetToParents)    // return children in struct Net of a node by given id
+		rLink.GET("/net/expand", linkApi.ExpandNetFromSource) // expand net from source by given id constraint by depth
 	}
 }
 
