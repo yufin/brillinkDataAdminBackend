@@ -69,7 +69,7 @@ func (e *SysMenu) Get(r *dto.SysMenuGetReq) (model *models.SysMenu, err error) {
 	}
 
 	apis := make([]int, 0)
-	for _, v := range model.SysApi {
+	for _, v := range *model.SysApi {
 		apis = append(apis, v.Id)
 	}
 	model.Apis = apis
@@ -154,7 +154,7 @@ func (e *SysMenu) Update(c *gin.Context, r *dto.SysMenuUpdateReq) *SysMenu {
 		return e
 	}
 	r.Generate(&model)
-	model.SysApi = alist
+	model.SysApi = &alist
 	db := tx.Model(&model).Session(&gorm.Session{FullSaveAssociations: true}).Save(&model)
 	if db.Error != nil {
 		e.Log.Errorf("db error:%s", err)
