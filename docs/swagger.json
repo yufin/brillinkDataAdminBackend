@@ -786,6 +786,272 @@
                 }
             }
         },
+        "/api/v1/enterprise-wait-list": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取待爬取列表列表",
+                "tags": [
+                    "待爬取列表"
+                ],
+                "summary": "获取待爬取列表列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "企业名称",
+                        "name": "enterpriseName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "纳税人识别号",
+                        "name": "taxIdentCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "优先级",
+                        "name": "priority",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "qcc主体网址",
+                        "name": "qccUrl",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "企业uuid4",
+                        "name": "enterpriseId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "数据爬取状态码",
+                        "name": "statusCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "来源备注",
+                        "name": "source",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建人",
+                        "name": "create_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新人",
+                        "name": "update_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/antd.Pages"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.EnterpriseWaitList"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建待爬取列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "待爬取列表"
+                ],
+                "summary": "创建待爬取列表",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.EnterpriseWaitListInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除待爬取列表",
+                "tags": [
+                    "待爬取列表"
+                ],
+                "summary": "删除待爬取列表",
+                "parameters": [
+                    {
+                        "description": "ids",
+                        "name": "ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/enterprise-wait-list/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取待爬取列表",
+                "tags": [
+                    "待爬取列表"
+                ],
+                "summary": "获取待爬取列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/antd.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.EnterpriseWaitList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改待爬取列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "待爬取列表"
+                ],
+                "summary": "修改待爬取列表",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.EnterpriseWaitListUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/antd.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/getinfo": {
             "get": {
                 "security": [
@@ -5304,6 +5570,88 @@
                 }
             }
         },
+        "dto.EnterpriseWaitListInsertReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "enterpriseId": {
+                    "description": "企业uuid4",
+                    "type": "string"
+                },
+                "enterpriseName": {
+                    "description": "企业名称",
+                    "type": "string"
+                },
+                "priority": {
+                    "description": "优先级",
+                    "type": "integer"
+                },
+                "qccUrl": {
+                    "description": "qcc主体网址",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "来源备注",
+                    "type": "string"
+                },
+                "statusCode": {
+                    "description": "数据爬取状态码",
+                    "type": "integer"
+                },
+                "taxIdentCode": {
+                    "description": "纳税人识别号",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.EnterpriseWaitListUpdateReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "enterpriseId": {
+                    "description": "企业uuid4",
+                    "type": "string"
+                },
+                "enterpriseName": {
+                    "description": "企业名称",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键id",
+                    "type": "integer"
+                },
+                "priority": {
+                    "description": "优先级",
+                    "type": "integer"
+                },
+                "qccUrl": {
+                    "description": "qcc主体网址",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "来源备注",
+                    "type": "string"
+                },
+                "statusCode": {
+                    "description": "数据爬取状态码",
+                    "type": "integer"
+                },
+                "taxIdentCode": {
+                    "description": "纳税人识别号",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.Geographic": {
             "type": "object",
             "properties": {
@@ -7249,6 +7597,47 @@
                     "type": "string"
                 },
                 "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.EnterpriseWaitList": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "enterpriseId": {
+                    "type": "string"
+                },
+                "enterpriseName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "qccUrl": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer"
+                },
+                "taxIdentCode": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }

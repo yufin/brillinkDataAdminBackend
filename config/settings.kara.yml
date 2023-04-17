@@ -9,10 +9,16 @@ settings:
     writertimeout: 200
   database:
     driver: mysql
-    source: root:adminpassword@tcp(localhost:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+    source: root:adminpassword@tcp(192.168.31.158:3306)/brillink_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+    registers:
+      - source: root:adminpassword@tcp(192.168.31.158:3306)/brillink_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+        replicas:
+          - 'root:adminpassword@tcp(192.168.31.158:3306)/data_spider?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
+        tables:
+          - 'enterprise_wait_list'
   gen:
-    dbname: go_admin
-    frontpath: ../go-admin-ui/src
+    dbname: brillink_admin
+    frontpath: ../graphAdminWebserver/src
   jwt:
     secret: go-admin
     timeout: 3600
@@ -36,4 +42,4 @@ settings:
         username: neo4j
         password: password
     amap:
-      key: 
+      key:

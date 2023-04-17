@@ -78,6 +78,65 @@ definitions:
       target:
         type: string
     type: object
+  dto.EnterpriseWaitListInsertReq:
+    properties:
+      createBy:
+        type: integer
+      enterpriseId:
+        description: 企业uuid4
+        type: string
+      enterpriseName:
+        description: 企业名称
+        type: string
+      priority:
+        description: 优先级
+        type: integer
+      qccUrl:
+        description: qcc主体网址
+        type: string
+      source:
+        description: 来源备注
+        type: string
+      statusCode:
+        description: 数据爬取状态码
+        type: integer
+      taxIdentCode:
+        description: 纳税人识别号
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.EnterpriseWaitListUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      enterpriseId:
+        description: 企业uuid4
+        type: string
+      enterpriseName:
+        description: 企业名称
+        type: string
+      id:
+        description: 主键id
+        type: integer
+      priority:
+        description: 优先级
+        type: integer
+      qccUrl:
+        description: qcc主体网址
+        type: string
+      source:
+        description: 来源备注
+        type: string
+      statusCode:
+        description: 数据爬取状态码
+        type: integer
+      taxIdentCode:
+        description: 纳税人识别号
+        type: string
+      updateBy:
+        type: integer
+    type: object
   dto.Geographic:
     properties:
       city:
@@ -1405,6 +1464,33 @@ definitions:
     - username
     - uuid
     type: object
+  models.EnterpriseWaitList:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      enterpriseId:
+        type: string
+      enterpriseName:
+        type: string
+      id:
+        type: integer
+      priority:
+        type: integer
+      qccUrl:
+        type: string
+      source:
+        type: string
+      statusCode:
+        type: integer
+      taxIdentCode:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
   models.TbCmsArticle:
     properties:
       author:
@@ -2160,6 +2246,165 @@ paths:
       summary: 修改字典类型
       tags:
       - 字典类型
+  /api/v1/enterprise-wait-list:
+    delete:
+      description: 删除待爬取列表
+      parameters:
+      - description: ids
+        in: body
+        name: ids
+        schema:
+          items:
+            type: integer
+          type: array
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/antd.Response'
+      security:
+      - Bearer: []
+      summary: 删除待爬取列表
+      tags:
+      - 待爬取列表
+    get:
+      description: 获取待爬取列表列表
+      parameters:
+      - description: 主键id
+        in: query
+        name: id
+        type: integer
+      - description: 企业名称
+        in: query
+        name: enterpriseName
+        type: string
+      - description: 纳税人识别号
+        in: query
+        name: taxIdentCode
+        type: string
+      - description: 优先级
+        in: query
+        name: priority
+        type: integer
+      - description: qcc主体网址
+        in: query
+        name: qccUrl
+        type: string
+      - description: 企业uuid4
+        in: query
+        name: enterpriseId
+        type: string
+      - description: 数据爬取状态码
+        in: query
+        name: statusCode
+        type: integer
+      - description: 来源备注
+        in: query
+        name: source
+        type: string
+      - description: 创建人
+        in: query
+        name: create_by
+        type: string
+      - description: 更新人
+        in: query
+        name: update_by
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/antd.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/antd.Pages'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.EnterpriseWaitList'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取待爬取列表列表
+      tags:
+      - 待爬取列表
+    post:
+      consumes:
+      - application/json
+      description: 创建待爬取列表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.EnterpriseWaitListInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/antd.Response'
+      security:
+      - Bearer: []
+      summary: 创建待爬取列表
+      tags:
+      - 待爬取列表
+  /api/v1/enterprise-wait-list/{id}:
+    get:
+      description: 获取待爬取列表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: string
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/antd.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.EnterpriseWaitList'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取待爬取列表
+      tags:
+      - 待爬取列表
+    put:
+      consumes:
+      - application/json
+      description: 修改待爬取列表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.EnterpriseWaitListUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/antd.Response'
+      security:
+      - Bearer: []
+      summary: 修改待爬取列表
+      tags:
+      - 待爬取列表
   /api/v1/getinfo:
     get:
       description: 获取JSON

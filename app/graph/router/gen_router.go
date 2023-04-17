@@ -46,5 +46,6 @@ func registerNodeRouter(v1 *gin.RouterGroup) {
 //
 // /dev-api/graphDev/link/node --> /dev-api/v1/graph/link/node				请求参数: id
 // /dev-api/graphDev/link/root --> /dev-api/v1/graph/link/node/root		无参数
-// /dev-api/graphDev/link/children --> /dev-api/v1/graph/link/children		请求参数: id, pageSize, pageNum(从1开始)
+// /dev-api/graphDev/link/children --> /dev-api/v1/graph/link/net/children		请求参数: id, pageSize, pageNum(从1开始)
+// /dev-api/graphDev/link/children --> /dev-api/v1/graph/link/net/parents		请求参数: id, pageSize, pageNum(从1开始)
 // /dev-api/graphDev/link/path --> /dev-api/v1/graph/link/expand			请求参数: sourceId(默认为rootId, 原node_id), depth(默认为5), limit(默认为50)

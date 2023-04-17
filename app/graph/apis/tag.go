@@ -109,9 +109,10 @@ func (e LabelApi) GetChildrenNode(c *gin.Context) {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return
 	}
-	resp := make([]dto.TreeNode, 0)
+	var resp []dto.TreeNode
 	for _, child := range children {
-		resp = append(resp, *dto.SerializeTreeNode(child))
+		childNode := dto.SerializeTreeNode(child)
+		resp = append(resp, *childNode)
 	}
 	e.PageOK(resp, int64(math.Ceil(float64(count)/float64(pageSize))), pageNum, len(resp))
 }

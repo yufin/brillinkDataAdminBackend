@@ -9,13 +9,16 @@ settings:
     writertimeout: 200
   database:
     driver: mysql
-    source: root:oyyufei8@tcp(192.168.44.169:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
-  graphdb:
-    driver: neo4j
-    source: bolt://neo4j:adminpassword@localhost:7687
+    source: root:adminpassword@tcp(localhost:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+    registers:
+      - source: root:adminpassword@tcp(localhost:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+        replicas:
+          - 'root:adminpassword@tcp(localhost:3306)/data_spider?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
+        tables:
+          - 'crawl_wait_list'
   gen:
     dbname: go_admin
-    frontpath: ../go-admin-ui/src
+    frontpath: ../graphAdminWebserver/src
   jwt:
     secret: go-admin
     timeout: 3600
@@ -34,8 +37,8 @@ settings:
   extend:
     graph:
       neo4j:
-        activate: true
-        uri: neo4j://10.0.203.73:7687
+        activate: false
+        uri: neo4j://192.168.31.158:7687
         username: neo4j
         password: password
     amap:
