@@ -9,8 +9,8 @@ import (
 type EnterpriseRankingGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	EnterpriseId           int64  `form:"enterpriseId"  search:"type:;column:enterprise_id;table:enterprise_ranking" comment:"外键(enterprise表的id)"`
-	RankingListId          int64  `form:"rankingListId"  search:"type:;column:ranking_list_id;table:enterprise_ranking" comment:"外键(enterprise_ranking_list表的id)"`
+	UscId                  string `form:"uscId"  search:"type:;column:usc_id;table:enterprise_ranking" comment:"社会统一信用代码"`
+	ListId                 int64  `form:"listId"  search:"type:;column:list_id;table:enterprise_ranking" comment:"外键(enterprise_ranking_list表的id)"`
 	RankingPosition        int    `form:"rankingPosition"  search:"type:;column:ranking_position;table:enterprise_ranking" comment:"榜内位置"`
 	RankingEnterpriseTitle string `form:"rankingEnterpriseTitle"  search:"type:;column:ranking_enterprise_title;table:enterprise_ranking" comment:"榜单中的企业名称"`
 	EnterpriseRankingPageOrder
@@ -18,8 +18,8 @@ type EnterpriseRankingGetPageReq struct {
 
 type EnterpriseRankingPageOrder struct {
 	RankId                 int64  `form:"rankIdOrder"  search:"type:order;column:rank_id;table:enterprise_ranking"`
-	EnterpriseId           int64  `form:"enterpriseIdOrder"  search:"type:order;column:enterprise_id;table:enterprise_ranking"`
-	RankingListId          int64  `form:"rankingListIdOrder"  search:"type:order;column:ranking_list_id;table:enterprise_ranking"`
+	UscId                  string `form:"uscIdOrder"  search:"type:order;column:usc_id;table:enterprise_ranking"`
+	ListId                 int64  `form:"listIdOrder"  search:"type:order;column:list_id;table:enterprise_ranking"`
 	RankingPosition        int    `form:"rankingPositionOrder"  search:"type:order;column:ranking_position;table:enterprise_ranking"`
 	RankingEnterpriseTitle string `form:"rankingEnterpriseTitleOrder"  search:"type:order;column:ranking_enterprise_title;table:enterprise_ranking"`
 }
@@ -30,8 +30,8 @@ func (m *EnterpriseRankingGetPageReq) GetNeedSearch() interface{} {
 
 type EnterpriseRankingGetResp struct {
 	RankId                 int64  `json:"rankId"`                 // 主键
-	EnterpriseId           int64  `json:"enterpriseId"`           // 外键(enterprise表的id)
-	RankingListId          int64  `json:"rankingListId"`          // 外键(enterprise_ranking_list表的id)
+	UscId                  string `json:"uscId"`                  // 社会统一信用代码
+	ListId                 int64  `json:"listId"`                 // 外键(enterprise_ranking_list表的id)
 	RankingPosition        int    `json:"rankingPosition"`        // 榜内位置
 	RankingEnterpriseTitle string `json:"rankingEnterpriseTitle"` // 榜单中的企业名称
 	common.ControlBy
@@ -39,8 +39,8 @@ type EnterpriseRankingGetResp struct {
 
 func (s *EnterpriseRankingGetResp) Generate(model *models.EnterpriseRanking) {
 	s.RankId = model.RankId
-	s.EnterpriseId = model.EnterpriseId
-	s.RankingListId = model.RankingListId
+	s.UscId = model.UscId
+	s.ListId = model.ListId
 	s.RankingPosition = model.RankingPosition
 	s.RankingEnterpriseTitle = model.RankingEnterpriseTitle
 	s.CreateBy = model.CreateBy
@@ -48,8 +48,8 @@ func (s *EnterpriseRankingGetResp) Generate(model *models.EnterpriseRanking) {
 
 type EnterpriseRankingInsertReq struct {
 	RankId                 int64  `json:"-"`                      // 主键
-	EnterpriseId           int64  `json:"enterpriseId"`           // 外键(enterprise表的id)
-	RankingListId          int64  `json:"rankingListId"`          // 外键(enterprise_ranking_list表的id)
+	UscId                  string `json:"uscId"`                  // 社会统一信用代码
+	ListId                 int64  `json:"listId"`                 // 外键(enterprise_ranking_list表的id)
 	RankingPosition        int    `json:"rankingPosition"`        // 榜内位置
 	RankingEnterpriseTitle string `json:"rankingEnterpriseTitle"` // 榜单中的企业名称
 	common.ControlBy
@@ -57,8 +57,8 @@ type EnterpriseRankingInsertReq struct {
 
 func (s *EnterpriseRankingInsertReq) Generate(model *models.EnterpriseRanking) {
 	model.RankId = s.RankId
-	model.EnterpriseId = s.EnterpriseId
-	model.RankingListId = s.RankingListId
+	model.UscId = s.UscId
+	model.ListId = s.ListId
 	model.RankingPosition = s.RankingPosition
 	model.RankingEnterpriseTitle = s.RankingEnterpriseTitle
 	model.CreateBy = s.CreateBy
@@ -70,8 +70,8 @@ func (s *EnterpriseRankingInsertReq) GetId() interface{} {
 
 type EnterpriseRankingUpdateReq struct {
 	RankId                 int64  `uri:"rankId"`                  // 主键
-	EnterpriseId           int64  `json:"enterpriseId"`           // 外键(enterprise表的id)
-	RankingListId          int64  `json:"rankingListId"`          // 外键(enterprise_ranking_list表的id)
+	UscId                  string `json:"uscId"`                  // 社会统一信用代码
+	ListId                 int64  `json:"listId"`                 // 外键(enterprise_ranking_list表的id)
 	RankingPosition        int    `json:"rankingPosition"`        // 榜内位置
 	RankingEnterpriseTitle string `json:"rankingEnterpriseTitle"` // 榜单中的企业名称
 	common.ControlBy
@@ -79,8 +79,8 @@ type EnterpriseRankingUpdateReq struct {
 
 func (s *EnterpriseRankingUpdateReq) Generate(model *models.EnterpriseRanking) {
 	model.RankId = s.RankId
-	model.EnterpriseId = s.EnterpriseId
-	model.RankingListId = s.RankingListId
+	model.UscId = s.UscId
+	model.ListId = s.ListId
 	model.RankingPosition = s.RankingPosition
 	model.RankingEnterpriseTitle = s.RankingEnterpriseTitle
 	model.UpdateBy = s.UpdateBy

@@ -17,10 +17,8 @@ type EnterpriseWaitList struct {
 
 // GetPage 获取EnterpriseWaitList列表
 func (e *EnterpriseWaitList) GetPage(c *dto.EnterpriseWaitListGetPageReq, p *actions.DataPermission, list *[]models.EnterpriseWaitList, count *int64) error {
-	var (
-		err  error
-		data models.EnterpriseWaitList
-	)
+	var err error
+	var data models.EnterpriseWaitList
 
 	err = e.Orm.Model(&data).
 		Scopes(

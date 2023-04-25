@@ -23,7 +23,7 @@ type Enterprise struct {
 // @Description 获取企业主体列表
 // @Tags 企业主体
 // @Param id query int64 false "主键"
-// @Param unifiedSocialCreditCode query string false "统一社会信用代码"
+// @Param uscId query string false "统一社会信用代码"
 // @Param statusCode query int false "状态标识码"
 // @Param updated_at query time.Time false "更新时间"
 // @Param deleted_at query time.Time false "删除时间"

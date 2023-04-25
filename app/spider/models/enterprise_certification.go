@@ -17,7 +17,7 @@ type EnterpriseCertification struct {
 	CertificationTermStart time.Time `json:"certificationTermStart" gorm:"comment:有效期起"`
 	CertificationTermEnd   time.Time `json:"certificationTermEnd" gorm:"comment:有效期至"`
 	CertificationAuthority string    `json:"certificationAuthority" gorm:"comment:发证机关"`
-	EnterpriseId           int64     `json:"enterpriseId" gorm:"comment:外键(enterprise表的id)"`
+	UscId                  string    `json:"uscId" gorm:"comment:社会统一信用代码"`
 	StatusCode             int64     `json:"statusCode" gorm:"comment:状态标识码"`
 	models.ModelTime
 	models.ControlBy

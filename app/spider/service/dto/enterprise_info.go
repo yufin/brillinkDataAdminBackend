@@ -35,7 +35,7 @@ type EnterpriseInfoGetPageReq struct {
 	UrlHomepage                   string    `form:"urlHomepage"  search:"type:;column:url_homepage;table:enterprise_info" comment:"官网url"`
 	BusinessTermStart             time.Time `form:"businessTermStart"  search:"type:;column:business_term_start;table:enterprise_info" comment:"营业期限开始"`
 	BusinessTermEnd               time.Time `form:"businessTermEnd"  search:"type:;column:business_term_end;table:enterprise_info" comment:"营业期限结束"`
-	EnterpriseId                  int64     `form:"enterpriseId"  search:"type:;column:enterprise_id;table:enterprise_info" comment:"外键(enterprise_ids表的id)"`
+	UscId                         string    `form:"uscId"  search:"type:;column:usc_id;table:enterprise_info" comment:"社会统一信用代码"`
 	StatusCode                    int       `form:"statusCode"  search:"type:;column:status_code;table:enterprise_info" comment:"状态标识码"`
 	EnterpriseInfoPageOrder
 }
@@ -67,7 +67,7 @@ type EnterpriseInfoPageOrder struct {
 	UrlHomepage                   string    `form:"urlHomepageOrder"  search:"type:order;column:url_homepage;table:enterprise_info"`
 	BusinessTermStart             time.Time `form:"businessTermStartOrder"  search:"type:order;column:business_term_start;table:enterprise_info"`
 	BusinessTermEnd               time.Time `form:"businessTermEndOrder"  search:"type:order;column:business_term_end;table:enterprise_info"`
-	EnterpriseId                  int64     `form:"enterpriseIdOrder"  search:"type:order;column:enterprise_id;table:enterprise_info"`
+	UscId                         string    `form:"uscIdOrder"  search:"type:order;column:usc_id;table:enterprise_info"`
 	StatusCode                    int       `form:"statusCodeOrder"  search:"type:order;column:status_code;table:enterprise_info"`
 }
 
@@ -102,7 +102,7 @@ type EnterpriseInfoGetResp struct {
 	UrlHomepage                   string    `json:"urlHomepage"`                   // 官网url
 	BusinessTermStart             time.Time `json:"businessTermStart"`             // 营业期限开始
 	BusinessTermEnd               time.Time `json:"businessTermEnd"`               // 营业期限结束
-	EnterpriseId                  int64     `json:"enterpriseId"`                  // 外键(enterprise_ids表的id)
+	UscId                         string    `json:"uscId"`                         // 社会统一信用代码
 	StatusCode                    int       `json:"statusCode"`                    // 状态标识码
 	common.ControlBy
 }
@@ -134,7 +134,7 @@ func (s *EnterpriseInfoGetResp) Generate(model *models.EnterpriseInfo) {
 	s.UrlHomepage = model.UrlHomepage
 	s.BusinessTermStart = model.BusinessTermStart
 	s.BusinessTermEnd = model.BusinessTermEnd
-	s.EnterpriseId = model.EnterpriseId
+	s.UscId = model.UscId
 	s.StatusCode = model.StatusCode
 	s.CreateBy = model.CreateBy
 }
@@ -166,7 +166,7 @@ type EnterpriseInfoInsertReq struct {
 	UrlHomepage                   string    `json:"urlHomepage"`                   // 官网url
 	BusinessTermStart             time.Time `json:"businessTermStart"`             // 营业期限开始
 	BusinessTermEnd               time.Time `json:"businessTermEnd"`               // 营业期限结束
-	EnterpriseId                  int64     `json:"enterpriseId"`                  // 外键(enterprise_ids表的id)
+	UscId                         string    `json:"uscId"`                         // 社会统一信用代码
 	StatusCode                    int       `json:"statusCode"`                    // 状态标识码
 	common.ControlBy
 }
@@ -198,7 +198,7 @@ func (s *EnterpriseInfoInsertReq) Generate(model *models.EnterpriseInfo) {
 	model.UrlHomepage = s.UrlHomepage
 	model.BusinessTermStart = s.BusinessTermStart
 	model.BusinessTermEnd = s.BusinessTermEnd
-	model.EnterpriseId = s.EnterpriseId
+	model.UscId = s.UscId
 	model.StatusCode = s.StatusCode
 	model.CreateBy = s.CreateBy
 }
@@ -234,7 +234,7 @@ type EnterpriseInfoUpdateReq struct {
 	UrlHomepage                   string    `json:"urlHomepage"`                   // 官网url
 	BusinessTermStart             time.Time `json:"businessTermStart"`             // 营业期限开始
 	BusinessTermEnd               time.Time `json:"businessTermEnd"`               // 营业期限结束
-	EnterpriseId                  int64     `json:"enterpriseId"`                  // 外键(enterprise_ids表的id)
+	UscId                         string    `json:"uscId"`                         // 社会统一信用代码
 	StatusCode                    int       `json:"statusCode"`                    // 状态标识码
 	common.ControlBy
 }
@@ -266,7 +266,7 @@ func (s *EnterpriseInfoUpdateReq) Generate(model *models.EnterpriseInfo) {
 	model.UrlHomepage = s.UrlHomepage
 	model.BusinessTermStart = s.BusinessTermStart
 	model.BusinessTermEnd = s.BusinessTermEnd
-	model.EnterpriseId = s.EnterpriseId
+	model.UscId = s.UscId
 	model.StatusCode = s.StatusCode
 	model.UpdateBy = s.UpdateBy
 }

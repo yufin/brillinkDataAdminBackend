@@ -23,7 +23,7 @@ type EnterpriseIndustry struct {
 // @Description 获取企业行业分类表列表
 // @Tags 企业行业分类表
 // @Param indId query int64 false "主键"
-// @Param enterpriseId query int64 false "外键-企业id"
+// @Param uscId query string false "社会统一信用代码"
 // @Param industryData query string false "json格式的行业分类"
 // @Param statusCode query int false "状态标识码"
 // @Param deleted_at query time.Time false "删除时间"

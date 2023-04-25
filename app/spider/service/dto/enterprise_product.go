@@ -9,17 +9,17 @@ import (
 type EnterpriseProductGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	EnterpriseId int64  `form:"enterpriseId"  search:"type:;column:enterprise_id;table:enterprise_product" comment:"外键-企业id"`
-	ProductData  string `form:"productData"  search:"type:;column:product_data;table:enterprise_product" comment:"json格式的产品分类"`
-	StatusCode   int    `form:"statusCode"  search:"type:;column:status_code;table:enterprise_product" comment:"状态码"`
+	UscId       string `form:"uscId"  search:"type:;column:usc_id;table:enterprise_product" comment:"社会统一信用代码"`
+	ProductData string `form:"productData"  search:"type:;column:product_data;table:enterprise_product" comment:"json格式的产品分类"`
+	StatusCode  int    `form:"statusCode"  search:"type:;column:status_code;table:enterprise_product" comment:"状态码"`
 	EnterpriseProductPageOrder
 }
 
 type EnterpriseProductPageOrder struct {
-	ProdId       int64  `form:"prodIdOrder"  search:"type:order;column:prod_id;table:enterprise_product"`
-	EnterpriseId int64  `form:"enterpriseIdOrder"  search:"type:order;column:enterprise_id;table:enterprise_product"`
-	ProductData  string `form:"productDataOrder"  search:"type:order;column:product_data;table:enterprise_product"`
-	StatusCode   int    `form:"statusCodeOrder"  search:"type:order;column:status_code;table:enterprise_product"`
+	ProdId      int64  `form:"prodIdOrder"  search:"type:order;column:prod_id;table:enterprise_product"`
+	UscId       string `form:"uscIdOrder"  search:"type:order;column:usc_id;table:enterprise_product"`
+	ProductData string `form:"productDataOrder"  search:"type:order;column:product_data;table:enterprise_product"`
+	StatusCode  int    `form:"statusCodeOrder"  search:"type:order;column:status_code;table:enterprise_product"`
 }
 
 func (m *EnterpriseProductGetPageReq) GetNeedSearch() interface{} {
@@ -27,32 +27,32 @@ func (m *EnterpriseProductGetPageReq) GetNeedSearch() interface{} {
 }
 
 type EnterpriseProductGetResp struct {
-	ProdId       int64  `json:"prodId"`       // 主键
-	EnterpriseId int64  `json:"enterpriseId"` // 外键-企业id
-	ProductData  string `json:"productData"`  // json格式的产品分类
-	StatusCode   int    `json:"statusCode"`   // 状态码
+	ProdId      int64  `json:"prodId"`      // 主键
+	UscId       string `json:"uscId"`       // 社会统一信用代码
+	ProductData string `json:"productData"` // json格式的产品分类
+	StatusCode  int    `json:"statusCode"`  // 状态码
 	common.ControlBy
 }
 
 func (s *EnterpriseProductGetResp) Generate(model *models.EnterpriseProduct) {
 	s.ProdId = model.ProdId
-	s.EnterpriseId = model.EnterpriseId
+	s.UscId = model.UscId
 	s.ProductData = model.ProductData
 	s.StatusCode = model.StatusCode
 	s.CreateBy = model.CreateBy
 }
 
 type EnterpriseProductInsertReq struct {
-	ProdId       int64  `json:"-"`            // 主键
-	EnterpriseId int64  `json:"enterpriseId"` // 外键-企业id
-	ProductData  string `json:"productData"`  // json格式的产品分类
-	StatusCode   int    `json:"statusCode"`   // 状态码
+	ProdId      int64  `json:"-"`           // 主键
+	UscId       string `json:"uscId"`       // 社会统一信用代码
+	ProductData string `json:"productData"` // json格式的产品分类
+	StatusCode  int    `json:"statusCode"`  // 状态码
 	common.ControlBy
 }
 
 func (s *EnterpriseProductInsertReq) Generate(model *models.EnterpriseProduct) {
 	model.ProdId = s.ProdId
-	model.EnterpriseId = s.EnterpriseId
+	model.UscId = s.UscId
 	model.ProductData = s.ProductData
 	model.StatusCode = s.StatusCode
 	model.CreateBy = s.CreateBy
@@ -63,16 +63,16 @@ func (s *EnterpriseProductInsertReq) GetId() interface{} {
 }
 
 type EnterpriseProductUpdateReq struct {
-	ProdId       int64  `uri:"prodId"`        // 主键
-	EnterpriseId int64  `json:"enterpriseId"` // 外键-企业id
-	ProductData  string `json:"productData"`  // json格式的产品分类
-	StatusCode   int    `json:"statusCode"`   // 状态码
+	ProdId      int64  `uri:"prodId"`       // 主键
+	UscId       string `json:"uscId"`       // 社会统一信用代码
+	ProductData string `json:"productData"` // json格式的产品分类
+	StatusCode  int    `json:"statusCode"`  // 状态码
 	common.ControlBy
 }
 
 func (s *EnterpriseProductUpdateReq) Generate(model *models.EnterpriseProduct) {
 	model.ProdId = s.ProdId
-	model.EnterpriseId = s.EnterpriseId
+	model.UscId = s.UscId
 	model.ProductData = s.ProductData
 	model.StatusCode = s.StatusCode
 	model.UpdateBy = s.UpdateBy

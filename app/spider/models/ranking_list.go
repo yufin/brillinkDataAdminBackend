@@ -6,7 +6,7 @@ import (
 
 // RankingList 排名榜单表
 type RankingList struct {
-	ListId                int64  `json:"listId" gorm:"primaryKey;comment:主键id"`
+	models.Model
 	ListTitle             string `json:"listTitle" gorm:"comment:榜单名称"`
 	ListType              string `json:"listType" gorm:"comment:榜单类型(品牌产品榜,企业榜,...)"`
 	ListSource            string `json:"listSource" gorm:"comment:排名来源(JsonArray格式;eg:["德本咨询", "eNet研究院", "互联网周刊"]"`
@@ -29,5 +29,5 @@ func (e *RankingList) Generate() models.ActiveRecord {
 }
 
 func (e *RankingList) GetId() interface{} {
-	return e.ListId
+	return e.Id
 }

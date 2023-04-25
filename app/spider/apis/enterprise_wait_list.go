@@ -24,10 +24,9 @@ type EnterpriseWaitList struct {
 // @Tags 待爬取列表
 // @Param id query int64 false "主键id"
 // @Param enterpriseName query string false "企业名称"
-// @Param unifiedSocialCreditCode query string false "纳税人识别号"
+// @Param uscId query string false "社会统一信用代码"
 // @Param priority query int false "优先级"
 // @Param qccUrl query string false "qcc主体网址"
-// @Param enterpriseId query string false "企业uuid4"
 // @Param statusCode query int false "数据爬取状态码"
 // @Param source query string false "来源备注"
 // @Param deleted_at query time.Time false "删除时间"

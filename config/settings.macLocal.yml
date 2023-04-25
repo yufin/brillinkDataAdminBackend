@@ -11,7 +11,8 @@ settings:
     driver: mysql
     source: root:adminpassword@tcp(localhost:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
     registers:
-      - source: root:adminpassword@tcp(localhost:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+      - sources:
+          - 'root:adminpassword@tcp(localhost:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
         replicas:
           - 'root:adminpassword@tcp(localhost:3306)/data_spider?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
         tables:

@@ -23,8 +23,8 @@ type EnterpriseRanking struct {
 // @Description 获取企业榜单排名数据列表
 // @Tags 企业榜单排名数据
 // @Param rankId query int64 false "主键"
-// @Param enterpriseId query int64 false "外键(enterprise表的id)"
-// @Param rankingListId query int64 false "外键(enterprise_ranking_list表的id)"
+// @Param uscId query string false "社会统一信用代码"
+// @Param listId query int64 false "外键(enterprise_ranking_list表的id)"
 // @Param rankingPosition query int false "榜内位置"
 // @Param rankingEnterpriseTitle query string false "榜单中的企业名称"
 // @Param create_by query string false "创建人"

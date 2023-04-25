@@ -20,7 +20,7 @@ type EnterpriseCertificationGetPageReq struct {
 	CertificationTermStart time.Time `form:"certificationTermStart"  search:"type:;column:certification_term_start;table:enterprise_certification" comment:"有效期起"`
 	CertificationTermEnd   time.Time `form:"certificationTermEnd"  search:"type:;column:certification_term_end;table:enterprise_certification" comment:"有效期至"`
 	CertificationAuthority string    `form:"certificationAuthority"  search:"type:;column:certification_authority;table:enterprise_certification" comment:"发证机关"`
-	EnterpriseId           int64     `form:"enterpriseId"  search:"type:;column:enterprise_id;table:enterprise_certification" comment:"外键(enterprise表的id)"`
+	UscId                  string    `form:"uscId"  search:"type:;column:usc_id;table:enterprise_certification" comment:"社会统一信用代码"`
 	StatusCode             int64     `form:"statusCode"  search:"type:;column:status_code;table:enterprise_certification" comment:"状态标识码"`
 	EnterpriseCertificationPageOrder
 }
@@ -36,7 +36,7 @@ type EnterpriseCertificationPageOrder struct {
 	CertificationTermStart time.Time `form:"certificationTermStartOrder"  search:"type:order;column:certification_term_start;table:enterprise_certification"`
 	CertificationTermEnd   time.Time `form:"certificationTermEndOrder"  search:"type:order;column:certification_term_end;table:enterprise_certification"`
 	CertificationAuthority string    `form:"certificationAuthorityOrder"  search:"type:order;column:certification_authority;table:enterprise_certification"`
-	EnterpriseId           int64     `form:"enterpriseIdOrder"  search:"type:order;column:enterprise_id;table:enterprise_certification"`
+	UscId                  string    `form:"uscIdOrder"  search:"type:order;column:usc_id;table:enterprise_certification"`
 	StatusCode             int64     `form:"statusCodeOrder"  search:"type:order;column:status_code;table:enterprise_certification"`
 }
 
@@ -55,7 +55,7 @@ type EnterpriseCertificationGetResp struct {
 	CertificationTermStart time.Time `json:"certificationTermStart"` // 有效期起
 	CertificationTermEnd   time.Time `json:"certificationTermEnd"`   // 有效期至
 	CertificationAuthority string    `json:"certificationAuthority"` // 发证机关
-	EnterpriseId           int64     `json:"enterpriseId"`           // 外键(enterprise表的id)
+	UscId                  string    `json:"uscId"`                  // 社会统一信用代码
 	StatusCode             int64     `json:"statusCode"`             // 状态标识码
 	common.ControlBy
 }
@@ -71,7 +71,7 @@ func (s *EnterpriseCertificationGetResp) Generate(model *models.EnterpriseCertif
 	s.CertificationTermStart = model.CertificationTermStart
 	s.CertificationTermEnd = model.CertificationTermEnd
 	s.CertificationAuthority = model.CertificationAuthority
-	s.EnterpriseId = model.EnterpriseId
+	s.UscId = model.UscId
 	s.StatusCode = model.StatusCode
 	s.CreateBy = model.CreateBy
 }
@@ -87,7 +87,7 @@ type EnterpriseCertificationInsertReq struct {
 	CertificationTermStart time.Time `json:"certificationTermStart"` // 有效期起
 	CertificationTermEnd   time.Time `json:"certificationTermEnd"`   // 有效期至
 	CertificationAuthority string    `json:"certificationAuthority"` // 发证机关
-	EnterpriseId           int64     `json:"enterpriseId"`           // 外键(enterprise表的id)
+	UscId                  string    `json:"uscId"`                  // 社会统一信用代码
 	StatusCode             int64     `json:"statusCode"`             // 状态标识码
 	common.ControlBy
 }
@@ -103,7 +103,7 @@ func (s *EnterpriseCertificationInsertReq) Generate(model *models.EnterpriseCert
 	model.CertificationTermStart = s.CertificationTermStart
 	model.CertificationTermEnd = s.CertificationTermEnd
 	model.CertificationAuthority = s.CertificationAuthority
-	model.EnterpriseId = s.EnterpriseId
+	model.UscId = s.UscId
 	model.StatusCode = s.StatusCode
 	model.CreateBy = s.CreateBy
 }
@@ -123,7 +123,7 @@ type EnterpriseCertificationUpdateReq struct {
 	CertificationTermStart time.Time `json:"certificationTermStart"` // 有效期起
 	CertificationTermEnd   time.Time `json:"certificationTermEnd"`   // 有效期至
 	CertificationAuthority string    `json:"certificationAuthority"` // 发证机关
-	EnterpriseId           int64     `json:"enterpriseId"`           // 外键(enterprise表的id)
+	UscId                  string    `json:"uscId"`                  // 社会统一信用代码
 	StatusCode             int64     `json:"statusCode"`             // 状态标识码
 	common.ControlBy
 }
@@ -139,7 +139,7 @@ func (s *EnterpriseCertificationUpdateReq) Generate(model *models.EnterpriseCert
 	model.CertificationTermStart = s.CertificationTermStart
 	model.CertificationTermEnd = s.CertificationTermEnd
 	model.CertificationAuthority = s.CertificationAuthority
-	model.EnterpriseId = s.EnterpriseId
+	model.UscId = s.UscId
 	model.StatusCode = s.StatusCode
 	model.UpdateBy = s.UpdateBy
 }

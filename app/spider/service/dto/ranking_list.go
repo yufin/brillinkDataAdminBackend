@@ -9,7 +9,7 @@ import (
 type RankingListGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	ListId                int64  `form:"listId"  search:"type:;column:list_id;table:ranking_list" comment:"主键id"`
+	Id                    int64  `form:"id"  search:"type:;column:id;table:ranking_list" comment:"主键id"`
 	ListTitle             string `form:"listTitle"  search:"type:;column:list_title;table:ranking_list" comment:"榜单名称"`
 	ListType              string `form:"listType"  search:"type:;column:list_type;table:ranking_list" comment:"榜单类型(品牌产品榜,企业榜,...)"`
 	ListSource            string `form:"listSource"  search:"type:;column:list_source;table:ranking_list" comment:"排名来源(JsonArray格式;eg:["德本咨询", "eNet研究院", "互联网周刊"]"`
@@ -24,7 +24,7 @@ type RankingListGetPageReq struct {
 }
 
 type RankingListPageOrder struct {
-	ListId                int64  `form:"listIdOrder"  search:"type:order;column:list_id;table:ranking_list"`
+	Id                    int64  `form:"idOrder"  search:"type:order;column:id;table:ranking_list"`
 	ListTitle             string `form:"listTitleOrder"  search:"type:order;column:list_title;table:ranking_list"`
 	ListType              string `form:"listTypeOrder"  search:"type:order;column:list_type;table:ranking_list"`
 	ListSource            string `form:"listSourceOrder"  search:"type:order;column:list_source;table:ranking_list"`
@@ -40,7 +40,7 @@ func (m *RankingListGetPageReq) GetNeedSearch() interface{} {
 }
 
 type RankingListGetResp struct {
-	ListId                int64  `json:"listId"`                // 主键id
+	Id                    int64  `json:"id"`                    // 主键id
 	ListTitle             string `json:"listTitle"`             // 榜单名称
 	ListType              string `json:"listType"`              // 榜单类型(品牌产品榜,企业榜,...)
 	ListSource            string `json:"listSource"`            // 排名来源(JsonArray格式;eg:["德本咨询", "eNet研究院", "互联网周刊"]
@@ -53,7 +53,9 @@ type RankingListGetResp struct {
 }
 
 func (s *RankingListGetResp) Generate(model *models.RankingList) {
-	s.ListId = model.ListId
+	if s.Id == 0 {
+		s.Id = model.Id
+	}
 	s.ListTitle = model.ListTitle
 	s.ListType = model.ListType
 	s.ListSource = model.ListSource
@@ -66,7 +68,7 @@ func (s *RankingListGetResp) Generate(model *models.RankingList) {
 }
 
 type RankingListInsertReq struct {
-	ListId                int64  `json:"-"`                     // 主键id
+	Id                    int64  `json:"-"`                     // 主键id
 	ListTitle             string `json:"listTitle"`             // 榜单名称
 	ListType              string `json:"listType"`              // 榜单类型(品牌产品榜,企业榜,...)
 	ListSource            string `json:"listSource"`            // 排名来源(JsonArray格式;eg:["德本咨询", "eNet研究院", "互联网周刊"]
@@ -79,7 +81,9 @@ type RankingListInsertReq struct {
 }
 
 func (s *RankingListInsertReq) Generate(model *models.RankingList) {
-	model.ListId = s.ListId
+	if s.Id == 0 {
+		model.Model = common.Model{Id: s.Id}
+	}
 	model.ListTitle = s.ListTitle
 	model.ListType = s.ListType
 	model.ListSource = s.ListSource
@@ -92,11 +96,11 @@ func (s *RankingListInsertReq) Generate(model *models.RankingList) {
 }
 
 func (s *RankingListInsertReq) GetId() interface{} {
-	return s.ListId
+	return s.Id
 }
 
 type RankingListUpdateReq struct {
-	ListId                int64  `uri:"listId"`                 // 主键id
+	Id                    int64  `uri:"id"`                     // 主键id
 	ListTitle             string `json:"listTitle"`             // 榜单名称
 	ListType              string `json:"listType"`              // 榜单类型(品牌产品榜,企业榜,...)
 	ListSource            string `json:"listSource"`            // 排名来源(JsonArray格式;eg:["德本咨询", "eNet研究院", "互联网周刊"]
@@ -109,7 +113,9 @@ type RankingListUpdateReq struct {
 }
 
 func (s *RankingListUpdateReq) Generate(model *models.RankingList) {
-	model.ListId = s.ListId
+	if s.Id == 0 {
+		model.Model = common.Model{Id: s.Id}
+	}
 	model.ListTitle = s.ListTitle
 	model.ListType = s.ListType
 	model.ListSource = s.ListSource
@@ -122,16 +128,16 @@ func (s *RankingListUpdateReq) Generate(model *models.RankingList) {
 }
 
 func (s *RankingListUpdateReq) GetId() interface{} {
-	return s.ListId
+	return s.Id
 }
 
 // RankingListGetReq 功能获取请求参数
 type RankingListGetReq struct {
-	ListId int64 `uri:"listId"`
+	Id int64 `uri:"id"`
 }
 
 func (s *RankingListGetReq) GetId() interface{} {
-	return s.ListId
+	return s.Id
 }
 
 // RankingListDeleteReq 功能删除请求参数

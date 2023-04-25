@@ -10,7 +10,7 @@ import (
 
 func init() {
 	//routerCheckRole = append(routerCheckRole, registerEnterpriseWaitListRouter)
-	routerNoCheckRole = append(routerNoCheckRole, registerEnterpriseWaitListRouterNoAuth)
+	routerNoCheckRole = append(routerNoCheckRole, registerEnterpriseWaitListRouterNoCheck)
 }
 
 // registerEnterpriseWaitListRouter
@@ -26,7 +26,7 @@ func registerEnterpriseWaitListRouter(v1 *gin.RouterGroup, authMiddleware *jwtau
 	}
 }
 
-func registerEnterpriseWaitListRouterNoAuth(v1 *gin.RouterGroup) {
+func registerEnterpriseWaitListRouterNoCheck(v1 *gin.RouterGroup) {
 	api := apis.EnterpriseWaitList{}
 	r := v1.Group("/enterprise-wait-list")
 	{

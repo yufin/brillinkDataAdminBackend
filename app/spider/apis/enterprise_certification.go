@@ -32,7 +32,7 @@ type EnterpriseCertification struct {
 // @Param certificationTermStart query time.Time false "有效期起"
 // @Param certificationTermEnd query time.Time false "有效期至"
 // @Param certificationAuthority query string false "发证机关"
-// @Param enterpriseId query int64 false "外键(enterprise表的id)"
+// @Param uscId query string false "社会统一信用代码"
 // @Param statusCode query int64 false "状态标识码"
 // @Param created_at query time.Time false "创建时间"
 // @Param updated_at query time.Time false "更新时间"

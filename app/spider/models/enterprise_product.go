@@ -6,10 +6,10 @@ import (
 
 // EnterpriseProduct 企业产品
 type EnterpriseProduct struct {
-	ProdId       int64  `json:"prodId" gorm:"primaryKey;autoIncrement;comment:主键"`
-	EnterpriseId int64  `json:"enterpriseId" gorm:"comment:外键-企业id"`
-	ProductData  string `json:"productData" gorm:"comment:json格式的产品分类"`
-	StatusCode   int    `json:"statusCode" gorm:"comment:状态码"`
+	ProdId      int64  `json:"prodId" gorm:"primaryKey;autoIncrement;comment:主键"`
+	UscId       string `json:"uscId" gorm:"comment:社会统一信用代码"`
+	ProductData string `json:"productData" gorm:"comment:json格式的产品分类"`
+	StatusCode  int    `json:"statusCode" gorm:"comment:状态码"`
 	models.ModelTime
 	models.ControlBy
 }

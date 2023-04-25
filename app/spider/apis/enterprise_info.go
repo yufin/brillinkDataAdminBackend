@@ -48,7 +48,7 @@ type EnterpriseInfo struct {
 // @Param urlHomepage query string false "官网url"
 // @Param businessTermStart query time.Time false "营业期限开始"
 // @Param businessTermEnd query time.Time false "营业期限结束"
-// @Param enterpriseId query int64 false "外键(enterprise_ids表的id)"
+// @Param uscId query string false "社会统一信用代码"
 // @Param statusCode query int false "状态标识码"
 // @Param createdAt query time.Time false "创建时间"
 // @Param updated_at query time.Time false "更新时间"

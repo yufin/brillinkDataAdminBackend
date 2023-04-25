@@ -23,7 +23,7 @@ type EnterpriseProduct struct {
 // @Description 获取企业产品列表
 // @Tags 企业产品
 // @Param prodId query int64 false "主键"
-// @Param enterpriseId query int64 false "外键-企业id"
+// @Param uscId query string false "社会统一信用代码"
 // @Param productData query string false "json格式的产品分类"
 // @Param statusCode query int false "状态码"
 // @Param deleted_at query time.Time false "删除时间"

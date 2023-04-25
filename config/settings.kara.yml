@@ -11,11 +11,18 @@ settings:
     driver: mysql
     source: root:adminpassword@tcp(192.168.31.158:3306)/brillink_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
     registers:
-      - source: root:adminpassword@tcp(192.168.31.158:3306)/brillink_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+      - sources:
+          - 'root:adminpassword@tcp(192.168.31.158:3306)/data_warehouse?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
         replicas:
-          - 'root:adminpassword@tcp(192.168.31.158:3306)/data_spider?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
+          - 'root:adminpassword@tcp(192.168.31.158:3306)/data_warehouse?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
         tables:
           - 'enterprise_wait_list'
+          - 'enterprise'
+          - 'enterprise_info'
+          - 'enterprise_certification'
+          - 'enterprise_ranking'
+          - 'enterprise_product'
+          - 'ranking_list'
   gen:
     dbname: brillink_admin
     frontpath: ../graphAdminWebserver/src

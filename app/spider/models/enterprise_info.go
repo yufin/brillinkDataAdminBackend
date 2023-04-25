@@ -33,7 +33,7 @@ type EnterpriseInfo struct {
 	UrlHomepage                   string    `json:"urlHomepage" gorm:"comment:官网url"`
 	BusinessTermStart             time.Time `json:"businessTermStart" gorm:"comment:营业期限开始"`
 	BusinessTermEnd               time.Time `json:"businessTermEnd" gorm:"comment:营业期限结束"`
-	EnterpriseId                  int64     `json:"enterpriseId" gorm:"comment:外键(enterprise_ids表的id)"`
+	UscId                         string    `json:"uscId" gorm:"comment:社会统一信用代码"`
 	StatusCode                    int       `json:"statusCode" gorm:"comment:状态标识码"`
 	models.ModelTime
 	models.ControlBy

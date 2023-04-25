@@ -22,7 +22,7 @@ type RankingList struct {
 // @Summary 获取排名榜单表列表
 // @Description 获取排名榜单表列表
 // @Tags 排名榜单表
-// @Param listId query int64 false "主键id"
+// @Param id query int64 false "主键id"
 // @Param listTitle query string false "榜单名称"
 // @Param listType query string false "榜单类型(品牌产品榜,企业榜,...)"
 // @Param listSource query string false "排名来源(JsonArray格式;eg:["德本咨询", "eNet研究院", "互联网周刊"]"
