@@ -89,10 +89,13 @@ func (e *SysRole) Insert(c *gin.Context, r *dto.SysRoleInsertReq, cb *casbin.Syn
 		err = errors.WithStack(err)
 		return err
 	}
-	tx.Commit()
+
 	var polices = make([][]string, 0)
 	mp := make(map[string]int, 0)
 	for _, menu := range *dataMenu {
+		if menu.SysApi == nil {
+			continue
+		}
 		for _, api := range *menu.SysApi {
 			if _, ok := mp[data.RoleKey+api.Path+api.Method]; !ok {
 				mp[data.RoleKey+api.Path+api.Method] = 1
@@ -100,11 +103,13 @@ func (e *SysRole) Insert(c *gin.Context, r *dto.SysRoleInsertReq, cb *casbin.Syn
 			}
 		}
 	}
+
 	_, err = cb.AddNamedPolicies("p", polices)
 	if err != nil {
 		err = errors.WithStack(err)
 		e.Log.Errorf("add named policy error:%s", err)
 	}
+	tx.Commit()
 	after, _ := json.Marshal(data)
 	middleware.SetContextOperateLog(c,
 		"新增",
