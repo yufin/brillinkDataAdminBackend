@@ -2,6 +2,7 @@ package apis
 
 import (
 	"github.com/gin-gonic/gin"
+	"strconv"
 
 	"go-admin/app/spider/models"
 	"go-admin/app/spider/service"
@@ -9,6 +10,7 @@ import (
 
 	"go-admin/common/actions"
 	"go-admin/common/apis"
+	dtoCommon "go-admin/common/dto"
 	"go-admin/common/exception"
 	"go-admin/common/jwtauth/user"
 	_ "go-admin/common/response/antd"
@@ -16,6 +18,58 @@ import (
 
 type EnterpriseWaitList struct {
 	apis.Api
+}
+
+//
+
+// InsertMatchedUrl 插入匹配的url
+// @Summary 通过id与名称插入匹配的url,
+
+// GetEnterprisePageWaitingForMatch 获取企业等待匹配列表
+// @Summary 获取企业等待匹配url的列表: 条件: qccUrl为空字符串, statusCode=0
+// @Param pageSize query int false "页条数"
+// @Param pageIndex query int false "页码"
+// @Param statusCode query int 状态码: 1.等待匹配url 2.等待爬取主体信息(enterprise_info), 3.等待爬取其他信息(tag,industry...)，4.完成爬取
+
+func (e EnterpriseWaitList) GetEnterprisePageWaitingForMatch(c *gin.Context) {
+
+	paginationReq := dtoCommon.Pagination{}
+	//req := dto.EnterpriseWaitListGetPageReq{}
+	s := service.EnterpriseWaitList{}
+	err := e.MakeContext(c).
+		MakeOrm().Bind(&paginationReq).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
+		return
+	}
+	//statusCodeParam, _ := strconv.Atoi(c.Query("statusCode"))
+	statusCodeParam, err := strconv.Atoi(c.Query("statusCode"))
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(500, "QueryParamStatusCodeParseFail", err))
+	}
+	req := dto.EnterpriseWaitListGetPageReq{
+		Pagination: paginationReq,
+		StatusCode: statusCodeParam,
+		//QccUrl: "-",
+	}
+	req.EnterpriseWaitListPageOrder.PriorityOrder = "desc"
+
+	p := actions.GetPermissionFromContext(c)
+	list := make([]models.EnterpriseWaitList, 0)
+	var count int64
+
+	err = s.GetPage(&req, p, &list, &count)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
+		return
+	}
+
+	e.PageOK(list, count, paginationReq.GetPageIndex(), paginationReq.GetPageSize())
 }
 
 // GetPage 获取待爬取列表列表

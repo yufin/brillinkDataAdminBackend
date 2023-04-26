@@ -20,13 +20,9 @@ type EnterpriseWaitListGetPageReq struct {
 }
 
 type EnterpriseWaitListPageOrder struct {
-	Id             int64  `form:"idOrder"  search:"type:order;column:id;table:enterprise_wait_list"`
-	EnterpriseName string `form:"enterpriseNameOrder"  search:"type:order;column:enterprise_name;table:enterprise_wait_list"`
-	UscId          string `form:"uscIdOrder"  search:"type:order;column:usc_id;table:enterprise_wait_list"`
-	Priority       int    `form:"priorityOrder"  search:"type:order;column:priority;table:enterprise_wait_list"`
-	QccUrl         string `form:"qccUrlOrder"  search:"type:order;column:qcc_url;table:enterprise_wait_list"`
-	StatusCode     int    `form:"statusCodeOrder"  search:"type:order;column:status_code;table:enterprise_wait_list"`
-	Source         string `form:"sourceOrder"  search:"type:order;column:source;table:enterprise_wait_list"`
+	IdOrder         string `form:"idOrder"  search:"type:order;column:id;table:enterprise_wait_list"`
+	PriorityOrder   string `form:"priorityOrder"  search:"type:order;column:priority;table:enterprise_wait_list"`
+	StatusCodeOrder string `form:"statusCodeOrder"  search:"type:order;column:status_code;table:enterprise_wait_list"`
 }
 
 func (m *EnterpriseWaitListGetPageReq) GetNeedSearch() interface{} {
