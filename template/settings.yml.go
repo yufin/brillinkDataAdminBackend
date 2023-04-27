@@ -20,6 +20,10 @@ var Yml = `settings:
   database:
     driver: mysql
     source: {{.User}}:{{.Password}}@tcp({{.Host}}:{{.Port}})/{{.DatabaseName}}?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+  databases:
+    'localhost:8888':
+      driver: mysql
+      source: {{.User}}:{{.Password}}@tcp({{.Host}}:{{.Port}})/{{.DatabaseName}}?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
   gen:
     dbname: {{.DatabaseName}}
     frontpath: ../go-admin-ui/src
