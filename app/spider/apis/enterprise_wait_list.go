@@ -2,11 +2,13 @@ package apis
 
 import (
 	"github.com/gin-gonic/gin"
-	"strconv"
-
+	"github.com/go-sql-driver/mysql"
 	"go-admin/app/spider/models"
 	"go-admin/app/spider/service"
 	"go-admin/app/spider/service/dto"
+	"math"
+	"net/url"
+	"strconv"
 
 	"go-admin/common/actions"
 	"go-admin/common/apis"
@@ -20,17 +22,66 @@ type EnterpriseWaitList struct {
 	apis.Api
 }
 
-//
+// UpdateStatusCode 更新状态码
+// @Summary 更新状态码, 3检查info表信息是否健全,4.检查certification,industry,product,ranking表信息是否健全.
+func (e EnterpriseWaitList) UpdateStatusCode(c *gin.Context) {
 
-// InsertMatchedUrl 插入匹配的url
+}
+
+// UpdateQccUrls 插入匹配的url
 // @Summary 通过id与名称插入匹配的url,
+// @Description 修改待爬取列表
+// @Tags 待爬取列表
+// @Accept application/json
+// @Product application/json
+// @Param data body dto.EnterpriseWaitListUpdateReq true "body"
+// @Success 200 {object} antd.Response	"{"code": 200, "message": "修改成功"}"
+// @Router /api/v1/enterprise-wait-list/qccUrl/{id} [put]
+// @Security Bearer
+func (e EnterpriseWaitList) UpdateQccUrls(c *gin.Context) {
+	req := dto.EnterpriseWaitListUpdateReq{}
+	s := service.EnterpriseWaitList{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+	u, err := url.Parse(req.QccUrl)
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(500, "NotValidUrl", err))
+		return
+	}
+
+	var object models.EnterpriseWaitList
+	p := actions.GetPermissionFromContext(c)
+	err = s.Get(&dto.EnterpriseWaitListGetReq{Id: req.Id}, p, &object)
+	if err != nil {
+		panic(exception.WithMsg(50000, "GetEnterpriseWaitListFailWhileUpdateQccUrl", err))
+		return
+	}
+
+	req.StatusCode = int(math.Max(float64(object.StatusCode), float64(2)))
+	req.SetUpdateBy(int64(user.GetUserId(c)))
+	err = s.Update(&req, p)
+	if err != nil {
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+	e.OK(req.GetId())
+}
 
 // GetEnterprisePageWaitingForMatch 获取企业等待匹配列表
 // @Summary 获取企业等待匹配url的列表: 条件: qccUrl为空字符串, statusCode=0
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Param statusCode query int 状态码: 1.等待匹配url 2.等待爬取主体信息(enterprise_info), 3.等待爬取其他信息(tag,industry...)，4.完成爬取
-
+// @Router /api/v1/enterprise-wait-lit/waiting [get]
 func (e EnterpriseWaitList) GetEnterprisePageWaitingForMatch(c *gin.Context) {
 
 	paginationReq := dtoCommon.Pagination{}
@@ -50,6 +101,7 @@ func (e EnterpriseWaitList) GetEnterprisePageWaitingForMatch(c *gin.Context) {
 	if err != nil {
 		e.Logger.Error(err)
 		panic(exception.WithMsg(500, "QueryParamStatusCodeParseFail", err))
+		return
 	}
 	req := dto.EnterpriseWaitListGetPageReq{
 		Pagination: paginationReq,
@@ -178,16 +230,44 @@ func (e EnterpriseWaitList) Insert(c *gin.Context) {
 		panic(exception.WithMsg(50000, "InsertEnterpriseWaitListFail", err))
 		return
 	}
-	// 设置创建人
-	req.SetCreateBy(int64(user.GetUserId(c)))
 
-	err = s.Insert(&req)
-	if err != nil {
-		panic(exception.WithMsg(50000, "InsertEnterpriseWaitListFail", err))
-		return
+	if req.Priority == 0 {
+		req.Priority = 1
 	}
 
-	e.OK(req.GetId())
+	u, err := url.Parse(req.QccUrl)
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		req.StatusCode = 1 // not valid url
+	} else {
+		req.StatusCode = 2
+	}
+	req.SetCreateBy(int64(user.GetUserId(c)))
+
+	p := actions.GetPermissionFromContext(c)
+	err = s.Insert(&req)
+	if err != nil {
+		if err.(*mysql.MySQLError).Number == 1062 {
+			// column not unique
+			list := make([]models.EnterpriseWaitList, 0)
+			var count int64
+			err = s.GetPage(&dto.EnterpriseWaitListGetPageReq{
+				EnterpriseName: req.EnterpriseName, UscId: req.UscId}, p, &list, &count)
+			if err != nil {
+				e.Logger.Error(err)
+				panic(exception.WithMsg(50000, "InsertEnterpriseWaitListFail", err))
+				return
+			}
+			if len(list) > 0 {
+				e.OK(list[0])
+				return
+			}
+		} else {
+			e.Logger.Error(err)
+			panic(exception.WithMsg(500, "InsertEnterpriseWaitListFail", err))
+			return
+		}
+	}
+	e.OK(req)
 }
 
 // Update 修改待爬取列表

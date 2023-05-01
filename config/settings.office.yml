@@ -42,11 +42,17 @@ settings:
     memory:
       poolSize: 100
   extend:
+    amap:
+      key:
     graph:
       neo4j:
         activate: true
         uri: neo4j://10.0.203.73:7687
         username: neo4j
         password: password
-    amap:
-      key: 
+    vzoom:
+      sftp:
+        host: 120.132.117.50
+        port: '8155'
+        username: lhgyl
+        password: lhgyl2022

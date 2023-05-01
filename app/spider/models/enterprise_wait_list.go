@@ -7,8 +7,8 @@ import (
 // EnterpriseWaitList 待爬取列表
 type EnterpriseWaitList struct {
 	models.Model
-	EnterpriseName string `json:"enterpriseName" gorm:"default:'-';comment:企业名称"`
-	UscId          string `json:"uscId" gorm:"default:'-';comment:社会统一信用代码"`
+	EnterpriseName string `json:"enterpriseName" gorm:"default:null;comment:企业名称"`
+	UscId          string `json:"uscId" gorm:"default:null;comment:社会统一信用代码"`
 	Priority       int    `json:"priority" gorm:"default:1;comment:优先级"`
 	QccUrl         string `json:"qccUrl" gorm:"default:'-';comment:qcc主体网址"`
 	StatusCode     int    `json:"statusCode" gorm:"default:1;comment:数据爬取状态码"`

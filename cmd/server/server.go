@@ -157,6 +157,7 @@ func run() error {
 			log.Println("Neo4j Driver Closed")
 		}
 	}
+	//rskc.CloseShhConn()
 
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal("Server Shutdown:", err)
@@ -167,7 +168,7 @@ func run() error {
 }
 
 func tip() {
-	usageStr := `欢迎使用 ` + pkg.Green(`go-admin-pro `+global.Version) + ` 可以使用 ` + pkg.Red(`-h`) + ` 查看命令`
+	usageStr := `欢迎使用 ` + pkg.Green(`brillink-admin-pro `+global.Version) + ` 可以使用 ` + pkg.Red(`-h`) + ` 查看命令`
 	fmt.Printf("%s \n\n", usageStr)
 }
 

@@ -12,6 +12,7 @@ var ExtConfig Extend
 type Extend struct {
 	AMap  AMap // 这里配置对应配置文件的结构即可
 	Graph Graph
+	Vzoom Vzoom
 }
 
 type AMap struct {
@@ -25,6 +26,17 @@ type Graph struct {
 type Neo4j struct {
 	Activate bool
 	Uri      string
+	Username string
+	Password string
+}
+
+type Vzoom struct {
+	Sftp Sftp
+}
+
+type Sftp struct {
+	Host     string
+	Port     string
 	Username string
 	Password string
 }

@@ -30,10 +30,11 @@ func registerEnterpriseWaitListRouterNoCheck(v1 *gin.RouterGroup) {
 	api := apis.EnterpriseWaitList{}
 	r := v1.Group("/enterprise-wait-list")
 	{
-		r.GET("", api.GetPage)
 		r.GET("/waiting", api.GetEnterprisePageWaitingForMatch)
-		r.GET("/:id", api.Get)
+		r.PUT("/qccUrl/:id", api.UpdateQccUrls)
 		r.POST("", api.Insert)
+		r.GET("", api.GetPage)
+		r.GET("/:id", api.Get)
 		r.PUT("/:id", api.Update)
 		r.DELETE("", api.Delete)
 	}

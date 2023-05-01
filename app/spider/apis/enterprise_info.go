@@ -145,6 +145,7 @@ func (e EnterpriseInfo) Insert(c *gin.Context) {
 		panic(exception.WithMsg(50000, "InsertEnterpriseInfoFail", err))
 		return
 	}
+	req.StatusCode = 1
 	// 设置创建人
 	req.SetCreateBy(int64(user.GetUserId(c)))
 

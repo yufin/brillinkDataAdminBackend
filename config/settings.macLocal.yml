@@ -14,9 +14,16 @@ settings:
       - sources:
           - 'root:adminpassword@tcp(localhost:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
         replicas:
-          - 'root:adminpassword@tcp(localhost:3306)/data_spider?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
+          - 'root:adminpassword@tcp(localhost:3306)/data_warehouse?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
         tables:
-          - 'crawl_wait_list'
+          - 'enterprise_wait_list'
+          - 'enterprise'
+          - 'enterprise_info'
+          - 'enterprise_certification'
+          - 'enterprise_ranking'
+          - 'enterprise_product'
+          - 'ranking_list'
+          - 'rskc_origin_content'
   gen:
     dbname: go_admin
     frontpath: ../graphAdminWebserver/src
@@ -42,5 +49,11 @@ settings:
         uri: neo4j://192.168.31.158:7687
         username: neo4j
         password: password
+    vzoom:
+      sftp:
+        host: 120.132.117.50
+        port: '8155'
+        username: lhgyl
+        password: lhgyl2022
     amap:
       key: 
