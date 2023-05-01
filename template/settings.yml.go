@@ -15,11 +15,11 @@ var Yml = `settings:
     mode: dev
     name: testApp
     port: 8888
-    readtimeout: 100
-    writertimeout: 200
+    readtimeout: 10000
+    writertimeout: 20000
   database:
     driver: mysql
-    source: {{.User}}:{{.Password}}@tcp({{.Host}}:{{.Port}})/{{.DatabaseName}}?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+    source: {{.User}}:{{.Password}}@tcp({{.Host}}:{{.Port}})/{{.DatabaseName}}?charset=utf8mb4&parseTime=True&loc=Local&timeout=100000ms
   gen:
     dbname: {{.DatabaseName}}
     frontpath: ../go-admin-ui/src
