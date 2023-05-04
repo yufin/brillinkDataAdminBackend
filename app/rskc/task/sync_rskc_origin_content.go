@@ -17,8 +17,9 @@ import (
 )
 
 const (
-	UscIdPattern     = `^[a-zA-Z0-9]{18}$`
-	YearMonthPattern = `^[0-9]{6}$`
+	UscIdPattern         = `^[a-zA-Z0-9]{18}$`
+	YearMonthPattern     = `^[0-9]{6}$`
+	ConcurrencyLimit int = 5
 )
 
 type SyncOriginContentTask struct {
@@ -65,7 +66,9 @@ func SyncOriginJsonContent() error {
 
 	// 读取数据库，找出不存在数据库中的文件信息，存入数据库
 	var wg sync.WaitGroup
+	limitCh := make(chan struct{}, ConcurrencyLimit)
 	for _, dirInfo := range dirInfos {
+		limitCh <- struct{}{}
 		wg.Add(1)
 		go func(dirInfoP *DirInfo) {
 			defer wg.Done()
@@ -73,6 +76,7 @@ func SyncOriginJsonContent() error {
 			if err != nil {
 				log.Errorf("CheckIfInfoRecorded Error: %s \r\n", err)
 			}
+			<-limitCh
 		}(&dirInfo)
 	}
 	wg.Wait()
