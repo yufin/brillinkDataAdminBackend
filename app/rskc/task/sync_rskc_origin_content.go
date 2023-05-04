@@ -90,6 +90,7 @@ func SyncOriginJsonContent() error {
 				UscId:             dirInfo.UscId,
 				YearMonth:         dirInfo.YearMonth,
 				OriginJsonContent: string(GetFileContentFromSftp(sftpClientP, dirInfo.DataFilePath)),
+				StatusCode:        1,
 				ControlBy:         models.ControlBy{CreateBy: 0},
 			}
 			err := s.Insert(&insertReq)
@@ -140,7 +141,7 @@ type DirInfo struct {
 func CheckIfInfoRecorded(dirInfo *DirInfo) error {
 	s := service.OriginContent{}
 	req := dto.OriginContentGetPageReq{
-		Pagination: cDto.Pagination{PageIndex: 1, PageSize: 10},
+		Pagination: cDto.Pagination{PageIndex: 1, PageSize: 100},
 		UscId:      dirInfo.UscId,
 		YearMonth:  dirInfo.YearMonth,
 	}

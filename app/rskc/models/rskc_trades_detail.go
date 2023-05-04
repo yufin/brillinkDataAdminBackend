@@ -19,7 +19,7 @@ type RskcTradesDetail struct {
 	TagProduct     string `json:"tagProduct" gorm:"comment:产品标签"`
 	TagList        string `json:"tagList" gorm:"comment:榜单标签"`
 	EnterpriseInfo string `json:"enterpriseInfo" gorm:"comment:企业信息"`
-	StatusCode     string `json:"statusCode" gorm:"comment:状态码"`
+	StatusCode     string `json:"statusCode" gorm:"comment:状态码: 1.待确认企业数据已采集，2.待采集，已经同步至waitList, 3.采集完成, 4.匹配并录入完成"`
 	models.ModelTime
 	models.ControlBy
 }
