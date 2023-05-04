@@ -17,6 +17,8 @@ func main() {
 	cmd.Execute()
 }
 
+// __________________________________________________________________________
+
 // cmd note
 // -a true # 同步接口信息
 // go run main.go app -n appname
