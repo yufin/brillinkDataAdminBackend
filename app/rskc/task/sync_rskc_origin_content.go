@@ -5,11 +5,13 @@ import (
 	log "github.com/go-admin-team/go-admin-core/logger"
 	"github.com/google/uuid"
 	"github.com/pkg/sftp"
+	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service"
 	"go-admin/app/rskc/service/dto"
 	"go-admin/app/rskc/utils"
+	"go-admin/common/actions"
 	cDto "go-admin/common/dto"
-	"go-admin/common/models"
+	cModels "go-admin/common/models"
 	"io/ioutil"
 	"path"
 	"regexp"
@@ -22,16 +24,9 @@ const (
 	ConcurrencyLimit int = 5
 )
 
-type SyncOriginContentTask struct {
-}
-
-func (t SyncOriginContentTask) Exec(arg interface{}) error {
-	err := SyncOriginJsonContent()
-	return err
-}
-
 // SyncOriginJsonContent 同步微众企业风控数据json数据至数据库
-func SyncOriginJsonContent() error {
+func SyncOriginJsonContent(s *service.OriginContent, p *actions.DataPermission) error {
+	// todo: 添加content校验逻辑,未通过校验不入库
 	// 1. 获取sftp连接
 	sftpClientP, err := utils.GetSftpClient()
 	if err != nil {
@@ -66,23 +61,28 @@ func SyncOriginJsonContent() error {
 
 	// 读取数据库，找出不存在数据库中的文件信息，存入数据库
 	var wg sync.WaitGroup
+	var mutex sync.Mutex
 	limitCh := make(chan struct{}, ConcurrencyLimit)
-	for _, dirInfo := range dirInfos {
+
+	for i, _ := range dirInfos {
 		limitCh <- struct{}{}
 		wg.Add(1)
-		go func(dirInfoP *DirInfo) {
+		go func(index int, sOriginContent *service.OriginContent, dataP *actions.DataPermission) {
 			defer wg.Done()
-			err := CheckIfInfoRecorded(dirInfoP)
+			mutex.Lock()
+			dirInfoP := &dirInfos[index]
+			mutex.Unlock()
+
+			err := CheckIfInfoRecorded(dirInfoP, sOriginContent, dataP)
 			if err != nil {
 				log.Errorf("CheckIfInfoRecorded Error: %s \r\n", err)
 			}
 			<-limitCh
-		}(&dirInfo)
+		}(i, s, p)
 	}
 	wg.Wait()
 
 	// 遍历dirInfos,读取文件录入数据库
-	s := service.OriginContent{}
 	for _, dirInfo := range dirInfos {
 		if dirInfo.notExist == true {
 			insertReq := dto.OriginContentInsertReq{
@@ -91,7 +91,7 @@ func SyncOriginJsonContent() error {
 				YearMonth:         dirInfo.YearMonth,
 				OriginJsonContent: string(GetFileContentFromSftp(sftpClientP, dirInfo.DataFilePath)),
 				StatusCode:        1,
-				ControlBy:         models.ControlBy{CreateBy: 0},
+				ControlBy:         cModels.ControlBy{CreateBy: 0},
 			}
 			err := s.Insert(&insertReq)
 			if err != nil {
@@ -138,22 +138,23 @@ type DirInfo struct {
 	notExist     bool
 }
 
-func CheckIfInfoRecorded(dirInfo *DirInfo) error {
-	s := service.OriginContent{}
+func CheckIfInfoRecorded(dirInfo *DirInfo, s *service.OriginContent, p *actions.DataPermission) error {
 	req := dto.OriginContentGetPageReq{
 		Pagination: cDto.Pagination{PageIndex: 1, PageSize: 100},
 		UscId:      dirInfo.UscId,
 		YearMonth:  dirInfo.YearMonth,
 	}
 	var count int64
-	err := s.CountByInfo(&req, &count)
+	list := make([]models.OriginContentInfo, 0)
+	err := s.GetPageWithoutContent(&req, p, &list, &count)
 	if err != nil {
+		log.Errorf("GetPageWithoutContent CheckIfInfoRecorded Error: %s \r\n", err)
 		return err
 	}
 	if count == 0 {
-		dirInfo.notExist = true
+		(*dirInfo).notExist = true
 	} else {
-		dirInfo.notExist = false
+		(*dirInfo).notExist = false
 	}
 	return nil
 }
@@ -178,10 +179,9 @@ func GetDirInfo(dirPath string, client *sftp.Client, dirInfos *[]DirInfo) {
 			return
 		}
 		*dirInfos = append(*dirInfos, DirInfo{
-			UscId:     uscId,
-			YearMonth: path.Base(dir),
-			DataFilePath: fmt.Sprintf(
-				"%s-%s", JsonFilePathArray[0][:4], JsonFilePathArray[0][4:]),
+			UscId:        uscId,
+			YearMonth:    fmt.Sprintf("%s-%s", path.Base(dir)[:4], path.Base(dir)[4:]),
+			DataFilePath: JsonFilePathArray[0],
 		})
 	}
 }

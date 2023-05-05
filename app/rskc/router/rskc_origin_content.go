@@ -17,5 +17,7 @@ func registerRskcOriginContentRouterNoCheck(v1 *gin.RouterGroup) {
 		r.GET("/temp", api.ParseJsonFile)
 		r.GET("", api.GetPage)
 		r.GET("/info", api.GetPageWithoutContent)
+		r.GET("/task/syncOriginContent", api.TaskSyncOriginContent)
+		r.GET("/noContent", api.GetPageWithoutContent)
 	}
 }

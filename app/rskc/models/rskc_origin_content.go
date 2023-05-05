@@ -7,7 +7,7 @@ type OriginContent struct {
 	UscId             string `json:"uscId" gorm:"comment:社会统一信用代码"`
 	YearMonth         string `json:"yearMonth" gorm:"size:10;comment:数据更新年月(eg:2020-08);"`
 	OriginJsonContent string `json:"originJsonContent" gorm:"comment:json数据字符串"`
-	StatusCode        int    `json:"status_code" gorm:"comment:状态码(1:待匹配标签,2:匹配完成)"`
+	StatusCode        int    `json:"status_code" gorm:"comment:状态码(1:待解析录入其他表,2:解析并录入完成,)"`
 	models.ModelTime
 	models.ControlBy
 }

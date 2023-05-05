@@ -23,6 +23,8 @@ settings:
           - 'enterprise_ranking'
           - 'enterprise_product'
           - 'ranking_list'
+          - 'rskc_origin_content'
+          - 'rskc_trades_detail'
   gen:
     dbname: go_admin
     frontpath: ../graphAdminWebserver/src

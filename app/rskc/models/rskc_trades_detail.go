@@ -14,12 +14,12 @@ type RskcTradesDetail struct {
 	RatioAmountTax string `json:"ratioAmountTax" gorm:"comment:税额占比"`
 	SumAmountTax   string `json:"sumAmountTax" gorm:"comment:税总额"`
 	DetailType     int    `json:"detailType" gorm:"comment:1:customer_12,2:customer_24,3:supplier_12,4:supplier_24"`
-	TagIndustry    string `json:"tagIndustry" gorm:"comment:行业标签"`
-	TagAuthorized  string `json:"tagAuthorized" gorm:"comment:认证标签"`
-	TagProduct     string `json:"tagProduct" gorm:"comment:产品标签"`
-	TagList        string `json:"tagList" gorm:"comment:榜单标签"`
-	EnterpriseInfo string `json:"enterpriseInfo" gorm:"comment:企业信息"`
-	StatusCode     string `json:"statusCode" gorm:"comment:状态码: 1.待确认企业数据已采集，2.待采集，已经同步至waitList, 3.采集完成, 4.匹配并录入完成"`
+	TagIndustry    string `json:"tagIndustry" gorm:"default:'-';comment:行业标签"`
+	TagAuthorized  string `json:"tagAuthorized" gorm:"default:'-';comment:认证标签"`
+	TagProduct     string `json:"tagProduct" gorm:"default:'-';comment:产品标签"`
+	TagList        string `json:"tagList" gorm:"default:'-';comment:榜单标签"`
+	EnterpriseInfo string `json:"enterpriseInfo" gorm:"default:'-';comment:企业信息"`
+	StatusCode     int    `json:"statusCode" gorm:"default:'-';comment:状态码: 1.待确认企业数据已采集，2.待采集，已经同步至waitList, 3.采集完成, 4.匹配并录入完成"`
 	models.ModelTime
 	models.ControlBy
 }

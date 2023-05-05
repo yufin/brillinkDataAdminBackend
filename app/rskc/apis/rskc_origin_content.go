@@ -6,6 +6,7 @@ import (
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service"
 	"go-admin/app/rskc/service/dto"
+	"go-admin/app/rskc/task"
 	"go-admin/app/rskc/utils"
 	"go-admin/common/actions"
 	"go-admin/common/apis"
@@ -83,4 +84,22 @@ func (e RskcOriginContent) GetPageWithoutContent(c *gin.Context) {
 	}
 
 	e.PageOK(list, count, req.GetPageIndex(), req.GetPageSize())
+}
+
+func (e RskcOriginContent) TaskSyncOriginContent(c *gin.Context) {
+	s := service.OriginContent{}
+	err := e.MakeContext(c).MakeOrm().MakeService(&s.Service).Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "TaskSyncOriginContentFail", err))
+		return
+	}
+	p := actions.GetPermissionFromContext(c)
+	err = task.SyncOriginJsonContent(&s, p)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "TaskSyncOriginContentFail", err))
+		return
+	}
+	e.OK(nil)
 }

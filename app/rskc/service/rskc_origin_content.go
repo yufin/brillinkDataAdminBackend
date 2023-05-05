@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/pkg/errors"
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service/dto"
 	"go-admin/common/actions"
@@ -63,14 +64,36 @@ func (e *OriginContent) GetPageWithoutContent(c *dto.OriginContentGetPageReq, p 
 }
 
 func (e *OriginContent) CountByInfo(c *dto.OriginContentGetPageReq, count *int64) error {
+	var list []models.OriginContentInfo
 	var err error
 	var data models.OriginContentInfo
 	err = e.Orm.Model(&data).Scopes(
 		cDto.MakeCondition(c.GetNeedSearch()),
-	).Count(count).Error
+		actions.Permission(data.TableName(), nil),
+	).Find(&list).Limit(-1).Offset(-1).Count(count).Error
 	if err != nil {
 		e.Log.Errorf("RskOriginContent CountByInfo error:%s \r\n", err)
 		return err
+	}
+	return nil
+}
+
+func (e *OriginContent) Update(c *dto.OriginContentUpdateReq, p *actions.DataPermission) error {
+	var err error
+	var data models.OriginContent
+	e.Orm.Scopes(
+		actions.Permission(data.TableName(), p),
+	).First(&data, c.GetId())
+	c.Generate(&data)
+
+	db := e.Orm.Save(&data)
+	if db.Error != nil {
+		err = errors.WithStack(db.Error)
+		e.Log.Errorf("RskcOriginContentService Save error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权更新该数据")
 	}
 	return nil
 }

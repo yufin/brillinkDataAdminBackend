@@ -42,3 +42,33 @@ type OriginContentPageOrder struct {
 func (m *OriginContentGetPageReq) GetNeedSearch() interface{} {
 	return *m
 }
+
+type OriginContentUpdateReq struct {
+	ContentId         string `json:"contentId"`
+	UscId             string `json:"uscId"`
+	YearMonth         string `json:"yearMonth"`
+	OriginJsonContent string `json:"originJsonContent"`
+	StatusCode        int    `json:"statusCode"`
+	common.ControlBy
+}
+
+func (s *OriginContentUpdateReq) Generate(model *models.OriginContent) {
+	model.ContentId = s.ContentId
+	model.UscId = s.UscId
+	model.YearMonth = s.YearMonth
+	model.OriginJsonContent = s.OriginJsonContent
+	model.StatusCode = s.StatusCode
+	model.UpdateBy = s.UpdateBy
+}
+
+func (s *OriginContentUpdateReq) GetId() interface{} {
+	return s.ContentId
+}
+
+type OriginContentDeleteReq struct {
+	Ids []string `json:"ids"`
+}
+
+func (s *OriginContentDeleteReq) GetIds() interface{} {
+	return s.Ids
+}

@@ -60,7 +60,7 @@ type RskcTradesDetailGetResp struct {
 	TagProduct     string `json:"tagProduct"`     // 产品标签
 	TagList        string `json:"tagList"`        // 榜单标签
 	EnterpriseInfo string `json:"enterpriseInfo"` // 企业信息
-	StatusCode     string `json:"statusCode"`     // 状态码
+	StatusCode     int    `json:"statusCode"`     // 状态码
 	common.ControlBy
 }
 
@@ -85,7 +85,7 @@ func (s *RskcTradesDetailGetResp) Generate(model *models.RskcTradesDetail) {
 }
 
 type RskcTradesDetailInsertReq struct {
-	Id             int64  `json:"-"`              // 主键
+	Id             int64  `json:"id"`             // 主键
 	ContentId      string `json:"contentId"`      // 外键
 	EnterpriseName string `json:"enterpriseName"` // 企业名称
 	CommodityRatio string `json:"commodityRatio"` // 货物占比
@@ -98,7 +98,7 @@ type RskcTradesDetailInsertReq struct {
 	TagProduct     string `json:"tagProduct"`     // 产品标签
 	TagList        string `json:"tagList"`        // 榜单标签
 	EnterpriseInfo string `json:"enterpriseInfo"` // 企业信息
-	StatusCode     string `json:"statusCode"`     // 状态码
+	StatusCode     int    `json:"statusCode"`     // 状态码
 	common.ControlBy
 }
 
@@ -140,7 +140,7 @@ type RskcTradesDetailUpdateReq struct {
 	TagProduct     string `json:"tagProduct"`     // 产品标签
 	TagList        string `json:"tagList"`        // 榜单标签
 	EnterpriseInfo string `json:"enterpriseInfo"` // 企业信息
-	StatusCode     string `json:"statusCode"`     // 状态码: 1.待确认企业数据已采集，2.待采集，已经同步至waitList, 3.采集完成, 4.匹配并录入完成
+	StatusCode     int    `json:"statusCode"`     // 状态码: 1.待确认企业数据已采集，2.待采集，已经同步至waitList, 3.采集完成, 4.匹配并录入完成
 	common.ControlBy
 }
 
@@ -179,7 +179,7 @@ func (s *RskcTradesDetailGetReq) GetId() interface{} {
 
 // RskcTradesDetailDeleteReq 功能删除请求参数
 type RskcTradesDetailDeleteReq struct {
-	Ids []int `json:"ids"`
+	Ids []int64 `json:"ids"`
 }
 
 func (s *RskcTradesDetailDeleteReq) GetId() interface{} {

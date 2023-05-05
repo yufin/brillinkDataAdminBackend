@@ -9,8 +9,9 @@ import (
 // 字典 key 可以配置到 自动任务 调用目标 中；
 func InitJob() {
 	jobList = map[string]JobsExec{
-		"ExamplesOne":   ExamplesOne{},
-		"SyncVzoomJson": task.SyncOriginContentTask{},
+		"ExamplesOne": ExamplesOne{},
+		//"SyncVzoomJson":    task.SyncOriginContentTask{},
+		"SyncTradesDetail": task.SyncTradesDetailTask{},
 		// ...
 	}
 }
