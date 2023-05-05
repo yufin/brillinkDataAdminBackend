@@ -71,7 +71,7 @@ func (e *SysUser) Insert(c *gin.Context, r *dto.SysUserInsertReq) error {
 		return err
 	}
 	if i > 0 {
-		panic(exception.WithMsg(5000, "用户名已存在!", err))
+		panic(exception.WithMsg(5000, "用户名已存在!", errors.New("用户名已存在!")))
 	}
 	r.Generate(&data)
 	err = e.Orm.Create(&data).Error
@@ -85,6 +85,7 @@ func (e *SysUser) Insert(c *gin.Context, r *dto.SysUserInsertReq) error {
 		fmt.Sprintf("创建新用户，ID：%v", data.UserId),
 		"{}",
 		string(after),
+		"用户",
 	)
 	return nil
 }
@@ -120,6 +121,7 @@ func (e *SysUser) Update(c *gin.Context, r *dto.SysUserUpdateReq, p *actions.Dat
 		fmt.Sprintf("更新用户信息，ID：%v", model.UserId),
 		string(before),
 		string(after),
+		"用户",
 	)
 	return nil
 }
@@ -152,6 +154,7 @@ func (e *SysUser) UpdateAvatar(c *gin.Context, r *dto.UpdateSysUserAvatarReq, p 
 		fmt.Sprintf("更新用户头像，ID：%v", model.UserId),
 		string(before),
 		string(after),
+		"用户",
 	)
 	return nil
 }
@@ -184,6 +187,7 @@ func (e *SysUser) UpdateStatus(c *gin.Context, r *dto.UpdateSysUserStatusReq, p 
 		fmt.Sprintf("更新用户状态，ID：%v", model.UserId),
 		string(before),
 		string(after),
+		"用户",
 	)
 	return nil
 }
@@ -203,6 +207,7 @@ func (e *SysUser) ResetPwd(c *gin.Context, r *dto.ResetSysUserPwdReq, p *actions
 			fmt.Sprintf("重置用户密码，ID：%v", model.UserId),
 			string(before),
 			string(after),
+			"用户",
 		)
 	}
 	return nil
@@ -236,6 +241,7 @@ func (e *SysUser) Remove(c *gin.Context, r *dto.SysUserById, p *actions.DataPerm
 		fmt.Sprintf("删除了User数据，ID：%v", r.GetId()),
 		string(before),
 		string(after),
+		"用户",
 	)
 	return nil
 }
@@ -274,6 +280,7 @@ func (e *SysUser) UpdatePwd(c *gin.Context, r *dto.UpdateSysUserPwdReq, p *actio
 			fmt.Sprintf("更新了用户密码数据，ID：%v", model.UserId),
 			string(before),
 			string(after),
+			"用户",
 		)
 	}
 	return

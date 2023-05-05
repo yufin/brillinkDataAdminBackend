@@ -14,6 +14,7 @@ type SysOperateLog struct {
 	LogId        int64  `json:"logId" gorm:"primaryKey;autoIncrement;comment:编码"`
 	Type         string `json:"type" gorm:"type:varchar(128);comment:操作类型"`
 	Description  string `json:"description" gorm:"type:varchar(128);comment:操作说明"`
+	Project      string `json:"project" gorm:"type:varchar(128);comment:项目"`
 	UserName     string `json:"userName" gorm:"type:varchar(128);comment:用户"`
 	UserId       int64  `json:"userId" gorm:"type:int(11);comment:用户id"`
 	UpdateBefore string `json:"updateBefore" gorm:"type:json;comment:更新前"`

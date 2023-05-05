@@ -30,6 +30,7 @@ type SysOperateLogGetPageResp struct {
 	LogId       int64  `json:"logId" comment:"编码"` // 编码
 	Type        string `json:"type" comment:"操作类型"`
 	Description string `json:"description" comment:"操作说明"`
+	Project     string `json:"project" comment:"项目"`
 	UserName    string `json:"userName" comment:"用户"`
 	UserId      int64  `json:"userId" comment:"用户id"`
 	common.ControlBy

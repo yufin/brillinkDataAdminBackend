@@ -56,6 +56,7 @@ func (e *SysPost) Insert(c *gin.Context, r *dto.SysPostInsertReq) (err error) {
 			fmt.Sprintf("数据，ID：%v", model.GetId()),
 		"{}",
 		string(after),
+		"职位",
 	)
 	return
 }
@@ -75,6 +76,7 @@ func (e *SysPost) Update(c *gin.Context, r *dto.SysPostUpdateReq) (err error) {
 				fmt.Sprintf("数据，ID：%v", r.GetId()),
 			string(before),
 			string(after),
+			"职位",
 		)
 	}
 	return
@@ -94,6 +96,7 @@ func (e *SysPost) Remove(c *gin.Context, r *dto.SysPostDeleteReq) (err error) {
 				fmt.Sprintf("数据，ID：%v", r.GetId()),
 			"{}",
 			"{}",
+			"职位",
 		)
 	}
 	return

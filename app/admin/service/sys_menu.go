@@ -107,6 +107,7 @@ func (e *SysMenu) Insert(c *gin.Context, r *dto.SysMenuInsertReq) (err error) {
 		fmt.Sprintf("新增了菜单数据，ID：%v", model.MenuId),
 		"{}",
 		string(after),
+		"菜单",
 	)
 	return
 }
@@ -185,6 +186,7 @@ func (e *SysMenu) Update(c *gin.Context, r *dto.SysMenuUpdateReq) *SysMenu {
 		fmt.Sprintf("更新菜单，ID：%v", model.MenuId),
 		string(before),
 		string(after),
+		"菜单",
 	)
 	return e
 }
@@ -212,6 +214,7 @@ func (e *SysMenu) Remove(c *gin.Context, r *dto.SysMenuDeleteReq) *SysMenu {
 		fmt.Sprintf("删除菜单，ID：%v", r.Ids),
 		string(before),
 		"{}",
+		"菜单",
 	)
 	return e
 }

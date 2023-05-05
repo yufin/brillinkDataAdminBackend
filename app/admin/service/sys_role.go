@@ -116,6 +116,7 @@ func (e *SysRole) Insert(c *gin.Context, r *dto.SysRoleInsertReq, cb *casbin.Syn
 		fmt.Sprintf("创建新角色，ID：%v", data.RoleId),
 		"[]",
 		string(after),
+		"角色",
 	)
 	return nil
 }
@@ -193,6 +194,7 @@ func (e *SysRole) Update(c *gin.Context, r *dto.SysRoleUpdateReq, cb *casbin.Syn
 		fmt.Sprintf("更新角色，ID：%v", model.RoleId),
 		string(before),
 		string(after),
+		"角色",
 	)
 	return nil
 }
@@ -227,6 +229,7 @@ func (e *SysRole) Remove(c *gin.Context, r *dto.SysRoleDeleteReq) error {
 		fmt.Sprintf("删除角色，ID：%v", r.GetId()),
 		string(before),
 		"{}",
+		"角色",
 	)
 	return nil
 }
@@ -288,6 +291,7 @@ func (e *SysRole) UpdateDataScope(c *gin.Context, r *dto.RoleDataScopeReq) *SysR
 		fmt.Sprintf("删除角色，ID：%v", model.RoleId),
 		string(before),
 		string(after),
+		"角色",
 	)
 	return e
 }
@@ -322,6 +326,7 @@ func (e *SysRole) UpdateStatus(c *gin.Context, r *dto.UpdateStatusReq) error {
 		fmt.Sprintf("删除角色，ID：%v", model.RoleId),
 		string(before),
 		string(after),
+		"角色",
 	)
 	return nil
 }

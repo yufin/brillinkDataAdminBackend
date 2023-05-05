@@ -67,6 +67,7 @@ func (e *SysConfig) Insert(c *gin.Context, r *dto.SysConfigControl) (err error) 
 			fmt.Sprintf("数据，ID：%v", model.GetId()),
 		"{}",
 		string(after),
+		"系统配置",
 	)
 	return
 }
@@ -87,6 +88,7 @@ func (e *SysConfig) Update(c *gin.Context, r *dto.SysConfigControl) (err error) 
 				fmt.Sprintf("数据，ID：%v", r.GetId()),
 			string(before),
 			string(after),
+			"系统配置",
 		)
 	}
 	return
@@ -188,6 +190,7 @@ func (e *SysConfig) UpdateForSet(c *gin.Context, r *[]dto.UpdateSetSysConfigReq)
 					fmt.Sprintf("更新配置数据，ID：%v", data.GetId()),
 					string(before),
 					string(after),
+					"系统配置",
 				)
 			}
 		}
@@ -261,6 +264,7 @@ func (e *SysConfig) updateSetConfigWithCustom(c *gin.Context, req dto.UpdateSetS
 				fmt.Sprintf("创建自定义参数数据，ID：%v", newConfig.GetId()),
 				"{}",
 				string(after),
+				"系统配置",
 			)
 		}
 		if oldConfig.ConfigType == "Y" {
@@ -297,6 +301,7 @@ func (e *SysConfig) updateSetConfigWithCustom(c *gin.Context, req dto.UpdateSetS
 				fmt.Sprintf("更新自定义参数数据，ID：%v", oldConfig.GetId()),
 				string(before),
 				string(after),
+				"系统配置",
 			)
 		}
 	}
@@ -315,6 +320,7 @@ func (e *SysConfig) updateSetConfigWithCustom(c *gin.Context, req dto.UpdateSetS
 			fmt.Sprintf("更新自定义参数数据，ID：%v", configList),
 			"{}",
 			"{}",
+			"系统配置",
 		)
 	}
 	return nil
