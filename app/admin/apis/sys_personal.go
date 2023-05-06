@@ -5,6 +5,8 @@ import (
 	"github.com/pkg/errors"
 	"go-admin/app/admin/service"
 	"go-admin/app/admin/service/dto"
+	"go-admin/common/actions"
+	"go-admin/common/exception"
 	"strconv"
 
 	"go-admin/common/apis"
@@ -104,6 +106,34 @@ func (e Personal) CurrentUser(c *gin.Context) {
 		Mobile:  userM.Phone,
 	}
 	e.OK(userInfo)
+}
+
+func (e Personal) UpdateCurrent(c *gin.Context) {
+	s := service.SysPersonal{}
+	req := dto.UpdatePersonalReq{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "UpdateCurrentFail", err))
+		return
+	}
+
+	req.UserId = int(user.GetUserId(c))
+	req.SetUpdateBy(user.GetUserId(c))
+
+	//数据权限检查
+	p := actions.GetPermissionFromContext(c)
+
+	err = s.Update(c, &req, p)
+	if err != nil {
+		e.Logger.Error(err)
+		return
+	}
+	e.OK(req.GetId())
 }
 
 func (e Personal) UserOutLogin(c *gin.Context) {
