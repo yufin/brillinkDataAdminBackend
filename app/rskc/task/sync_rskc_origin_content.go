@@ -25,7 +25,7 @@ const (
 )
 
 // SyncOriginJsonContent 同步微众企业风控数据json数据至数据库
-func SyncOriginJsonContent(s *service.OriginContent, p *actions.DataPermission) error {
+func SyncOriginJsonContent(s *service.RskcOriginContent, p *actions.DataPermission) error {
 	// todo: 添加content校验逻辑,未通过校验不入库
 	// 1. 获取sftp连接
 	sftpClientP, err := utils.GetSftpClient()
@@ -67,7 +67,7 @@ func SyncOriginJsonContent(s *service.OriginContent, p *actions.DataPermission) 
 	for i, _ := range dirInfos {
 		limitCh <- struct{}{}
 		wg.Add(1)
-		go func(index int, sOriginContent *service.OriginContent, dataP *actions.DataPermission) {
+		go func(index int, sOriginContent *service.RskcOriginContent, dataP *actions.DataPermission) {
 			defer wg.Done()
 			mutex.Lock()
 			dirInfoP := &dirInfos[index]
@@ -85,13 +85,13 @@ func SyncOriginJsonContent(s *service.OriginContent, p *actions.DataPermission) 
 	// 遍历dirInfos,读取文件录入数据库
 	for _, dirInfo := range dirInfos {
 		if dirInfo.notExist == true {
-			insertReq := dto.OriginContentInsertReq{
-				ContentId:         uuid.New().String(),
-				UscId:             dirInfo.UscId,
-				YearMonth:         dirInfo.YearMonth,
-				OriginJsonContent: string(GetFileContentFromSftp(sftpClientP, dirInfo.DataFilePath)),
-				StatusCode:        1,
-				ControlBy:         cModels.ControlBy{CreateBy: 0},
+			insertReq := dto.RskcOriginContentInsertReq{
+				ContentId:  uuid.New().String(),
+				UscId:      dirInfo.UscId,
+				YearMonth:  dirInfo.YearMonth,
+				Content:    string(GetFileContentFromSftp(sftpClientP, dirInfo.DataFilePath)),
+				StatusCode: 1,
+				ControlBy:  cModels.ControlBy{CreateBy: 0},
 			}
 			err := s.Insert(&insertReq)
 			if err != nil {
@@ -138,15 +138,15 @@ type DirInfo struct {
 	notExist     bool
 }
 
-func CheckIfInfoRecorded(dirInfo *DirInfo, s *service.OriginContent, p *actions.DataPermission) error {
-	req := dto.OriginContentGetPageReq{
+func CheckIfInfoRecorded(dirInfo *DirInfo, s *service.RskcOriginContent, p *actions.DataPermission) error {
+	req := dto.RskcOriginContentGetPageReq{
 		Pagination: cDto.Pagination{PageIndex: 1, PageSize: 100},
 		UscId:      dirInfo.UscId,
 		YearMonth:  dirInfo.YearMonth,
 	}
 	var count int64
-	list := make([]models.OriginContentInfo, 0)
-	err := s.GetPageWithoutContent(&req, p, &list, &count)
+	list := make([]models.RskcOriginContentInfo, 0)
+	err := s.GetPageNoContent(&req, p, &list, &count)
 	if err != nil {
 		log.Errorf("GetPageWithoutContent CheckIfInfoRecorded Error: %s \r\n", err)
 		return err

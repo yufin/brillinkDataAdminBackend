@@ -220,7 +220,7 @@ func (e RskcTradesDetail) TaskSyncTradesDetail(c *gin.Context) {
 		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
 		return
 	}
-	sContent := service.OriginContent{}
+	sContent := service.RskcOriginContent{}
 	err = e.MakeContext(c).MakeOrm().MakeService(&sContent.Service).Errors
 	if err != nil {
 		e.Logger.Error(err)

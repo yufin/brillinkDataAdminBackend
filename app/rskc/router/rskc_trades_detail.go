@@ -16,7 +16,7 @@ func init() {
 // registerRskcTradesDetailRouter
 func registerRskcTradesDetailRouter(v1 *gin.RouterGroup, authMiddleware *jwtauth.GinJWTMiddleware) {
 	api := apis.RskcTradesDetail{}
-	r := v1.Group("/rskc/tradesDetail").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
+	r := v1.Group("/rskc/trades-detail").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
 		//r.GET("", api.GetPage)
 		r.GET("/:id", api.Get)
@@ -28,7 +28,7 @@ func registerRskcTradesDetailRouter(v1 *gin.RouterGroup, authMiddleware *jwtauth
 
 func registerRskcTradesDetailRouterNoCheck(v1 *gin.RouterGroup) {
 	api := apis.RskcTradesDetail{}
-	r := v1.Group("/rskc/tradesDetail")
+	r := v1.Group("/rskc/trades-detail")
 	{
 		r.GET("/task/sync", api.TaskSyncTradesDetail)
 		r.GET("", api.GetPage)
