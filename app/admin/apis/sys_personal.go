@@ -53,6 +53,7 @@ func (e Personal) CurrentUser(c *gin.Context) {
 	}
 
 	var userInfo = dto.Personal{
+		NickName:  userM.NickName,
 		Name:      userM.NickName,
 		Avatar:    userM.Avatar,
 		Userid:    strconv.Itoa(userM.UserId),
@@ -102,7 +103,7 @@ func (e Personal) CurrentUser(c *gin.Context) {
 			},
 		},
 		Address: "西湖区工专路 77 号",
-		Phone:   "0752-268888888",
+		Phone:   userM.Phone,
 		Mobile:  userM.Phone,
 	}
 	e.OK(userInfo)

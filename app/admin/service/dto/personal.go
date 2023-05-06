@@ -7,6 +7,7 @@ import (
 )
 
 type Personal struct {
+	NickName    string     `json:"nickName"`
 	Name        string     `json:"name"`
 	Avatar      string     `json:"avatar"`
 	Userid      string     `json:"userid"`
