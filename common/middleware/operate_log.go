@@ -29,7 +29,7 @@ const (
 )
 
 //SetContextOperateLog 设置上下文中操作日志信息
-func SetContextOperateLog(c *gin.Context, typeX Operate, desc, before, after string) {
+func SetContextOperateLog(c *gin.Context, typeX Operate, desc, before, after, project string) {
 	mp := make(map[string]interface{}, 0)
 	mp["type"] = typeX
 	mp["description"] = user.GetUserName(c) + desc
@@ -37,5 +37,6 @@ func SetContextOperateLog(c *gin.Context, typeX Operate, desc, before, after str
 	mp["userId"] = user.GetUserId(c)
 	mp["updateBefore"] = before
 	mp["updateAfter"] = after
+	mp["project"] = project
 	c.Set("operateLog", mp)
 }

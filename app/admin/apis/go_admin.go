@@ -1,12 +1,15 @@
 package apis
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/jinzhu/now"
 	"github.com/pkg/errors"
 	"go-admin/app/admin/service"
 	"go-admin/app/admin/service/dto"
 	"go-admin/common"
+	"go-admin/common/actions"
 	"go-admin/common/apis"
 	"go-admin/common/jwtauth/user"
 	"strconv"
@@ -139,24 +142,7 @@ func (e Dashboard) DashboardA(c *gin.Context) {
 			str.VisitData = append(str.VisitData, xy)
 		}
 	}
-	//str.VisitData = append(str.VisitData,
-	//	XY{"2021-08-06", 7},
-	//	XY{"2021-08-07", 5},
-	//	XY{"2021-08-08", 4},
-	//	XY{"2021-08-09", 2},
-	//	XY{"2021-08-10", 4},
-	//	XY{"2021-08-11", 7},
-	//	XY{"2021-08-12", 5},
-	//	XY{"2021-08-13", 6},
-	//	XY{"2021-08-14", 5},
-	//	XY{"2021-08-15", 9},
-	//	XY{"2021-08-16", 6},
-	//	XY{"2021-08-17", 3},
-	//	XY{"2021-08-18", 1},
-	//	XY{"2021-08-19", 5},
-	//	XY{"2021-08-20", 3},
-	//	XY{"2021-08-21", 6},
-	//	XY{"2021-08-22", 5})
+
 	str.VisitData2 = append(str.VisitData2,
 		XY{"2021-08-06", 1},
 		XY{"2021-08-07", 6},
@@ -436,43 +422,43 @@ type T struct {
 }
 
 func (e Dashboard) Activities(c *gin.Context) {
-	e.MakeContext(c)
+	s := service.SysOperateLog{}
+	req := dto.SysOperateLogGetPageReq{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req, binding.Form).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(err)
+		return
+	}
+
+	req.SysOperateLogPageOrder.CreatedAt = "desc"
+
+	p := actions.GetPermission(c)
+	list := make([]dto.SysOperateLogGetPageResp, 0)
+	var count int64
+
+	err = s.GetPage(&req, p, &list, &count)
+	if err != nil {
+		e.Error(500, fmt.Sprintf("获取操作日志 失败，失败信息 %s", err.Error()), "")
+		return
+	}
+
 	var t2 = make([]T2, 0)
-	t2 = append(t2, T2{Id: "trend-1", UpdatedAt: "2021-08-12T09:19:58.845Z",
-		User:     User{Name: "曲丽丽", Avatar: "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"},
-		Group:    Group{Name: "高逼格设计天团", Link: "http://github.com/"},
-		Project:  Project{Name: "六月迭代", Link: "http://github.com/"},
-		Template: "在 @{group} 新建项目 @{project}",
-	},
-		T2{Id: "trend-2", UpdatedAt: "2021-08-12T09:19:58.845Z",
-			User:     User{Name: "付小小", Avatar: "https://gw.alipayobjects.com/zos/rmsportal/cnrhVkzwxjPwAaCfPbdc.png"},
-			Group:    Group{Name: "高逼格设计天团", Link: "http://github.com/"},
-			Project:  Project{Name: "六月迭代", Link: "http://github.com/"},
-			Template: "在 @{group} 新建项目 @{project}",
-		},
-		T2{Id: "trend-3", UpdatedAt: "2021-08-12T09:19:58.845Z",
-			User:     User{Name: "林东东", Avatar: "https://gw.alipayobjects.com/zos/rmsportal/gaOngJwsRYRaVAuXXcmB.png"},
-			Group:    Group{Name: "中二少女团", Link: "http://github.com/"},
-			Project:  Project{Name: "六月迭代", Link: "http://github.com/"},
-			Template: "在 @{group} 新建项目 @{project}",
-		},
-		T2{Id: "trend-4", UpdatedAt: "2021-08-12T09:19:58.845Z",
-			User:     User{Name: "周星星", Avatar: "https://gw.alipayobjects.com/zos/rmsportal/WhxKECPNujWoWEFNdnJE.png"},
-			Project:  Project{Name: "5 月日常迭代", Link: "http://github.com/"},
-			Template: "将 @{project} 更新至已发布状态",
-		},
-		T2{Id: "trend-5", UpdatedAt: "2021-08-12T09:19:58.845Z",
-			User:     User{Name: "朱偏右", Avatar: "https://gw.alipayobjects.com/zos/rmsportal/ubnKSIfAJTxIgXOKlciN.png"},
-			Project:  Project{Name: "工程效能", Link: "http://github.com/"},
-			Comment:  Comment{Name: "留言", Link: "http://github.com/"},
-			Template: "在 @{project} 发布了 @{comment}",
-		},
-		T2{Id: "trend-6", UpdatedAt: "2021-08-12T09:19:58.845Z",
-			User:     User{"乐哥", "https://gw.alipayobjects.com/zos/rmsportal/jZUIxmJycoymBprLOUbT.png"},
-			Group:    Group{"程序员日常", "http://github.com/"},
-			Project:  Project{"品牌迭代", "http://github.com/"},
-			Template: "在 @{group} 新建项目 @{project}",
-		})
+
+	for _, resp := range list {
+		t2 = append(t2,
+			T2{Id: strconv.FormatInt(resp.LogId, 10),
+				UpdatedAt: resp.UpdatedAt.Format("2006-01-02 15:04:05.000"),
+				User:      User{Name: resp.UserName, Avatar: "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"},
+				Group:     Group{},
+				Project:   Project{Name: resp.Project, Link: ""},
+				Template:  resp.Type + " @{project}",
+			})
+	}
 	e.OK(t2)
 }
 

@@ -74,6 +74,7 @@ func (e *SysApi) Update(c *gin.Context, r *dto.SysApiUpdateReq, p *actions.DataP
 			fmt.Sprintf("更新了Post数据，ID：%v", r.GetId()),
 			string(before),
 			string(after),
+			"接口",
 		)
 	}
 	return
@@ -97,6 +98,7 @@ func (e *SysApi) Remove(c *gin.Context, r *dto.SysApiDeleteReq, p *actions.DataP
 			fmt.Sprintf("删除了数据，ID：%v", r.GetId()),
 			"{}",
 			"{}",
+			"接口",
 		)
 	}
 	return

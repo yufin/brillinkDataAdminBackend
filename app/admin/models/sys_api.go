@@ -147,7 +147,7 @@ func checkApi(routers *[]runtime.Router, db *gorm.DB) (err error) {
 			if apiName == "" || api.Name == apiName {
 				continue
 			}
-			err = db.Model(api).Update("name", apiName).Error
+			err = db.Model(api).Update("name", apiName).Update("is_history", false).Error
 			if err != nil {
 				err = errors.WithStack(err)
 				return err

@@ -1,6 +1,9 @@
 package server
 
-import "go-admin/app/{{.appName}}/router"
+import(
+    "github.com/go-admin-team/go-admin-core/sdk"
+    "go-admin/app/{{.appName}}/router"
+)
 
 func init() {
 	//注册路由 fixme 其他应用的路由，在本目录新建文件放在init方法

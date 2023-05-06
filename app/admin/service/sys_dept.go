@@ -69,6 +69,7 @@ func (e *SysDept) Insert(c *gin.Context, r *dto.SysDeptInsertReq) error {
 		fmt.Sprintf("新增了部门数据，ID：%v", data.DeptId),
 		"{}",
 		string(after),
+		"部门",
 	)
 	return nil
 }
@@ -112,6 +113,7 @@ func (e *SysDept) Update(c *gin.Context, r *dto.SysDeptUpdateReq) error {
 		fmt.Sprintf("更新了部门数据，ID：%v", r.DeptId),
 		string(before),
 		string(after),
+		"部门",
 	)
 	return nil
 }
@@ -137,6 +139,7 @@ func (e *SysDept) Remove(c *gin.Context, r *dto.SysDeptDeleteReq) error {
 		fmt.Sprintf("删除了部门数据，ID：%v", r.Ids),
 		"{}",
 		"{}",
+		"部门",
 	)
 	return nil
 }
