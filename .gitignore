@@ -17,3 +17,5 @@ cmd/migrate/migration/version-local/*
 
 .run/go build  go-admin-sqlite3.run.xml
 *.sum
+91350200MA31RD1P7H_import_export_enterprises_report_json.json
+graph-server-linux-amd64

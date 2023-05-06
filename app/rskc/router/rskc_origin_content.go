@@ -12,12 +12,13 @@ func init() {
 
 func registerRskcOriginContentRouterNoCheck(v1 *gin.RouterGroup) {
 	api := apis.RskcOriginContent{}
-	r := v1.Group("/rskc")
+	r := v1.Group("/rskc/originContent")
 	{
 		r.GET("/temp", api.ParseJsonFile)
 		r.GET("", api.GetPage)
+		r.PUT("/:ContentId", api.Update)
 		r.GET("/info", api.GetPageWithoutContent)
-		r.GET("/task/syncOriginContent", api.TaskSyncOriginContent)
+		r.GET("/task/sync", api.TaskSyncOriginContent)
 		r.GET("/noContent", api.GetPageWithoutContent)
 	}
 }

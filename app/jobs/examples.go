@@ -2,7 +2,6 @@ package jobs
 
 import (
 	"github.com/go-admin-team/go-admin-core/logger"
-	"go-admin/app/rskc/task"
 )
 
 // 需要将定义的struct 添加到字典中；
@@ -10,8 +9,6 @@ import (
 func InitJob() {
 	jobList = map[string]JobsExec{
 		"ExamplesOne": ExamplesOne{},
-		//"SyncVzoomJson":    task.SyncOriginContentTask{},
-		"SyncTradesDetail": task.SyncTradesDetailTask{},
 		// ...
 	}
 }

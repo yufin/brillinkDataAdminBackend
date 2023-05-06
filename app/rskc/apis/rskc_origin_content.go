@@ -11,6 +11,7 @@ import (
 	"go-admin/common/actions"
 	"go-admin/common/apis"
 	"go-admin/common/exception"
+	"go-admin/common/jwtauth/user"
 )
 
 type RskcOriginContent struct {
@@ -102,4 +103,28 @@ func (e RskcOriginContent) TaskSyncOriginContent(c *gin.Context) {
 		return
 	}
 	e.OK(nil)
+}
+
+func (e RskcOriginContent) Update(c *gin.Context) {
+	req := dto.OriginContentUpdateReq{}
+	s := service.OriginContent{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "UpdateRskcOriginContentFail", err))
+		return
+	}
+	req.SetUpdateBy(int64(user.GetUserId(c)))
+	p := actions.GetPermissionFromContext(c)
+
+	err = s.Update(&req, p)
+	if err != nil {
+		panic(exception.WithMsg(50000, "UpdateRskcOriginContentFail", err))
+		return
+	}
+	e.OK(req.GetId())
 }

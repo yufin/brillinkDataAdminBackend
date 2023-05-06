@@ -11,19 +11,12 @@ import (
 	cModels "go-admin/common/models"
 )
 
-type SyncTradesDetailTask struct {
-}
-
-func (t SyncTradesDetailTask) Exec(args interface{}) error {
-	return SyncTags4Trades()
-}
-
 // content-statusCode: 1:待解析录入其他表,2:解析并录入完成,3.数据匹配并录入完成
 // tradeDetail-statusCode: 1.待确认企业数据已采集，2.待采集，已经同步至waitList, 3.采集完成, 4.匹配并录入完成
 
-// SyncTags4Trades 同步tags4trades
+// SyncTradesDetail 同步tags4trades
 // @Description end with statusCode: content-2, tradeDetail-1
-func SyncTags4Trades() error {
+func SyncTradesDetail(s *service.RskcTradesDetail, sContent *service.OriginContent, p *actions.DataPermission) error {
 	// check the tables where statusCode = 1
 	req := dto.OriginContentGetPageReq{
 		Pagination: cDto.Pagination{PageSize: 100, PageIndex: 1},
@@ -31,11 +24,9 @@ func SyncTags4Trades() error {
 	}
 	var count int64
 	contentList := make([]models.OriginContent, 0)
-	contentService := service.OriginContent{}
-	p := actions.DataPermission{}
-	err := contentService.GetPage(&req, &p, &contentList, &count)
+	err := sContent.GetPage(&req, p, &contentList, &count)
 	if err != nil {
-		log.Errorf("Task SyncTags4Trades func-SyncTags4Trades Failed:%s \r\n", err)
+		log.Errorf("Task SyncTradesDetail func-SyncTradesDetail Failed:%s \r\n", err)
 		return err
 	}
 
@@ -44,9 +35,9 @@ func SyncTags4Trades() error {
 	// get customer, supplier list
 	// insert base field to trades_detail with status_code 1
 	for _, content := range contentList {
-		err = ParseTradesDetailAndInsert(content.OriginJsonContent, content.ContentId, &p)
+		err = ParseTradesDetailAndInsert(content.OriginJsonContent, content.ContentId, s, sContent, p)
 		if err != nil {
-			log.Errorf("Task SyncTags4Trades func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
+			log.Errorf("Task SyncTradesDetail func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
 			return err
 		}
 	}
@@ -58,6 +49,8 @@ func SyncTags4Trades() error {
 
 	return err
 }
+
+const ReportDataKey = "impExpEntReport"
 
 func tradesDetailKeyList() []string {
 	return []string{
@@ -87,8 +80,7 @@ func contentEnterpriseNameKeyDict() map[string]string {
 
 // ParseTradesDetailAndInsert process of sync tradesDetail from content
 // @describe:parse trades detail from content and insert with statusCode = 1, then update content table with statusCode=2 by contentId
-func ParseTradesDetailAndInsert(contentJsonStr string, contentId string, p *actions.DataPermission) error {
-	tradeDetailService := service.RskcTradesDetail{}
+func ParseTradesDetailAndInsert(contentJsonStr string, contentId string, tradeDetailService *service.RskcTradesDetail, contentService *service.OriginContent, p *actions.DataPermission) error {
 	// delete all records in trades_detail if any by contentId
 	func() {
 		deleteList := make([]models.RskcTradesDetail, 0)
@@ -97,7 +89,7 @@ func ParseTradesDetailAndInsert(contentJsonStr string, contentId string, p *acti
 			Pagination: cDto.Pagination{PageSize: 1000, PageIndex: 1},
 			ContentId:  contentId}, p, &deleteList, &count)
 		if err != nil {
-			log.Errorf("Task SyncTags4Trades func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
+			log.Errorf("Task SyncTradesDetail func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
 			return
 		}
 		if len(deleteList) > 0 {
@@ -110,7 +102,7 @@ func ParseTradesDetailAndInsert(contentJsonStr string, contentId string, p *acti
 			}
 			err = tradeDetailService.Remove(&delReq, p)
 			if err != nil {
-				log.Errorf("Task SyncTags4Trades func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
+				log.Errorf("Task SyncTradesDetail func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
 				return
 			}
 		}
@@ -119,38 +111,78 @@ func ParseTradesDetailAndInsert(contentJsonStr string, contentId string, p *acti
 	var contentMap map[string]any
 	err := json.Unmarshal([]byte(contentJsonStr), &contentMap)
 	if err != nil {
-		log.Errorf("Task SyncTags4Trades func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
+		log.Errorf("Task SyncTradesDetail func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
 		return nil
 	}
 
 	for _, key := range tradesDetailKeyList() {
-		tradeDetail := contentMap[key].([]map[string]any)
+		entReport := contentMap[ReportDataKey].(map[string]any)
+		tradeDetail := entReport[key].([]any)
 		for _, trade := range tradeDetail {
+			log.Info(trade)
 			insertReq := dto.RskcTradesDetailInsertReq{
 				ContentId:      contentId,
-				EnterpriseName: trade[contentEnterpriseNameKeyDict()[key]].(string),
-				CommodityRatio: trade["COMMODITY_RATIO"].(string),
-				CommodityName:  trade["COMMODITY_NAME"].(string),
-				RatioAmountTax: trade["RATIO_AMOUNT_TAX"].(string),
-				SumAmountTax:   trade["SUM_AMOUNT_TAX"].(string),
+				EnterpriseName: verifyMapField(trade.(map[string]any), contentEnterpriseNameKeyDict()[key]),
+				CommodityRatio: verifyMapField(trade.(map[string]any), "COMMODITY_RATIO"),
+				CommodityName:  verifyMapField(trade.(map[string]any), "COMMODITY_NAME"),
+				RatioAmountTax: verifyMapField(trade.(map[string]any), "RATIO_AMOUNT_TAX"),
+				SumAmountTax:   verifyMapField(trade.(map[string]any), "SUM_AMOUNT_TAX"),
 				DetailType:     detailTypeDict()[key],
 				StatusCode:     1,
 				ControlBy:      cModels.ControlBy{},
 			}
+
 			if err = tradeDetailService.Insert(&insertReq); err != nil {
-				log.Errorf("Task SyncTags4Trades func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
+				log.Errorf("Task SyncTradesDetail func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
 				return err
 			}
+
+			//exists := func(q *dto.RskcTradesDetailInsertReq, sd *service.RskcTradesDetail, pe *actions.DataPermission) bool {
+			//	getPageReq := dto.RskcTradesDetailGetPageReq{
+			//		ContentId:      q.ContentId,
+			//		EnterpriseName: q.EnterpriseName,
+			//		DetailType:     q.DetailType,
+			//	}
+			//	var countExist int64
+			//	var existList []models.RskcTradesDetail
+			//	err := sd.GetPage(&getPageReq, pe, &existList, &countExist)
+			//	if err != nil {
+			//		log.Errorf("Task SyncTradesDetail func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
+			//		return false
+			//	}
+			//	return countExist > 0
+			//}(&insertReq, tradeDetailService, p)
+			//
+			//if !exists {
+			//	if err = tradeDetailService.Insert(&insertReq); err != nil {
+			//		log.Errorf("Task SyncTradesDetail func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
+			//		return err
+			//	}
+			//}
+
 		}
 	}
 	// finish sync tradesDetail, update content statusCode = 2
-	contentService := service.OriginContent{}
-	err = contentService.Update(&dto.OriginContentUpdateReq{ContentId: contentId, StatusCode: 2}, p)
+	contentStatusCodeQ := dto.OriginContentUpdateReq{ContentId: contentId, StatusCode: 2}
+	contentStatusCodeQ.SetUpdateBy(0)
+	err = contentService.Update(&contentStatusCodeQ, p)
 	if err != nil {
-		log.Errorf("Task SyncTags4Trades func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
+		log.Errorf("Task SyncTradesDetail func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
 		return err
 	}
 	return nil
+}
+
+func verifyMapField(m map[string]any, key string) string {
+	value, ok := m[key]
+	if !ok {
+		return "-"
+	}
+	str, isString := value.(string)
+	if isString {
+		return str
+	}
+	return "-"
 }
 
 func CheckEnterpriseCollection() error {

@@ -80,7 +80,7 @@ func (e *OriginContent) CountByInfo(c *dto.OriginContentGetPageReq, count *int64
 
 func (e *OriginContent) Update(c *dto.OriginContentUpdateReq, p *actions.DataPermission) error {
 	var err error
-	var data models.OriginContent
+	var data = models.OriginContent{}
 	e.Orm.Scopes(
 		actions.Permission(data.TableName(), p),
 	).First(&data, c.GetId())

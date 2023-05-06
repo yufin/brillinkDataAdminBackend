@@ -2,6 +2,7 @@ package apis
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-admin/app/rskc/task"
 
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service"
@@ -208,4 +209,31 @@ func (e RskcTradesDetail) Delete(c *gin.Context) {
 		return
 	}
 	e.OK(req.GetId())
+}
+
+// TaskSyncTradesDetail 同步客户、供应商交易细节
+func (e RskcTradesDetail) TaskSyncTradesDetail(c *gin.Context) {
+	s := service.RskcTradesDetail{}
+	err := e.MakeContext(c).MakeOrm().MakeService(&s.Service).Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
+		return
+	}
+	sContent := service.OriginContent{}
+	err = e.MakeContext(c).MakeOrm().MakeService(&sContent.Service).Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
+		return
+	}
+
+	p := actions.GetPermissionFromContext(c)
+	err = task.SyncTradesDetail(&s, &sContent, p)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
+		return
+	}
+	e.OK(nil)
 }

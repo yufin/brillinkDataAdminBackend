@@ -10,17 +10,28 @@ import (
 
 func init() {
 	routerCheckRole = append(routerCheckRole, registerRskcTradesDetailRouter)
+	routerNoCheckRole = append(routerNoCheckRole, registerRskcTradesDetailRouterNoCheck)
 }
 
 // registerRskcTradesDetailRouter
 func registerRskcTradesDetailRouter(v1 *gin.RouterGroup, authMiddleware *jwtauth.GinJWTMiddleware) {
 	api := apis.RskcTradesDetail{}
-	r := v1.Group("/rskc-trades-detail").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
+	r := v1.Group("/rskc/tradesDetail").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
-		r.GET("", api.GetPage)
+		//r.GET("", api.GetPage)
 		r.GET("/:id", api.Get)
 		r.POST("", api.Insert)
-		r.PUT("/:id", api.Update)
+		//r.PUT("/:id", api.Update)
 		r.DELETE("", api.Delete)
+	}
+}
+
+func registerRskcTradesDetailRouterNoCheck(v1 *gin.RouterGroup) {
+	api := apis.RskcTradesDetail{}
+	r := v1.Group("/rskc/tradesDetail")
+	{
+		r.GET("/task/sync", api.TaskSyncTradesDetail)
+		r.GET("", api.GetPage)
+		r.PUT("/:id", api.Update)
 	}
 }

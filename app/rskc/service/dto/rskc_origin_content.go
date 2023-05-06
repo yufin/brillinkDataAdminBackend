@@ -44,7 +44,7 @@ func (m *OriginContentGetPageReq) GetNeedSearch() interface{} {
 }
 
 type OriginContentUpdateReq struct {
-	ContentId         string `json:"contentId"`
+	ContentId         string `uri:"ContentId"`
 	UscId             string `json:"uscId"`
 	YearMonth         string `json:"yearMonth"`
 	OriginJsonContent string `json:"originJsonContent"`
@@ -54,10 +54,18 @@ type OriginContentUpdateReq struct {
 
 func (s *OriginContentUpdateReq) Generate(model *models.OriginContent) {
 	model.ContentId = s.ContentId
-	model.UscId = s.UscId
-	model.YearMonth = s.YearMonth
-	model.OriginJsonContent = s.OriginJsonContent
-	model.StatusCode = s.StatusCode
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.YearMonth != "" {
+		model.YearMonth = s.YearMonth
+	}
+	if s.OriginJsonContent != "" {
+		model.OriginJsonContent = s.OriginJsonContent
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
 	model.UpdateBy = s.UpdateBy
 }
 

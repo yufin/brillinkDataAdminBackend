@@ -8,7 +8,6 @@ import (
 
 type RskcTradesDetailGetPageReq struct {
 	dto.Pagination `search:"-"`
-
 	ContentId      string `form:"contentId"  search:"type:exact;column:content_id;table:rskc_trades_detail" comment:"外键"`
 	EnterpriseName string `form:"enterpriseName"  search:"type:exact;column:enterprise_name;table:rskc_trades_detail" comment:"企业名称"`
 	CommodityRatio string `form:"commodityRatio"  search:"type:exact;column:commodity_ratio;table:rskc_trades_detail" comment:"货物占比"`
@@ -26,20 +25,20 @@ type RskcTradesDetailGetPageReq struct {
 }
 
 type RskcTradesDetailPageOrder struct {
-	Id             int64  `form:"idOrder"  search:"type:order;column:id;table:rskc_trades_detail"`
+	Id             string `form:"idOrder"  search:"type:order;column:id;table:rskc_trades_detail"`
 	ContentId      string `form:"contentIdOrder"  search:"type:order;column:content_id;table:rskc_trades_detail"`
 	EnterpriseName string `form:"enterpriseNameOrder"  search:"type:order;column:enterprise_name;table:rskc_trades_detail"`
 	CommodityRatio string `form:"commodityRatioOrder"  search:"type:order;column:commodity_ratio;table:rskc_trades_detail"`
 	CommodityName  string `form:"commodityNameOrder"  search:"type:order;column:commodity_name;table:rskc_trades_detail"`
 	RatioAmountTax string `form:"ratioAmountTaxOrder"  search:"type:order;column:ratio_amount_tax;table:rskc_trades_detail"`
 	SumAmountTax   string `form:"sumAmountTaxOrder"  search:"type:order;column:sum_amount_tax;table:rskc_trades_detail"`
-	DetailType     int    `form:"detailTypeOrder"  search:"type:order;column:detail_type;table:rskc_trades_detail"`
+	DetailType     string `form:"detailTypeOrder"  search:"type:order;column:detail_type;table:rskc_trades_detail"`
 	TagIndustry    string `form:"tagIndustryOrder"  search:"type:order;column:tag_industry;table:rskc_trades_detail"`
 	TagAuthorized  string `form:"tagAuthorizedOrder"  search:"type:order;column:tag_authorized;table:rskc_trades_detail"`
 	TagProduct     string `form:"tagProductOrder"  search:"type:order;column:tag_product;table:rskc_trades_detail"`
 	TagList        string `form:"tagListOrder"  search:"type:order;column:tag_list;table:rskc_trades_detail"`
 	EnterpriseInfo string `form:"enterpriseInfoOrder"  search:"type:order;column:enterprise_info;table:rskc_trades_detail"`
-	StatusCode     int    `form:"statusCodeOrder"  search:"type:order;column:status_code;table:rskc_trades_detail"`
+	StatusCode     string `form:"statusCodeOrder"  search:"type:order;column:status_code;table:rskc_trades_detail"`
 }
 
 func (m *RskcTradesDetailGetPageReq) GetNeedSearch() interface{} {
@@ -148,19 +147,45 @@ func (s *RskcTradesDetailUpdateReq) Generate(model *models.RskcTradesDetail) {
 	if s.Id == 0 {
 		model.Model = common.Model{Id: s.Id}
 	}
-	model.ContentId = s.ContentId
-	model.EnterpriseName = s.EnterpriseName
-	model.CommodityRatio = s.CommodityRatio
-	model.CommodityName = s.CommodityName
-	model.RatioAmountTax = s.RatioAmountTax
-	model.SumAmountTax = s.SumAmountTax
-	model.DetailType = s.DetailType
-	model.TagIndustry = s.TagIndustry
-	model.TagAuthorized = s.TagAuthorized
-	model.TagProduct = s.TagProduct
-	model.TagList = s.TagList
-	model.EnterpriseInfo = s.EnterpriseInfo
-	model.StatusCode = s.StatusCode
+	if s.ContentId != "" {
+		model.ContentId = s.ContentId
+	}
+	if s.EnterpriseName != "" {
+		model.EnterpriseName = s.EnterpriseName
+	}
+	if s.CommodityRatio != "" {
+		model.CommodityRatio = s.CommodityRatio
+	}
+	if s.CommodityName != "" {
+		model.CommodityName = s.CommodityName
+	}
+	if s.RatioAmountTax != "" {
+		model.RatioAmountTax = s.RatioAmountTax
+	}
+	if s.SumAmountTax != "" {
+		model.SumAmountTax = s.SumAmountTax
+	}
+	if s.DetailType != 0 {
+		model.DetailType = s.DetailType
+	}
+	if s.TagIndustry != "" {
+		model.TagIndustry = s.TagIndustry
+	}
+	if s.TagAuthorized != "" {
+		model.TagAuthorized = s.TagAuthorized
+	}
+	if s.TagProduct != "" {
+		model.TagProduct = s.TagProduct
+	}
+	if s.TagList != "" {
+		model.TagList = s.TagList
+	}
+	if s.EnterpriseInfo != "" {
+		model.EnterpriseInfo = s.EnterpriseInfo
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
 	model.UpdateBy = s.UpdateBy
 }
 
