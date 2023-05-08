@@ -11,7 +11,7 @@ type RskcOriginContent struct {
 	UscId      string `json:"uscId" gorm:"comment:统一社会信用代码"`
 	YearMonth  string `json:"yearMonth" gorm:"comment:数据更新年月"`
 	Content    string `json:"content" gorm:"comment:原始JSON STRING数据"`
-	StatusCode int    `json:"statusCode" gorm:"comment:状态码"`
+	StatusCode int    `json:"statusCode" gorm:"comment:状态码: 1.待解析录入其他表,2.解析并录入完成,3.数据匹配并录入完成"`
 	models.ModelTime
 	models.ControlBy
 }

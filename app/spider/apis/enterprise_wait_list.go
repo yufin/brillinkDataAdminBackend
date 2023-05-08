@@ -6,16 +6,14 @@ import (
 	"go-admin/app/spider/models"
 	"go-admin/app/spider/service"
 	"go-admin/app/spider/service/dto"
-	"math"
-	"net/url"
-	"strconv"
-
 	"go-admin/common/actions"
 	"go-admin/common/apis"
 	dtoCommon "go-admin/common/dto"
 	"go-admin/common/exception"
 	"go-admin/common/jwtauth/user"
 	_ "go-admin/common/response/antd"
+	"math"
+	"net/url"
 )
 
 type EnterpriseWaitList struct {
@@ -85,7 +83,6 @@ func (e EnterpriseWaitList) UpdateQccUrls(c *gin.Context) {
 func (e EnterpriseWaitList) GetEnterprisePageWaitingForMatch(c *gin.Context) {
 
 	paginationReq := dtoCommon.Pagination{}
-	//req := dto.EnterpriseWaitListGetPageReq{}
 	s := service.EnterpriseWaitList{}
 	err := e.MakeContext(c).
 		MakeOrm().Bind(&paginationReq).
@@ -96,16 +93,16 @@ func (e EnterpriseWaitList) GetEnterprisePageWaitingForMatch(c *gin.Context) {
 		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
 		return
 	}
-	//statusCodeParam, _ := strconv.Atoi(c.Query("statusCode"))
-	statusCodeParam, err := strconv.Atoi(c.Query("statusCode"))
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(500, "QueryParamStatusCodeParseFail", err))
-		return
-	}
+	//statusCodeParam, err := strconv.Atoi(c.Query("statusCode"))
+	//if err != nil {
+	//	e.Logger.Error(err)
+	//	panic(exception.WithMsg(500, "QueryParamStatusCodeParseFail", err))
+	//	return
+	//}
 	req := dto.EnterpriseWaitListGetPageReq{
 		Pagination: paginationReq,
-		StatusCode: statusCodeParam,
+		StatusCode: 1,
+		//StatusCode: statusCodeParam,
 		//QccUrl: "-",
 	}
 	req.EnterpriseWaitListPageOrder.PriorityOrder = "desc"
@@ -121,7 +118,14 @@ func (e EnterpriseWaitList) GetEnterprisePageWaitingForMatch(c *gin.Context) {
 		return
 	}
 
-	e.PageOK(list, count, paginationReq.GetPageIndex(), paginationReq.GetPageSize())
+	respList := make([]dto.EnterpriseWaitListWaitingGetPageResp, 0)
+	for _, v := range list {
+		resp := dto.EnterpriseWaitListWaitingGetPageResp{}
+		resp.Generate(&v)
+		respList = append(respList, resp)
+	}
+
+	e.PageOK(respList, count, paginationReq.GetPageIndex(), paginationReq.GetPageSize())
 }
 
 // GetPage 获取待爬取列表列表

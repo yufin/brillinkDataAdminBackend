@@ -224,3 +224,5 @@ func (e EnterpriseInfo) Delete(c *gin.Context) {
 	}
 	e.OK(req.GetId())
 }
+
+func (e EnterpriseInfo) GetpageUnion

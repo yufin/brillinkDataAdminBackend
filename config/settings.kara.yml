@@ -23,6 +23,8 @@ settings:
           - 'enterprise_ranking'
           - 'enterprise_product'
           - 'ranking_list'
+          - 'rskc_origin_content'
+          - 'rskc_trades_detail'
   gen:
     dbname: brillink_admin
     frontpath: ../graphAdminWebserver/src
@@ -42,6 +44,12 @@ settings:
     memory:
       poolSize: 100
   extend:
+    vzoom:
+      sftp:
+        host: 192.168.31.158
+        port: '2222'
+        username: admin
+        password: password
     graph:
       neo4j:
         activate: false

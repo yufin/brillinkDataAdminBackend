@@ -40,6 +40,28 @@ type EnterpriseWaitListGetResp struct {
 	common.ControlBy
 }
 
+type EnterpriseWaitListWaitingGetPageResp struct {
+	Id             int64  `json:"id"`             // 主键id
+	EnterpriseName string `json:"enterpriseName"` // 企业名称
+	UscId          string `json:"uscId"`          // 社会统一信用代码
+	Priority       int    `json:"priority"`       // 优先级
+	Source         string `json:"source"`
+	StatusCode     int    `json:"statusCode"`
+	QccUrl         string `json:"qccUrl"`
+}
+
+func (s *EnterpriseWaitListWaitingGetPageResp) Generate(model *models.EnterpriseWaitList) {
+	if s.Id == 0 {
+		s.Id = model.Id
+	}
+	s.EnterpriseName = model.EnterpriseName
+	s.UscId = model.UscId
+	s.Priority = model.Priority
+	s.Source = model.Source
+	s.StatusCode = model.StatusCode
+	s.QccUrl = model.QccUrl
+}
+
 func (s *EnterpriseWaitListGetResp) Generate(model *models.EnterpriseWaitList) {
 	if s.Id == 0 {
 		s.Id = model.Id

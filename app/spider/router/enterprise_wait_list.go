@@ -28,7 +28,7 @@ func registerEnterpriseWaitListRouter(v1 *gin.RouterGroup, authMiddleware *jwtau
 
 func registerEnterpriseWaitListRouterNoCheck(v1 *gin.RouterGroup) {
 	api := apis.EnterpriseWaitList{}
-	r := v1.Group("/enterprise-wait-list")
+	r := v1.Group("/spider/enterprise/wait-list")
 	{
 		r.GET("/waiting", api.GetEnterprisePageWaitingForMatch)
 		r.PUT("/qccUrl/:id", api.UpdateQccUrls)

@@ -13,7 +13,7 @@ import (
 )
 
 // content-statusCode: 1:待解析录入其他表,2:解析并录入完成,3.数据匹配并录入完成
-// tradeDetail-statusCode: 1.待确认企业数据已采集，2.待采集，已经同步至waitList, 3.采集完成, 4.匹配并录入完成
+// tradeDetail-statusCode: 1.待确认企业数据已采集，2.待采集，已经同步至waitList, 3.确认采集完成, 4.匹配并录入完成
 
 // SyncTradesDetail 同步tags4trades
 // @Description end with statusCode: content-2, tradeDetail-1
