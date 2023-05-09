@@ -4,14 +4,15 @@ import (
 	"go-admin/app/spider/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
+	"go-admin/utils"
 )
 
 type EnterpriseProductGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	UscId       string `form:"uscId"  search:"type:;column:usc_id;table:enterprise_product" comment:"社会统一信用代码"`
-	ProductData string `form:"productData"  search:"type:;column:product_data;table:enterprise_product" comment:"json格式的产品分类"`
-	StatusCode  int    `form:"statusCode"  search:"type:;column:status_code;table:enterprise_product" comment:"状态码"`
+	UscId       string `form:"uscId"  search:"type:exact;column:usc_id;table:enterprise_product" comment:"社会统一信用代码"`
+	ProductData string `form:"productData"  search:"type:exact;column:product_data;table:enterprise_product" comment:"json格式的产品分类"`
+	StatusCode  int    `form:"statusCode"  search:"type:exact;column:status_code;table:enterprise_product" comment:"状态码"`
 	EnterpriseProductPageOrder
 }
 
@@ -51,6 +52,9 @@ type EnterpriseProductInsertReq struct {
 }
 
 func (s *EnterpriseProductInsertReq) Generate(model *models.EnterpriseProduct) {
+	if s.ProdId == 0 {
+		s.ProdId = utils.NewFlakeId()
+	}
 	model.ProdId = s.ProdId
 	model.UscId = s.UscId
 	model.ProductData = s.ProductData

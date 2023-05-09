@@ -8,6 +8,7 @@ import (
 // EnterpriseCertification
 type EnterpriseCertification struct {
 	CertId                 int64     `json:"certId" gorm:"primaryKey;comment:主键"`
+	UscId                  string    `json:"uscId" gorm:"comment:社会统一信用代码"`
 	CertificationTitle     string    `json:"certificationTitle" gorm:"comment:认证名称"`
 	CertificationCode      string    `json:"certificationCode" gorm:"comment:认证编号"`
 	CertificationLevel     string    `json:"certificationLevel" gorm:"comment:认证等级(省级,市级,国家级)"`
@@ -17,7 +18,6 @@ type EnterpriseCertification struct {
 	CertificationTermStart time.Time `json:"certificationTermStart" gorm:"comment:有效期起"`
 	CertificationTermEnd   time.Time `json:"certificationTermEnd" gorm:"comment:有效期至"`
 	CertificationAuthority string    `json:"certificationAuthority" gorm:"comment:发证机关"`
-	UscId                  string    `json:"uscId" gorm:"comment:社会统一信用代码"`
 	StatusCode             int64     `json:"statusCode" gorm:"comment:状态标识码"`
 	models.ModelTime
 	models.ControlBy

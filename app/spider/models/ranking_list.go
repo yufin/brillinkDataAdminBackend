@@ -9,7 +9,7 @@ type RankingList struct {
 	models.Model
 	ListTitle             string `json:"listTitle" gorm:"comment:榜单名称"`
 	ListType              string `json:"listType" gorm:"comment:榜单类型(品牌产品榜,企业榜,...)"`
-	ListSource            string `json:"listSource" gorm:"comment:排名来源(JsonArray格式;eg:["德本咨询", "eNet研究院", "互联网周刊"]"`
+	ListSource            string `json:"listSource" gorm:"comment:排名来源(JsonArray格式;eg:[\"德本咨询\", \"eNet研究院\", \"互联网周刊\"]"`
 	ListParticipantsTotal int64  `json:"listParticipantsTotal" gorm:"comment:参与排名企业数"`
 	ListPublishedDate     string `json:"listPublishedDate" gorm:"comment:排名发布日期"`
 	ListUrlQcc            string `json:"listUrlQcc" gorm:"comment:排名url(qcc)"`

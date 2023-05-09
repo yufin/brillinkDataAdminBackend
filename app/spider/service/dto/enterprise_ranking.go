@@ -4,15 +4,16 @@ import (
 	"go-admin/app/spider/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
+	"go-admin/utils"
 )
 
 type EnterpriseRankingGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	UscId                  string `form:"uscId"  search:"type:;column:usc_id;table:enterprise_ranking" comment:"社会统一信用代码"`
-	ListId                 int64  `form:"listId"  search:"type:;column:list_id;table:enterprise_ranking" comment:"外键(enterprise_ranking_list表的id)"`
-	RankingPosition        int    `form:"rankingPosition"  search:"type:;column:ranking_position;table:enterprise_ranking" comment:"榜内位置"`
-	RankingEnterpriseTitle string `form:"rankingEnterpriseTitle"  search:"type:;column:ranking_enterprise_title;table:enterprise_ranking" comment:"榜单中的企业名称"`
+	UscId                  string `form:"uscId"  search:"type:exact;column:usc_id;table:enterprise_ranking" comment:"社会统一信用代码"`
+	ListId                 int64  `form:"listId"  search:"type:exact;column:list_id;table:enterprise_ranking" comment:"外键(enterprise_ranking_list表的id)"`
+	RankingPosition        int    `form:"rankingPosition"  search:"type:exact;column:ranking_position;table:enterprise_ranking" comment:"榜内位置"`
+	RankingEnterpriseTitle string `form:"rankingEnterpriseTitle"  search:"type:exact;column:ranking_enterprise_title;table:enterprise_ranking" comment:"榜单中的企业名称"`
 	EnterpriseRankingPageOrder
 }
 
@@ -56,6 +57,9 @@ type EnterpriseRankingInsertReq struct {
 }
 
 func (s *EnterpriseRankingInsertReq) Generate(model *models.EnterpriseRanking) {
+	if s.RankId == 0 {
+		s.RankId = utils.NewFlakeId()
+	}
 	model.RankId = s.RankId
 	model.UscId = s.UscId
 	model.ListId = s.ListId

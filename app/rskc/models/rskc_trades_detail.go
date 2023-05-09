@@ -7,7 +7,8 @@ import (
 // RskcTradesDetail 客户、供应商交易细节（来自origin_content表)
 type RskcTradesDetail struct {
 	models.Model
-	ContentId      string `json:"contentId" gorm:"comment:外键"`
+	//Id             int64  `json:"id" gorm:"primaryKey;comment:主键编码"`
+	ContentId      int64  `json:"contentId" gorm:"comment:外键"`
 	EnterpriseName string `json:"enterpriseName" gorm:"comment:企业名称"`
 	CommodityRatio string `json:"commodityRatio" gorm:"default:'-';comment:货物占比"`
 	CommodityName  string `json:"commodityName" gorm:"default:'-';comment:货物种类名称"`

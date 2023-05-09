@@ -4,14 +4,15 @@ import (
 	"go-admin/app/spider/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
+	"go-admin/utils"
 )
 
 type EnterpriseIndustryGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	UscId        string `form:"uscId"  search:"type:;column:usc_id;table:enterprise_industry" comment:"社会统一信用代码"`
-	IndustryData string `form:"industryData"  search:"type:;column:industry_data;table:enterprise_industry" comment:"json格式的行业分类"`
-	StatusCode   int    `form:"statusCode"  search:"type:;column:status_code;table:enterprise_industry" comment:"状态标识码"`
+	UscId        string `form:"uscId"  search:"type:exact;column:usc_id;table:enterprise_industry" comment:"社会统一信用代码"`
+	IndustryData string `form:"industryData"  search:"type:exact;column:industry_data;table:enterprise_industry" comment:"json格式的行业分类"`
+	StatusCode   int    `form:"statusCode"  search:"type:exact;column:status_code;table:enterprise_industry" comment:"状态标识码"`
 	EnterpriseIndustryPageOrder
 }
 
@@ -51,6 +52,9 @@ type EnterpriseIndustryInsertReq struct {
 }
 
 func (s *EnterpriseIndustryInsertReq) Generate(model *models.EnterpriseIndustry) {
+	if s.IndId == 0 {
+		s.IndId = utils.NewFlakeId()
+	}
 	model.IndId = s.IndId
 	model.UscId = s.UscId
 	model.IndustryData = s.IndustryData

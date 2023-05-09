@@ -3,7 +3,6 @@ package task
 import (
 	"fmt"
 	log "github.com/go-admin-team/go-admin-core/logger"
-	"github.com/google/uuid"
 	"github.com/pkg/sftp"
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service"
@@ -86,7 +85,6 @@ func SyncOriginJsonContent(s *service.RskcOriginContent, p *actions.DataPermissi
 	for _, dirInfo := range dirInfos {
 		if dirInfo.notExist == true {
 			insertReq := dto.RskcOriginContentInsertReq{
-				ContentId:  uuid.New().String(),
 				UscId:      dirInfo.UscId,
 				YearMonth:  dirInfo.YearMonth,
 				Content:    string(GetFileContentFromSftp(sftpClientP, dirInfo.DataFilePath)),

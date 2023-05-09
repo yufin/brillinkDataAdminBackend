@@ -3,16 +3,17 @@ package apis
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
+	"github.com/pkg/errors"
 	"go-admin/app/spider/models"
 	"go-admin/app/spider/service"
 	"go-admin/app/spider/service/dto"
+	"go-admin/app/spider/task"
 	"go-admin/common/actions"
 	"go-admin/common/apis"
 	dtoCommon "go-admin/common/dto"
 	"go-admin/common/exception"
 	"go-admin/common/jwtauth/user"
 	_ "go-admin/common/response/antd"
-	"math"
 	"net/url"
 )
 
@@ -22,11 +23,41 @@ type EnterpriseWaitList struct {
 
 // UpdateStatusCode 更新状态码
 // @Summary 更新状态码, 3检查info表信息是否健全,4.检查certification,industry,product,ranking表信息是否健全.
-func (e EnterpriseWaitList) UpdateStatusCode(c *gin.Context) {
+func (e EnterpriseWaitList) TaskCheckIntegrality(c *gin.Context) {
+	req := dto.EnterpriseWaitListGetPageReq{
+		Pagination: dtoCommon.Pagination{PageSize: 3000, PageIndex: 1},
+		StatusCode: 2,
+	}
+	s := service.EnterpriseWaitList{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
+		return
+	}
 
+	p := actions.GetPermissionFromContext(c)
+	list := make([]models.EnterpriseWaitList, 0)
+	var count int64
+
+	err = s.GetPage(&req, p, &list, &count)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
+		return
+	}
+
+	for _, v := range list {
+		task.CheckIfAllCollected()
+	}
+
+	e.PageOK(list, count, req.GetPageIndex(), req.GetPageSize())
 }
 
-// UpdateQccUrls 插入匹配的url
+// UpdateMatchedIdent 插入匹配的url,并检查数据完整性，修改为对应的状态码
 // @Summary 通过id与名称插入匹配的url,
 // @Description 修改待爬取列表
 // @Tags 待爬取列表
@@ -36,37 +67,84 @@ func (e EnterpriseWaitList) UpdateStatusCode(c *gin.Context) {
 // @Success 200 {object} antd.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/enterprise-wait-list/qccUrl/{id} [put]
 // @Security Bearer
-func (e EnterpriseWaitList) UpdateQccUrls(c *gin.Context) {
+func (e EnterpriseWaitList) UpdateMatchedIdent(c *gin.Context) {
 	req := dto.EnterpriseWaitListUpdateReq{}
-	s := service.EnterpriseWaitList{}
-	err := e.MakeContext(c).
-		MakeOrm().
-		Bind(&req).
-		MakeService(&s.Service).
-		Errors
+	sWait := service.EnterpriseWaitList{}
+	if err := e.MakeContext(c).MakeOrm().Bind(&req).MakeService(&sWait.Service).Errors; err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+
+	// assert qccUrl is "" or nil
+	if req.UscId == "" || req.UscId == "-" || len(req.UscId) != 18 {
+		err := errors.Errorf("字段校验失败: 统一社会信用代码(uscId)不能为空/格式不正确")
+		panic(exception.WithMsg(500, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+
+	sInd := service.EnterpriseIndustry{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sInd.Service).Errors; err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+
+	sProd := service.EnterpriseProduct{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sProd.Service).Errors; err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+
+	sRank := service.EnterpriseRanking{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sRank.Service).Errors; err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+
+	sCert := service.EnterpriseCertification{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sCert.Service).Errors; err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+
+	sInf := service.EnterpriseInfo{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sInf.Service).Errors; err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+
+	p := actions.GetPermissionFromContext(c)
+
+	sw := task.ServiceWrap{
+		WaitListS: &sWait,
+		IndustryS: &sInd,
+		InfoS:     &sInf,
+		ProductS:  &sProd,
+		RankingS:  &sRank,
+		CertS:     &sCert,
+	}
+
+	allCollected, err := task.CheckIfAllCollected(req.UscId, &sw, p)
 	if err != nil {
 		e.Logger.Error(err)
 		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
 		return
 	}
-	u, err := url.Parse(req.QccUrl)
-	if err != nil || u.Scheme == "" || u.Host == "" {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(500, "NotValidUrl", err))
-		return
+
+	// 1.待匹配qccUrl&uscId,2.待爬取,3.爬取完成,-1.爬取失败,9非法公司(自动忽略)
+	if allCollected {
+		req.StatusCode = 3
+	} else {
+		req.StatusCode = 2
 	}
 
-	var object models.EnterpriseWaitList
-	p := actions.GetPermissionFromContext(c)
-	err = s.Get(&dto.EnterpriseWaitListGetReq{Id: req.Id}, p, &object)
-	if err != nil {
-		panic(exception.WithMsg(50000, "GetEnterpriseWaitListFailWhileUpdateQccUrl", err))
-		return
-	}
-
-	req.StatusCode = int(math.Max(float64(object.StatusCode), float64(2)))
 	req.SetUpdateBy(int64(user.GetUserId(c)))
-	err = s.Update(&req, p)
+	err = sWait.Update(&req, p)
 	if err != nil {
 		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
 		return
@@ -93,12 +171,6 @@ func (e EnterpriseWaitList) GetEnterprisePageWaitingForMatch(c *gin.Context) {
 		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
 		return
 	}
-	//statusCodeParam, err := strconv.Atoi(c.Query("statusCode"))
-	//if err != nil {
-	//	e.Logger.Error(err)
-	//	panic(exception.WithMsg(500, "QueryParamStatusCodeParseFail", err))
-	//	return
-	//}
 	req := dto.EnterpriseWaitListGetPageReq{
 		Pagination: paginationReq,
 		StatusCode: 1,

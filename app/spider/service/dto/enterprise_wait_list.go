@@ -4,6 +4,7 @@ import (
 	"go-admin/app/spider/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
+	"go-admin/utils"
 )
 
 type EnterpriseWaitListGetPageReq struct {
@@ -88,8 +89,9 @@ type EnterpriseWaitListInsertReq struct {
 
 func (s *EnterpriseWaitListInsertReq) Generate(model *models.EnterpriseWaitList) {
 	if s.Id == 0 {
-		model.Model = common.Model{Id: s.Id}
+		s.Id = utils.NewFlakeId()
 	}
+	model.Model = common.Model{Id: s.Id}
 	model.EnterpriseName = s.EnterpriseName
 	model.UscId = s.UscId
 	model.Priority = s.Priority

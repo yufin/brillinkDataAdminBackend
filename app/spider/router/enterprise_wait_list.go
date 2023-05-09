@@ -31,7 +31,7 @@ func registerEnterpriseWaitListRouterNoCheck(v1 *gin.RouterGroup) {
 	r := v1.Group("/spider/enterprise/wait-list")
 	{
 		r.GET("/waiting", api.GetEnterprisePageWaitingForMatch)
-		r.PUT("/qccUrl/:id", api.UpdateQccUrls)
+		r.PUT("/update-ident/:id", api.UpdateMatchedIdent)
 		r.POST("", api.Insert)
 		r.GET("", api.GetPage)
 		r.GET("/:id", api.Get)

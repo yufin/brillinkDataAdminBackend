@@ -4,39 +4,40 @@ import (
 	"go-admin/app/spider/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
+	"go-admin/utils"
 	"time"
 )
 
 type EnterpriseInfoGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	EnterpriseTitle               string    `form:"enterpriseTitle"  search:"type:;column:enterprise_title;table:enterprise_info" comment:"企业名称"`
-	EnterpriseTitleEn             string    `form:"enterpriseTitleEn"  search:"type:;column:enterprise_title_en;table:enterprise_info" comment:"企业英文名称"`
-	BusinessRegistrationNumber    string    `form:"businessRegistrationNumber"  search:"type:;column:business_registration_number;table:enterprise_info" comment:"工商注册号"`
-	EstablishedDate               time.Time `form:"establishedDate"  search:"type:;column:established_date;table:enterprise_info" comment:"成立日期"`
-	Region                        string    `form:"region"  search:"type:;column:region;table:enterprise_info" comment:"所属地区"`
-	ApprovedDate                  time.Time `form:"approvedDate"  search:"type:;column:approved_date;table:enterprise_info" comment:"核准日期"`
-	RegisteredAddress             string    `form:"registeredAddress"  search:"type:;column:registered_address;table:enterprise_info" comment:"注册地址"`
-	RegisteredCapital             float64   `form:"registeredCapital"  search:"type:;column:registered_capital;table:enterprise_info" comment:"注册资本"`
-	RegisteredCapitalCurrency     string    `form:"registeredCapitalCurrency"  search:"type:;column:registered_capital_currency;table:enterprise_info" comment:"注册资本币种"`
-	PaidInCapital                 float64   `form:"paidInCapital"  search:"type:;column:paid_in_capital;table:enterprise_info" comment:"实缴资本"`
-	PaidInCapitalCurrency         string    `form:"paidInCapitalCurrency"  search:"type:;column:paid_in_capital_currency;table:enterprise_info" comment:"实缴资本币种"`
-	EnterpriseType                string    `form:"enterpriseType"  search:"type:;column:enterprise_type;table:enterprise_info" comment:"企业类型"`
-	StuffSize                     string    `form:"stuffSize"  search:"type:;column:stuff_size;table:enterprise_info" comment:"人员规模"`
-	StuffInsuredNumber            int       `form:"stuffInsuredNumber"  search:"type:;column:stuff_insured_number;table:enterprise_info" comment:"参保人数"`
-	BusinessScope                 string    `form:"businessScope"  search:"type:;column:business_scope;table:enterprise_info" comment:"经营范围"`
-	ImportExportQualificationCode string    `form:"importExportQualificationCode"  search:"type:;column:import_export_qualification_code;table:enterprise_info" comment:"进出口企业代码"`
-	LegalRepresentative           string    `form:"legalRepresentative"  search:"type:;column:legal_representative;table:enterprise_info" comment:"法定代表人"`
-	RegistrationAuthority         string    `form:"registrationAuthority"  search:"type:;column:registration_authority;table:enterprise_info" comment:"登记机关"`
-	RegistrationStatus            string    `form:"registrationStatus"  search:"type:;column:registration_status;table:enterprise_info" comment:"登记状态"`
-	TaxpayerQualification         string    `form:"taxpayerQualification"  search:"type:;column:taxpayer_qualification;table:enterprise_info" comment:"纳税人资质"`
-	OrganizationCode              string    `form:"organizationCode"  search:"type:;column:organization_code;table:enterprise_info" comment:"组织机构代码"`
-	UrlQcc                        string    `form:"urlQcc"  search:"type:;column:url_qcc;table:enterprise_info" comment:"企查查url"`
-	UrlHomepage                   string    `form:"urlHomepage"  search:"type:;column:url_homepage;table:enterprise_info" comment:"官网url"`
-	BusinessTermStart             time.Time `form:"businessTermStart"  search:"type:;column:business_term_start;table:enterprise_info" comment:"营业期限开始"`
-	BusinessTermEnd               time.Time `form:"businessTermEnd"  search:"type:;column:business_term_end;table:enterprise_info" comment:"营业期限结束"`
-	UscId                         string    `form:"uscId"  search:"type:;column:usc_id;table:enterprise_info" comment:"社会统一信用代码"`
-	StatusCode                    int       `form:"statusCode"  search:"type:;column:status_code;table:enterprise_info" comment:"状态标识码"`
+	EnterpriseTitle               string    `form:"enterpriseTitle"  search:"type:exact;column:enterprise_title;table:enterprise_info" comment:"企业名称"`
+	EnterpriseTitleEn             string    `form:"enterpriseTitleEn"  search:"type:exact;column:enterprise_title_en;table:enterprise_info" comment:"企业英文名称"`
+	BusinessRegistrationNumber    string    `form:"businessRegistrationNumber"  search:"type:exact;column:business_registration_number;table:enterprise_info" comment:"工商注册号"`
+	EstablishedDate               time.Time `form:"establishedDate"  search:"type:exact;column:established_date;table:enterprise_info" comment:"成立日期"`
+	Region                        string    `form:"region"  search:"type:exact;column:region;table:enterprise_info" comment:"所属地区"`
+	ApprovedDate                  time.Time `form:"approvedDate"  search:"type:exact;column:approved_date;table:enterprise_info" comment:"核准日期"`
+	RegisteredAddress             string    `form:"registeredAddress"  search:"type:exact;column:registered_address;table:enterprise_info" comment:"注册地址"`
+	RegisteredCapital             float64   `form:"registeredCapital"  search:"type:exact;column:registered_capital;table:enterprise_info" comment:"注册资本"`
+	RegisteredCapitalCurrency     string    `form:"registeredCapitalCurrency"  search:"type:exact;column:registered_capital_currency;table:enterprise_info" comment:"注册资本币种"`
+	PaidInCapital                 float64   `form:"paidInCapital"  search:"type:exact;column:paid_in_capital;table:enterprise_info" comment:"实缴资本"`
+	PaidInCapitalCurrency         string    `form:"paidInCapitalCurrency"  search:"type:exact;column:paid_in_capital_currency;table:enterprise_info" comment:"实缴资本币种"`
+	EnterpriseType                string    `form:"enterpriseType"  search:"type:exact;column:enterprise_type;table:enterprise_info" comment:"企业类型"`
+	StuffSize                     string    `form:"stuffSize"  search:"type:exact;column:stuff_size;table:enterprise_info" comment:"人员规模"`
+	StuffInsuredNumber            int       `form:"stuffInsuredNumber"  search:"type:exact;column:stuff_insured_number;table:enterprise_info" comment:"参保人数"`
+	BusinessScope                 string    `form:"businessScope"  search:"type:exact;column:business_scope;table:enterprise_info" comment:"经营范围"`
+	ImportExportQualificationCode string    `form:"importExportQualificationCode"  search:"type:exact;column:import_export_qualification_code;table:enterprise_info" comment:"进出口企业代码"`
+	LegalRepresentative           string    `form:"legalRepresentative"  search:"type:exact;column:legal_representative;table:enterprise_info" comment:"法定代表人"`
+	RegistrationAuthority         string    `form:"registrationAuthority"  search:"type:exact;column:registration_authority;table:enterprise_info" comment:"登记机关"`
+	RegistrationStatus            string    `form:"registrationStatus"  search:"type:exact;column:registration_status;table:enterprise_info" comment:"登记状态"`
+	TaxpayerQualification         string    `form:"taxpayerQualification"  search:"type:exact;column:taxpayer_qualification;table:enterprise_info" comment:"纳税人资质"`
+	OrganizationCode              string    `form:"organizationCode"  search:"type:exact;column:organization_code;table:enterprise_info" comment:"组织机构代码"`
+	UrlQcc                        string    `form:"urlQcc"  search:"type:exact;column:url_qcc;table:enterprise_info" comment:"企查查url"`
+	UrlHomepage                   string    `form:"urlHomepage"  search:"type:exact;column:url_homepage;table:enterprise_info" comment:"官网url"`
+	BusinessTermStart             time.Time `form:"businessTermStart"  search:"type:exact;column:business_term_start;table:enterprise_info" comment:"营业期限开始"`
+	BusinessTermEnd               time.Time `form:"businessTermEnd"  search:"type:exact;column:business_term_end;table:enterprise_info" comment:"营业期限结束"`
+	UscId                         string    `form:"uscId"  search:"type:exact;column:usc_id;table:enterprise_info" comment:"社会统一信用代码"`
+	StatusCode                    int       `form:"statusCode"  search:"type:exact;column:status_code;table:enterprise_info" comment:"状态标识码"`
 	EnterpriseInfoPageOrder
 }
 
@@ -172,6 +173,9 @@ type EnterpriseInfoInsertReq struct {
 }
 
 func (s *EnterpriseInfoInsertReq) Generate(model *models.EnterpriseInfo) {
+	if s.InfoId == 0 {
+		s.InfoId = utils.NewFlakeId()
+	}
 	model.InfoId = s.InfoId
 	model.EnterpriseTitle = s.EnterpriseTitle
 	model.EnterpriseTitleEn = s.EnterpriseTitleEn

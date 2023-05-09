@@ -4,11 +4,12 @@ import (
 	"go-admin/app/rskc/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
+	"go-admin/utils"
 )
 
 type RskcTradesDetailGetPageReq struct {
 	dto.Pagination `search:"-"`
-	ContentId      string `form:"contentId"  search:"type:exact;column:content_id;table:rskc_trades_detail" comment:"外键"`
+	ContentId      int64  `form:"contentId"  search:"type:exact;column:content_id;table:rskc_trades_detail" comment:"外键"`
 	EnterpriseName string `form:"enterpriseName"  search:"type:exact;column:enterprise_name;table:rskc_trades_detail" comment:"企业名称"`
 	CommodityRatio string `form:"commodityRatio"  search:"type:exact;column:commodity_ratio;table:rskc_trades_detail" comment:"货物占比"`
 	CommodityName  string `form:"commodityName"  search:"type:exact;column:commodity_name;table:rskc_trades_detail" comment:"货物种类名称"`
@@ -26,7 +27,7 @@ type RskcTradesDetailGetPageReq struct {
 
 type RskcTradesDetailPageOrder struct {
 	Id             string `form:"idOrder"  search:"type:order;column:id;table:rskc_trades_detail"`
-	ContentId      string `form:"contentIdOrder"  search:"type:order;column:content_id;table:rskc_trades_detail"`
+	ContentId      int64  `form:"contentIdOrder"  search:"type:order;column:content_id;table:rskc_trades_detail"`
 	EnterpriseName string `form:"enterpriseNameOrder"  search:"type:order;column:enterprise_name;table:rskc_trades_detail"`
 	CommodityRatio string `form:"commodityRatioOrder"  search:"type:order;column:commodity_ratio;table:rskc_trades_detail"`
 	CommodityName  string `form:"commodityNameOrder"  search:"type:order;column:commodity_name;table:rskc_trades_detail"`
@@ -47,7 +48,7 @@ func (m *RskcTradesDetailGetPageReq) GetNeedSearch() interface{} {
 
 type RskcTradesDetailGetResp struct {
 	Id             int64  `json:"id"`             // 主键
-	ContentId      string `json:"contentId"`      // 外键
+	ContentId      int64  `json:"contentId"`      // 外键
 	EnterpriseName string `json:"enterpriseName"` // 企业名称
 	CommodityRatio string `json:"commodityRatio"` // 货物占比
 	CommodityName  string `json:"commodityName"`  // 货物种类名称
@@ -85,7 +86,7 @@ func (s *RskcTradesDetailGetResp) Generate(model *models.RskcTradesDetail) {
 
 type RskcTradesDetailInsertReq struct {
 	Id             int64  `json:"id"`             // 主键
-	ContentId      string `json:"contentId"`      // 外键
+	ContentId      int64  `json:"contentId"`      // 外键
 	EnterpriseName string `json:"enterpriseName"` // 企业名称
 	CommodityRatio string `json:"commodityRatio"` // 货物占比
 	CommodityName  string `json:"commodityName"`  // 货物种类名称
@@ -103,8 +104,10 @@ type RskcTradesDetailInsertReq struct {
 
 func (s *RskcTradesDetailInsertReq) Generate(model *models.RskcTradesDetail) {
 	if s.Id == 0 {
-		model.Model = common.Model{Id: s.Id}
+		//model.Model = common.Model{Id: s.Id}
+		s.Id = utils.NewFlakeId()
 	}
+	model.Model = common.Model{Id: utils.NewFlakeId()}
 	model.ContentId = s.ContentId
 	model.EnterpriseName = s.EnterpriseName
 	model.CommodityRatio = s.CommodityRatio
@@ -127,7 +130,7 @@ func (s *RskcTradesDetailInsertReq) GetId() interface{} {
 
 type RskcTradesDetailUpdateReq struct {
 	Id             int64  `uri:"id"`              // 主键
-	ContentId      string `json:"contentId"`      // 外键
+	ContentId      int64  `json:"contentId"`      // 外键
 	EnterpriseName string `json:"enterpriseName"` // 企业名称
 	CommodityRatio string `json:"commodityRatio"` // 货物占比
 	CommodityName  string `json:"commodityName"`  // 货物种类名称
@@ -147,7 +150,7 @@ func (s *RskcTradesDetailUpdateReq) Generate(model *models.RskcTradesDetail) {
 	if s.Id == 0 {
 		model.Model = common.Model{Id: s.Id}
 	}
-	if s.ContentId != "" {
+	if s.ContentId != 0 {
 		model.ContentId = s.ContentId
 	}
 	if s.EnterpriseName != "" {

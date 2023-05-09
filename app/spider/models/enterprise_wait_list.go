@@ -11,8 +11,8 @@ type EnterpriseWaitList struct {
 	UscId          string `json:"uscId" gorm:"default:null;comment:社会统一信用代码"`
 	Priority       int    `json:"priority" gorm:"default:1;comment:优先级"`
 	QccUrl         string `json:"qccUrl" gorm:"default:'-';comment:qcc主体网址"`
-	StatusCode     int    `json:"statusCode" gorm:"default:1;comment:数据爬取状态码,1.待确认爬取状态,2.待爬取,3.爬取完成,-1.爬取失败"`
 	Source         string `json:"source" gorm:"default:'-';comment:来源备注"`
+	StatusCode     int    `json:"statusCode" gorm:"default:1;comment:数据爬取状态码,1.待匹配qccUrl&uscId,2.待爬取,3.爬取完成,-1.爬取失败,9非法公司(自动忽略)"`
 	models.ModelTime
 	models.ControlBy
 }

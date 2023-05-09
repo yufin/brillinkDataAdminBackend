@@ -4,24 +4,25 @@ import (
 	"go-admin/app/spider/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
+	"go-admin/utils"
 	"time"
 )
 
 type EnterpriseCertificationGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	CertId                 int64     `form:"certId"  search:"type:;column:cert_id;table:enterprise_certification" comment:"主键"`
-	CertificationTitle     string    `form:"certificationTitle"  search:"type:;column:certification_title;table:enterprise_certification" comment:"认证名称"`
-	CertificationCode      string    `form:"certificationCode"  search:"type:;column:certification_code;table:enterprise_certification" comment:"认证编号"`
-	CertificationLevel     string    `form:"certificationLevel"  search:"type:;column:certification_level;table:enterprise_certification" comment:"认证等级(省级,市级,国家级)"`
-	CertificationType      string    `form:"certificationType"  search:"type:;column:certification_type;table:enterprise_certification" comment:"认证类型(荣誉,科技型企业,...)"`
-	CertificationSource    string    `form:"certificationSource"  search:"type:;column:certification_source;table:enterprise_certification" comment:"认证来源(eg:2022年度浙江省中小企业公共服务示范平台名单)"`
-	CertificationDate      time.Time `form:"certificationDate"  search:"type:;column:certification_date;table:enterprise_certification" comment:"发证日期"`
-	CertificationTermStart time.Time `form:"certificationTermStart"  search:"type:;column:certification_term_start;table:enterprise_certification" comment:"有效期起"`
-	CertificationTermEnd   time.Time `form:"certificationTermEnd"  search:"type:;column:certification_term_end;table:enterprise_certification" comment:"有效期至"`
-	CertificationAuthority string    `form:"certificationAuthority"  search:"type:;column:certification_authority;table:enterprise_certification" comment:"发证机关"`
-	UscId                  string    `form:"uscId"  search:"type:;column:usc_id;table:enterprise_certification" comment:"社会统一信用代码"`
-	StatusCode             int64     `form:"statusCode"  search:"type:;column:status_code;table:enterprise_certification" comment:"状态标识码"`
+	CertId                 int64     `form:"certId"  search:"type:exact;column:cert_id;table:enterprise_certification" comment:"主键"`
+	CertificationTitle     string    `form:"certificationTitle"  search:"type:exact;column:certification_title;table:enterprise_certification" comment:"认证名称"`
+	CertificationCode      string    `form:"certificationCode"  search:"type:exact;column:certification_code;table:enterprise_certification" comment:"认证编号"`
+	CertificationLevel     string    `form:"certificationLevel"  search:"type:exact;column:certification_level;table:enterprise_certification" comment:"认证等级(省级,市级,国家级)"`
+	CertificationType      string    `form:"certificationType"  search:"type:exact;column:certification_type;table:enterprise_certification" comment:"认证类型(荣誉,科技型企业,...)"`
+	CertificationSource    string    `form:"certificationSource"  search:"type:exact;column:certification_source;table:enterprise_certification" comment:"认证来源(eg:2022年度浙江省中小企业公共服务示范平台名单)"`
+	CertificationDate      time.Time `form:"certificationDate"  search:"type:exact;column:certification_date;table:enterprise_certification" comment:"发证日期"`
+	CertificationTermStart time.Time `form:"certificationTermStart"  search:"type:exact;column:certification_term_start;table:enterprise_certification" comment:"有效期起"`
+	CertificationTermEnd   time.Time `form:"certificationTermEnd"  search:"type:exact;column:certification_term_end;table:enterprise_certification" comment:"有效期至"`
+	CertificationAuthority string    `form:"certificationAuthority"  search:"type:exact;column:certification_authority;table:enterprise_certification" comment:"发证机关"`
+	UscId                  string    `form:"uscId"  search:"type:exact;column:usc_id;table:enterprise_certification" comment:"社会统一信用代码"`
+	StatusCode             int64     `form:"statusCode"  search:"type:exact;column:status_code;table:enterprise_certification" comment:"状态标识码"`
 	EnterpriseCertificationPageOrder
 }
 
@@ -93,6 +94,9 @@ type EnterpriseCertificationInsertReq struct {
 }
 
 func (s *EnterpriseCertificationInsertReq) Generate(model *models.EnterpriseCertification) {
+	if s.CertId == 0 {
+		s.CertId = utils.NewFlakeId()
+	}
 	model.CertId = s.CertId
 	model.CertificationTitle = s.CertificationTitle
 	model.CertificationCode = s.CertificationCode

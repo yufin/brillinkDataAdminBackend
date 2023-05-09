@@ -36,7 +36,7 @@ func SyncTradesDetail(s *service.RskcTradesDetail, sContent *service.RskcOriginC
 	// get customer, supplier list
 	// insert base field to trades_detail with status_code 1
 	for _, content := range contentList {
-		err = ParseTradesDetailAndInsert(content.Content, content.Id, content.ContentId, s, sContent, p)
+		err = ParseTradesDetailAndInsert(content.Content, content.Id, content.Id, s, sContent, p)
 		if err != nil {
 			log.Errorf("Task SyncTradesDetail func-ParseTradesDetailAndInsert Failed:%s \r\n", err)
 			return err
@@ -81,7 +81,7 @@ func contentEnterpriseNameKeyDict() map[string]string {
 
 // ParseTradesDetailAndInsert process of sync tradesDetail from content
 // @describe:parse trades detail from content and insert with statusCode = 1, then update content table with statusCode=2 by contentId
-func ParseTradesDetailAndInsert(contentJsonStr string, Id int64, contentId string, tradeDetailService *service.RskcTradesDetail, contentService *service.RskcOriginContent, p *actions.DataPermission) error {
+func ParseTradesDetailAndInsert(contentJsonStr string, Id int64, contentId int64, tradeDetailService *service.RskcTradesDetail, contentService *service.RskcOriginContent, p *actions.DataPermission) error {
 	// delete all records in trades_detail if any by contentId
 	func() {
 		deleteList := make([]models.RskcTradesDetail, 0)

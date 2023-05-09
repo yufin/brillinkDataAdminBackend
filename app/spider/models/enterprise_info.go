@@ -7,7 +7,7 @@ import (
 
 // EnterpriseInfo 企业主体信息
 type EnterpriseInfo struct {
-	InfoId                        int64     `json:"infoId" gorm:"primaryKey;autoIncrement;comment:主键"`
+	InfoId                        int64     `json:"infoId" gorm:"primaryKey;comment:主键"`
 	EnterpriseTitle               string    `json:"enterpriseTitle" gorm:"comment:企业名称"`
 	EnterpriseTitleEn             string    `json:"enterpriseTitleEn" gorm:"comment:企业英文名称"`
 	BusinessRegistrationNumber    string    `json:"businessRegistrationNumber" gorm:"comment:工商注册号"`

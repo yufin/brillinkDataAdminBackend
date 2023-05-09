@@ -4,6 +4,7 @@ import (
 	"go-admin/app/spider/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
+	"go-admin/utils"
 )
 
 type EnterpriseGetPageReq struct {
@@ -49,8 +50,9 @@ type EnterpriseInsertReq struct {
 
 func (s *EnterpriseInsertReq) Generate(model *models.Enterprise) {
 	if s.Id == 0 {
-		model.Model = common.Model{Id: s.Id}
+		s.Id = utils.NewFlakeId()
 	}
+	model.Model = common.Model{Id: s.Id}
 	model.UscId = s.UscId
 	model.StatusCode = s.StatusCode
 	model.CreateBy = s.CreateBy

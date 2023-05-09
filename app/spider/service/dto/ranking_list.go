@@ -4,20 +4,21 @@ import (
 	"go-admin/app/spider/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
+	"go-admin/utils"
 )
 
 type RankingListGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	Id                    int64  `form:"id"  search:"type:;column:id;table:ranking_list" comment:"主键id"`
-	ListTitle             string `form:"listTitle"  search:"type:;column:list_title;table:ranking_list" comment:"榜单名称"`
-	ListType              string `form:"listType"  search:"type:;column:list_type;table:ranking_list" comment:"榜单类型(品牌产品榜,企业榜,...)"`
-	ListSource            string `form:"listSource"  search:"type:;column:list_source;table:ranking_list" comment:"排名来源(JsonArray格式;eg:["德本咨询", "eNet研究院", "互联网周刊"]"`
-	ListParticipantsTotal int64  `form:"listParticipantsTotal"  search:"type:;column:list_participants_total;table:ranking_list" comment:"参与排名企业数"`
-	ListPublishedDate     string `form:"listPublishedDate"  search:"type:;column:list_published_date;table:ranking_list" comment:"排名发布日期"`
-	ListUrlQcc            string `form:"listUrlQcc"  search:"type:;column:list_url_qcc;table:ranking_list" comment:"排名url(qcc)"`
-	ListUrlOrigin         string `form:"listUrlOrigin"  search:"type:;column:list_url_origin;table:ranking_list" comment:"排名url(来源)"`
-	StatusCode            int64  `form:"statusCode"  search:"type:;column:status_code;table:ranking_list" comment:"状态标识码"`
+	Id                    int64  `form:"id"  search:"type:exact;column:id;table:ranking_list" comment:"主键id"`
+	ListTitle             string `form:"listTitle"  search:"type:exact;column:list_title;table:ranking_list" comment:"榜单名称"`
+	ListType              string `form:"listType"  search:"type:exact;column:list_type;table:ranking_list" comment:"榜单类型(品牌产品榜,企业榜,...)"`
+	ListSource            string `form:"listSource"  search:"type:exact;column:list_source;table:ranking_list" comment:"排名来源(JsonArray格式;eg:["德本咨询", "eNet研究院", "互联网周刊"]"`
+	ListParticipantsTotal int64  `form:"listParticipantsTotal"  search:"type:exact;column:list_participants_total;table:ranking_list" comment:"参与排名企业数"`
+	ListPublishedDate     string `form:"listPublishedDate"  search:"type:exact;column:list_published_date;table:ranking_list" comment:"排名发布日期"`
+	ListUrlQcc            string `form:"listUrlQcc"  search:"type:exact;column:list_url_qcc;table:ranking_list" comment:"排名url(qcc)"`
+	ListUrlOrigin         string `form:"listUrlOrigin"  search:"type:exact;column:list_url_origin;table:ranking_list" comment:"排名url(来源)"`
+	StatusCode            int64  `form:"statusCode"  search:"type:exact;column:status_code;table:ranking_list" comment:"状态标识码"`
 	StartTime             string `form:"startTime" search:"type:gte;column:created_at;table:ranking_list" comment:"创建时间"`
 	EndTime               string `form:"endTime" search:"type:lte;column:created_at;table:ranking_list" comment:"创建时间"`
 	RankingListPageOrder
@@ -82,8 +83,9 @@ type RankingListInsertReq struct {
 
 func (s *RankingListInsertReq) Generate(model *models.RankingList) {
 	if s.Id == 0 {
-		model.Model = common.Model{Id: s.Id}
+		s.Id = utils.NewFlakeId()
 	}
+	model.Model = common.Model{Id: s.Id}
 	model.ListTitle = s.ListTitle
 	model.ListType = s.ListType
 	model.ListSource = s.ListSource

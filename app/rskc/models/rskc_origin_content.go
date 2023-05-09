@@ -7,7 +7,7 @@ import (
 // RskcOriginContent 微众json存储
 type RskcOriginContent struct {
 	models.Model
-	ContentId  string `json:"contentId" gorm:"comment:uuid4"`
+	//Id int64 `json:"id" gorm:"primaryKey;autoIncrement;comment:主键编码"`
 	UscId      string `json:"uscId" gorm:"comment:统一社会信用代码"`
 	YearMonth  string `json:"yearMonth" gorm:"comment:数据更新年月"`
 	Content    string `json:"content" gorm:"comment:原始JSON STRING数据"`
