@@ -20,6 +20,25 @@ type RskcTradesDetail struct {
 	apis.Api
 }
 
+func (e RskcTradesDetail) GetJoin(c *gin.Context) {
+	req := dto.RskcTradesDetailGetPageReq{}
+	s := service.RskcTradesDetail{}
+	err := e.MakeContext(c).Bind(&req).MakeOrm().MakeService(&s.Service).Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(500, "GetJoinRskcTradesDetailFail", err))
+		return
+	}
+	p := actions.GetPermissionFromContext(c)
+	resp := make([]dto.RskcTradesDetailJoinWaitListResp, 0)
+	err = s.GetJoinWaitList(req.ContentId, &resp, p)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(500, "GetJoinRskcTradesDetailFail", err))
+	}
+	e.OK(resp)
+}
+
 // GetPage 获取客户、供应商交易细节（来自origin_content表)列表
 // @Summary 获取客户、供应商交易细节（来自origin_content表)列表
 // @Description 获取客户、供应商交易细节（来自origin_content表)列表

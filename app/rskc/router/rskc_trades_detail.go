@@ -34,5 +34,6 @@ func registerRskcTradesDetailRouterNoCheck(v1 *gin.RouterGroup) {
 		r.GET("/task/sync-wait", api.TaskSyncWaitList)
 		r.GET("", api.GetPage)
 		r.PUT("/:id", api.Update)
+		r.GET("/join-wait", api.GetJoin)
 	}
 }

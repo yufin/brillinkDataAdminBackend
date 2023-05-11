@@ -7,6 +7,15 @@ import (
 	"go-admin/utils"
 )
 
+type RskcTradesDetailJoinWaitListResp struct {
+	RtdId          int64
+	EwlId          int64
+	ContentId      int64
+	RtdStatusCode  int
+	EwlStatusCode  int
+	EnterpriseName string
+}
+
 type RskcTradesDetailGetPageReq struct {
 	dto.Pagination `search:"-"`
 	ContentId      int64  `form:"contentId"  search:"type:exact;column:content_id;table:rskc_trades_detail" comment:"外键"`

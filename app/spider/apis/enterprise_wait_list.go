@@ -21,12 +21,15 @@ type EnterpriseWaitList struct {
 	apis.Api
 }
 
-// UpdateStatusCode 更新状态码
-// @Summary 更新状态码, 3检查info表信息是否健全,4.检查certification,industry,product,ranking表信息是否健全.
+// TaskCheckIntegrality 检查数据采集情况任务
+// @Summary 更新状态码, (1.待匹配qccUrl&uscId,2.待爬取,3.爬取完成,-1.爬取失败,9非法公司(自动忽略))"
 func (e EnterpriseWaitList) TaskCheckIntegrality(c *gin.Context) {
 	req := dto.EnterpriseWaitListGetPageReq{
 		Pagination: dtoCommon.Pagination{PageSize: 3000, PageIndex: 1},
 		StatusCode: 2,
+		EnterpriseWaitListPageOrder: dto.EnterpriseWaitListPageOrder{
+			PriorityOrder: "desc",
+		},
 	}
 	s := service.EnterpriseWaitList{}
 	err := e.MakeContext(c).
@@ -50,11 +53,113 @@ func (e EnterpriseWaitList) TaskCheckIntegrality(c *gin.Context) {
 		return
 	}
 
-	for _, v := range list {
-		task.CheckIfAllCollected()
+	sw, err := task.GenServiceWrap(&e.Api, c)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GenServiceSwapEnterpriseWaitListFail", err))
+		return
 	}
 
-	e.PageOK(list, count, req.GetPageIndex(), req.GetPageSize())
+	updateBy := int64(user.GetUserId(c))
+	for _, v := range list {
+		collectionStatusP, err := task.GetDataCollectionDetailByUscId(v.UscId, p, sw)
+		if err != nil {
+			e.Logger.Error(err)
+			panic(exception.WithMsg(50000, "CheckIfAllCollectedEnterpriseWaitListFail", err))
+			return
+		}
+		if task.CheckIfAllCollected(collectionStatusP) {
+			// update statusCode
+			updateReq := dto.EnterpriseWaitListUpdateReq{
+				Id:         v.Id,
+				StatusCode: 3,
+			}
+			updateReq.SetUpdateBy(updateBy)
+			if err := s.Update(&updateReq, p); err != nil {
+				e.Logger.Error(err)
+				panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+				return
+			}
+		}
+	}
+	e.PageOK(nil, count, req.GetPageIndex(), req.GetPageSize())
+}
+
+// GetPageWaitingForCollect 获取等待采集的等待列表(statusCode=2)
+func (e EnterpriseWaitList) GetPageWaitingForCollect(c *gin.Context) {
+	paginationReq := dtoCommon.Pagination{}
+	s := service.EnterpriseWaitList{}
+	err := e.MakeContext(c).
+		MakeOrm().Bind(&paginationReq).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
+		return
+	}
+	req := dto.EnterpriseWaitListGetPageReq{
+		Pagination: paginationReq,
+		StatusCode: 2,
+		EnterpriseWaitListPageOrder: dto.EnterpriseWaitListPageOrder{
+			PriorityOrder: "desc",
+		},
+	}
+
+	p := actions.GetPermissionFromContext(c)
+	list := make([]models.EnterpriseWaitList, 0)
+
+	var count int64
+	err = s.GetPage(&req, p, &list, &count)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
+		return
+	}
+	// (lazy) check data integrality(if true:statusCode=2 update to 3)
+	sw, err := task.GenServiceWrap(&e.Api, c)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GenServiceSwapEnterpriseWaitListFail", err))
+		return
+	}
+
+	listChecked := make([]struct {
+		dto.EnterpriseWaitListWaitingGetPageResp
+		CollectionStatus []task.CollectionStatus `json:"collectionStatus"`
+	}, 0)
+	updateBy := int64(user.GetUserId(c))
+	for _, v := range list {
+		statusListP, err := task.GetDataCollectionDetailByUscId(v.UscId, p, sw)
+		if err != nil {
+			e.Logger.Error(err)
+			panic(exception.WithMsg(50000, "CheckIfAllCollectedEnterpriseWaitListFail", err))
+			return
+		}
+		if task.CheckIfAllCollected(statusListP) {
+			// update statusCode
+			updateReq := dto.EnterpriseWaitListUpdateReq{
+				Id:         v.Id,
+				StatusCode: 3,
+			}
+			updateReq.SetUpdateBy(updateBy)
+			if err := s.Update(&updateReq, p); err != nil {
+				e.Logger.Error(err)
+				panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+				return
+			}
+			count -= 1
+		} else {
+			resp := dto.EnterpriseWaitListWaitingGetPageResp{}
+			resp.Generate(&v)
+			resStruct := struct {
+				dto.EnterpriseWaitListWaitingGetPageResp
+				CollectionStatus []task.CollectionStatus `json:"collectionStatus"`
+			}{resp, *statusListP}
+			listChecked = append(listChecked, resStruct)
+		}
+	}
+	e.PageOK(listChecked, count, paginationReq.GetPageIndex(), paginationReq.GetPageSize())
 }
 
 // UpdateMatchedIdent 插入匹配的url,并检查数据完整性，修改为对应的状态码
@@ -83,53 +188,14 @@ func (e EnterpriseWaitList) UpdateMatchedIdent(c *gin.Context) {
 		return
 	}
 
-	sInd := service.EnterpriseIndustry{}
-	if err := e.MakeContext(c).MakeOrm().MakeService(&sInd.Service).Errors; err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
-		return
-	}
-
-	sProd := service.EnterpriseProduct{}
-	if err := e.MakeContext(c).MakeOrm().MakeService(&sProd.Service).Errors; err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
-		return
-	}
-
-	sRank := service.EnterpriseRanking{}
-	if err := e.MakeContext(c).MakeOrm().MakeService(&sRank.Service).Errors; err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
-		return
-	}
-
-	sCert := service.EnterpriseCertification{}
-	if err := e.MakeContext(c).MakeOrm().MakeService(&sCert.Service).Errors; err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
-		return
-	}
-
-	sInf := service.EnterpriseInfo{}
-	if err := e.MakeContext(c).MakeOrm().MakeService(&sInf.Service).Errors; err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
-		return
-	}
-
 	p := actions.GetPermissionFromContext(c)
-
-	sw := task.ServiceWrap{
-		WaitListS: &sWait,
-		IndustryS: &sInd,
-		InfoS:     &sInf,
-		ProductS:  &sProd,
-		RankingS:  &sRank,
-		CertS:     &sCert,
+	sw, err := task.GenServiceWrap(&e.Api, c)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GenServiceSwapEnterpriseWaitListFail", err))
+		return
 	}
-
-	allCollected, err := task.CheckIfAllCollected(req.UscId, &sw, p)
+	collectionStatusP, err := task.GetDataCollectionDetailByUscId(req.UscId, p, sw)
 	if err != nil {
 		e.Logger.Error(err)
 		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
@@ -137,7 +203,7 @@ func (e EnterpriseWaitList) UpdateMatchedIdent(c *gin.Context) {
 	}
 
 	// 1.待匹配qccUrl&uscId,2.待爬取,3.爬取完成,-1.爬取失败,9非法公司(自动忽略)
-	if allCollected {
+	if task.CheckIfAllCollected(collectionStatusP) {
 		req.StatusCode = 3
 	} else {
 		req.StatusCode = 2
@@ -152,14 +218,13 @@ func (e EnterpriseWaitList) UpdateMatchedIdent(c *gin.Context) {
 	e.OK(req.GetId())
 }
 
-// GetEnterprisePageWaitingForMatch 获取企业等待匹配列表
+// GetPageWaitingForMatch 获取企业等待匹配列表
 // @Summary 获取企业等待匹配url的列表: 条件: qccUrl为空字符串, statusCode=0
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Param statusCode query int 状态码: 1.等待匹配url 2.等待爬取主体信息(enterprise_info), 3.等待爬取其他信息(tag,industry...)，4.完成爬取
 // @Router /api/v1/enterprise-wait-lit/waiting [get]
-func (e EnterpriseWaitList) GetEnterprisePageWaitingForMatch(c *gin.Context) {
-
+func (e EnterpriseWaitList) GetPageWaitingForMatch(c *gin.Context) {
 	paginationReq := dtoCommon.Pagination{}
 	s := service.EnterpriseWaitList{}
 	err := e.MakeContext(c).
@@ -174,8 +239,9 @@ func (e EnterpriseWaitList) GetEnterprisePageWaitingForMatch(c *gin.Context) {
 	req := dto.EnterpriseWaitListGetPageReq{
 		Pagination: paginationReq,
 		StatusCode: 1,
-		//StatusCode: statusCodeParam,
-		//QccUrl: "-",
+		EnterpriseWaitListPageOrder: dto.EnterpriseWaitListPageOrder{
+			PriorityOrder: "desc",
+		},
 	}
 	req.EnterpriseWaitListPageOrder.PriorityOrder = "desc"
 
@@ -198,6 +264,36 @@ func (e EnterpriseWaitList) GetEnterprisePageWaitingForMatch(c *gin.Context) {
 	}
 
 	e.PageOK(respList, count, paginationReq.GetPageIndex(), paginationReq.GetPageSize())
+}
+
+// UpdateAsIllegal 通过Id标记该行为非法公司主体(update statusCode=9)
+func (e EnterpriseWaitList) UpdateAsIllegal(c *gin.Context) {
+	reqTemp := dto.EnterpriseWaitListUpdateReq{}
+	s := service.EnterpriseWaitList{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&reqTemp).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+
+	req := dto.EnterpriseWaitListUpdateReq{}
+	req.Id = reqTemp.Id
+	req.StatusCode = 9
+
+	req.SetUpdateBy(int64(user.GetUserId(c)))
+	p := actions.GetPermissionFromContext(c)
+
+	err = s.Update(&req, p)
+	if err != nil {
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+	e.OK(req.GetId())
 }
 
 // GetPage 获取待爬取列表列表

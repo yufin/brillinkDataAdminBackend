@@ -220,3 +220,21 @@ func (e RskcOriginContent) TaskSyncOriginContent(c *gin.Context) {
 	}
 	e.OK(nil)
 }
+
+func (e RskcOriginContent) TaskSyncDependencies(c *gin.Context) {
+	sw := task.ServiceWrapRskc{}
+	err := sw.GenServiceWrapRskc(&e.Api, c)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "TaskSyncDependenciesFail", err))
+		return
+	}
+	p := actions.GetPermissionFromContext(c)
+	err = task.SyncDependencies(&sw, p)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "TaskSyncDependenciesFail", err))
+		return
+	}
+	e.OK(nil)
+}

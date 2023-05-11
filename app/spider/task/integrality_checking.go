@@ -1,11 +1,13 @@
 package task
 
 import (
+	"github.com/gin-gonic/gin"
 	log "github.com/go-admin-team/go-admin-core/logger"
 	"go-admin/app/spider/models"
 	"go-admin/app/spider/service"
 	"go-admin/app/spider/service/dto"
 	"go-admin/common/actions"
+	"go-admin/common/apis"
 	"sync"
 )
 
@@ -37,119 +39,188 @@ type ServiceWrap struct {
 	CertS     *service.EnterpriseCertification
 }
 
-type chRes struct {
-	count int64
-	err   error
+func GenServiceWrap(e *apis.Api, c *gin.Context) (*ServiceWrap, error) {
+	sWait := service.EnterpriseWaitList{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sWait.Service).Errors; err != nil {
+		return nil, err
+	}
+	sInd := service.EnterpriseIndustry{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sInd.Service).Errors; err != nil {
+		return nil, err
+	}
+	sProd := service.EnterpriseProduct{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sProd.Service).Errors; err != nil {
+		return nil, err
+	}
+	sRank := service.EnterpriseRanking{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sRank.Service).Errors; err != nil {
+		return nil, err
+	}
+	sCert := service.EnterpriseCertification{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sCert.Service).Errors; err != nil {
+		return nil, err
+	}
+	sInf := service.EnterpriseInfo{}
+	if err := e.MakeContext(c).MakeOrm().MakeService(&sInf.Service).Errors; err != nil {
+		return nil, err
+	}
+	sw := &ServiceWrap{
+		WaitListS: &sWait,
+		IndustryS: &sInd,
+		InfoS:     &sInf,
+		ProductS:  &sProd,
+		RankingS:  &sRank,
+		CertS:     &sCert,
+	}
+	return sw, nil
 }
 
-// CheckIfAllCollected 通过uscId查询4张表中是否都有记录,都存在则返回true,否则返回false
-func CheckIfAllCollected(uscId string, sw *ServiceWrap, p *actions.DataPermission) (bool, error) {
-	var wg sync.WaitGroup
-	countCh := make(chan chRes, 5)
+type CollectionStatus struct {
+	UscId     string `json:"-"`
+	Count     int64  `json:"count"`
+	TableName string `json:"tableName"`
+	Err       error  `json:"-"`
+}
 
-	go func(s *service.EnterpriseInfo, uscId string, list *[]models.EnterpriseInfo, chP *chan chRes) {
-		wg.Add(1)
+func GetDataCollectionDetailByUscId(uscId string, p *actions.DataPermission, sw *ServiceWrap) (*[]CollectionStatus, error) {
+	var wg sync.WaitGroup
+	countCh := make(chan CollectionStatus, 5)
+
+	wg.Add(1)
+	go func(s *service.EnterpriseInfo, uscId string, list *[]models.EnterpriseInfo, chP *chan CollectionStatus) {
 		defer wg.Done()
 		var count int64
 		if err := s.GetPage(&dto.EnterpriseInfoGetPageReq{UscId: uscId}, p, list, &count); err != nil {
 			log.Errorf("CheckIfAllCollectedError %s \r\n", err)
-			*chP <- chRes{
-				count: 0,
-				err:   err,
+			*chP <- CollectionStatus{
+				Count:     0,
+				Err:       err,
+				TableName: "enterprise_info",
+				UscId:     uscId,
 			}
 			return
 		}
-		*chP <- chRes{
-			count: count,
-			err:   nil,
+		*chP <- CollectionStatus{
+			Count:     count,
+			Err:       nil,
+			TableName: "enterprise_info",
+			UscId:     uscId,
 		}
 	}(sw.InfoS, uscId, &[]models.EnterpriseInfo{}, &countCh)
 
-	go func(s *service.EnterpriseCertification, uscId string, list *[]models.EnterpriseCertification, chP *chan chRes) {
-		wg.Add(1)
+	wg.Add(1)
+	go func(s *service.EnterpriseCertification, uscId string, list *[]models.EnterpriseCertification, chP *chan CollectionStatus) {
 		defer wg.Done()
 		var count int64
 		if err := s.GetPage(&dto.EnterpriseCertificationGetPageReq{UscId: uscId}, p, list, &count); err != nil {
 			log.Errorf("CheckIfAllCollectedError %s \r\n", err)
-			*chP <- chRes{
-				count: 0,
-				err:   err,
+			*chP <- CollectionStatus{
+				Count:     0,
+				Err:       err,
+				TableName: "enterprise_certification",
+				UscId:     uscId,
 			}
 			return
 		}
-		*chP <- chRes{
-			count: count,
-			err:   nil,
+		*chP <- CollectionStatus{
+			Count:     count,
+			Err:       nil,
+			TableName: "enterprise_certification",
+			UscId:     uscId,
 		}
 	}(sw.CertS, uscId, &[]models.EnterpriseCertification{}, &countCh)
 
-	go func(s *service.EnterpriseIndustry, uscId string, list *[]models.EnterpriseIndustry, chP *chan chRes) {
-		wg.Add(1)
+	wg.Add(1)
+	go func(s *service.EnterpriseIndustry, uscId string, list *[]models.EnterpriseIndustry, chP *chan CollectionStatus) {
 		defer wg.Done()
 		var count int64
 		if err := s.GetPage(&dto.EnterpriseIndustryGetPageReq{UscId: uscId}, p, list, &count); err != nil {
 			log.Errorf("CheckIfAllCollectedError %s \r\n", err)
-			*chP <- chRes{
-				count: 0,
-				err:   err,
+			*chP <- CollectionStatus{
+				Count:     0,
+				Err:       err,
+				TableName: "enterprise_industry",
+				UscId:     uscId,
 			}
 			return
 		}
-		*chP <- chRes{
-			count: count,
-			err:   nil,
+		*chP <- CollectionStatus{
+			Count:     count,
+			Err:       nil,
+			TableName: "enterprise_industry",
+			UscId:     uscId,
 		}
 	}(sw.IndustryS, uscId, &[]models.EnterpriseIndustry{}, &countCh)
 
-	go func(s *service.EnterpriseProduct, uscId string, list *[]models.EnterpriseProduct, chP *chan chRes) {
-		wg.Add(1)
+	wg.Add(1)
+	go func(s *service.EnterpriseProduct, uscId string, list *[]models.EnterpriseProduct, chP *chan CollectionStatus) {
 		defer wg.Done()
 		var count int64
 		if err := s.GetPage(&dto.EnterpriseProductGetPageReq{UscId: uscId}, p, list, &count); err != nil {
 			log.Errorf("CheckIfAllCollectedError %s \r\n", err)
-			*chP <- chRes{
-				count: 0,
-				err:   err,
+			*chP <- CollectionStatus{
+				Count:     0,
+				Err:       err,
+				TableName: "enterprise_product",
+				UscId:     uscId,
 			}
 			return
 		}
-		*chP <- chRes{
-			count: count,
-			err:   nil,
+		*chP <- CollectionStatus{
+			Count:     count,
+			Err:       nil,
+			TableName: "enterprise_product",
+			UscId:     uscId,
 		}
 	}(sw.ProductS, uscId, &[]models.EnterpriseProduct{}, &countCh)
 
-	go func(s *service.EnterpriseRanking, uscId string, list *[]models.EnterpriseRanking, chP *chan chRes) {
-		wg.Add(1)
+	wg.Add(1)
+	go func(s *service.EnterpriseRanking, uscId string, list *[]models.EnterpriseRanking, chP *chan CollectionStatus) {
 		defer wg.Done()
 		var count int64
 		if err := s.GetPage(&dto.EnterpriseRankingGetPageReq{UscId: uscId}, p, list, &count); err != nil {
 			log.Errorf("CheckIfAllCollectedError %s \r\n", err)
-			*chP <- chRes{
-				count: 0,
-				err:   err,
+			*chP <- CollectionStatus{
+				Count:     0,
+				Err:       err,
+				TableName: "enterprise_ranking",
+				UscId:     uscId,
 			}
 			return
 		}
-		*chP <- chRes{
-			count: count,
-			err:   nil,
+		*chP <- CollectionStatus{
+			Count:     count,
+			Err:       nil,
+			TableName: "enterprise_ranking",
+			UscId:     uscId,
 		}
 	}(sw.RankingS, uscId, &[]models.EnterpriseRanking{}, &countCh)
 
 	wg.Wait()
+
 	close(countCh)
 
-	var res chRes
-	for range countCh {
+	statusList := make([]CollectionStatus, 0)
+	chLen := len(countCh)
+	var res CollectionStatus
+	var i int
+	for i = 0; i < chLen; i++ {
 		res = <-countCh
-		if res.err != nil {
-			log.Errorf("CheckIfAllCollectedError %s \r\n", res.err)
-			return false, res.err
+		if res.Err != nil {
+			log.Errorf("CheckIfAllCollectedError %s \r\n", res.Err)
+			return nil, res.Err
 		}
-		if res.count == 0 {
-			return false, nil
+		statusList = append(statusList, res)
+	}
+	return &statusList, nil
+}
+
+// CheckIfAllCollected 通过uscId查询4张表中是否都有记录,都存在则返回true,否则返回false
+func CheckIfAllCollected(statusList *[]CollectionStatus) bool {
+	for _, res := range *statusList {
+		if res.Count == 0 {
+			return false
 		}
 	}
-	return true, nil
+	return true
 }

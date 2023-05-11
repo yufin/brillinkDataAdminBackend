@@ -15,6 +15,25 @@ type RskcTradesDetail struct {
 	service.Service
 }
 
+func (e *RskcTradesDetail) GetJoinWaitList(contentId int64, resp *[]dto.RskcTradesDetailJoinWaitListResp, p *actions.DataPermission) error {
+	var err error
+	data := models.RskcTradesDetail{}
+
+	err = e.Orm.Model(&data).
+		Scopes(actions.Permission(data.TableName(), p)).
+		Select(" rskc_trades_detail.id as rtd_id, rskc_trades_detail.status_code as rtd_status_code, rskc_trades_detail.content_id as content_id,"+
+			" ewl.enterprise_name as enterprise_name, ewl.status_code as ewl_status_code, ewl.id as ewl_id").
+		Joins("left join enterprise_wait_list ewl on rskc_trades_detail.enterprise_name = ewl.enterprise_name").
+		Where("rskc_trades_detail.content_id = ?", contentId).
+		Scan(&resp).
+		Error
+	if err != nil {
+		e.Log.Errorf("RskcTradesDetailService GetJoinWaitList error:%s \r\n", err)
+		return err
+	}
+	return nil
+}
+
 // GetPage 获取RskcTradesDetail列表
 func (e *RskcTradesDetail) GetPage(c *dto.RskcTradesDetailGetPageReq, p *actions.DataPermission, list *[]models.RskcTradesDetail, count *int64) error {
 	var err error

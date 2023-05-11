@@ -31,5 +31,6 @@ func registerRskcOriginContentRouterNoAuth(v1 *gin.RouterGroup) {
 	r := v1.Group("/rskc/origin-content")
 	{
 		r.GET("/task/sync", api.TaskSyncOriginContent)
+		r.GET("/task/sync-dependencies", api.TaskSyncDependencies)
 	}
 }
