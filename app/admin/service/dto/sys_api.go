@@ -12,6 +12,7 @@ type SysApiGetPageReq struct {
 	Name           string `form:"name"  search:"type:contains;column:name;table:sys_api" comment:"标题"`
 	Path           string `form:"path"  search:"type:contains;column:path;table:sys_api" comment:"地址"`
 	Method         string `form:"method"  search:"type:contains;column:method;table:sys_api" comment:"类型"`
+	IsHistory      string `form:"isHistory"  search:"type:exact;column:is_history;table:sys_api" comment:"是否记录"`
 	SysApiOrder
 }
 
