@@ -133,6 +133,7 @@ func (e EnterpriseInfo) Get(c *gin.Context) {
 // @Router /api/v1/enterprise-info [post]
 // @Security Bearer
 func (e EnterpriseInfo) Insert(c *gin.Context) {
+	// time Layout"2006-01-02T15:04:05Z07:00"
 	req := dto.EnterpriseInfoInsertReq{}
 	s := service.EnterpriseInfo{}
 	err := e.MakeContext(c).

@@ -256,14 +256,14 @@ func (e EnterpriseWaitList) GetPageWaitingForMatch(c *gin.Context) {
 		return
 	}
 
-	respList := make([]dto.EnterpriseWaitListWaitingGetPageResp, 0)
-	for _, v := range list {
-		resp := dto.EnterpriseWaitListWaitingGetPageResp{}
-		resp.Generate(&v)
-		respList = append(respList, resp)
-	}
+	//respList := make([]dto.EnterpriseWaitListWaitingGetPageResp, 0)
+	//for _, v := range list {
+	//	resp := dto.EnterpriseWaitListWaitingGetPageResp{}
+	//	resp.Generate(&v)
+	//	respList = append(respList, resp)
+	//}
 
-	e.PageOK(respList, count, paginationReq.GetPageIndex(), paginationReq.GetPageSize())
+	e.PageOK(list, count, paginationReq.GetPageIndex(), paginationReq.GetPageSize())
 }
 
 // UpdateAsIllegal 通过Id标记该行为非法公司主体(update statusCode=9)
