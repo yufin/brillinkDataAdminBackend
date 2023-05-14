@@ -43,7 +43,7 @@ func init() {
 	StartCmd.PersistentFlags().StringVarP(&configYml, "config", "c", "config/settings.yml", "Start server with provided configuration file")
 	StartCmd.PersistentFlags().BoolVarP(&generate, "generate", "g", false, "generate migration file")
 	StartCmd.PersistentFlags().BoolVarP(&goAdmin, "goAdmin", "a", false, "generate go-admin migration file")
-	StartCmd.PersistentFlags().StringVarP(&Host, "domain", "d", "*", "select tenant host")
+	StartCmd.PersistentFlags().StringVarP(&Host, "domain", "d", "localhost:8888", "select tenant host")
 	StartCmd.PersistentFlags().StringVarP(&SystemName, "systemName", "s", "go-admin管理系统", "管理系统名称")
 	StartCmd.PersistentFlags().StringVarP(&Username, "username", "u", "admin", "系统超级管理员登录用户名")
 	StartCmd.PersistentFlags().StringVarP(&Password, "password", "p", "123456", "系统超级管理员登录用户密码")
