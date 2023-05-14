@@ -22,6 +22,7 @@ settings:
           - 'enterprise_certification'
           - 'enterprise_ranking'
           - 'enterprise_product'
+          - 'enterprise_industry'
           - 'ranking_list'
           - 'rskc_origin_content'
           - 'rskc_trades_detail'
