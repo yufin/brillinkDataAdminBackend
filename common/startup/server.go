@@ -175,7 +175,7 @@ func DatabaseMigrate(c *gin.Context) {
 		return
 	}
 	systemInfo.Default(systemInfo.SystemName, systemInfo.Username, systemInfo.Password)
-
+	migrate.Host = "localhost:8888"
 	err = migrate.Run()
 	if err != nil {
 		c.JSON(200, gin.H{"success": false, "errMessage": "数据库迁移失败" + err.Error()})

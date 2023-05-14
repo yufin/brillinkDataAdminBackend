@@ -1,0 +1,58 @@
+package common
+
+import (
+	"fmt"
+	"github.com/xuri/excelize/v2"
+	"reflect"
+)
+
+var Cols = []string{"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+
+func WriteXlsx(sheet string, records interface{}) *excelize.File {
+	xlsx := excelize.NewFile()    // new file
+	index := xlsx.NewSheet(sheet) // new sheet
+	xlsx.SetActiveSheet(index)    // set active (default) sheet
+	t := reflect.TypeOf(records)
+
+	if t.Kind() != reflect.Slice {
+		return xlsx
+	}
+
+	s := reflect.ValueOf(records)
+	for i := 0; i < s.Len(); i++ {
+		elem := s.Index(i).Interface()
+		elemType := reflect.TypeOf(elem)
+		elemValue := reflect.ValueOf(elem)
+		for j := 0; j < elemType.NumField(); j++ {
+			field := elemType.Field(j)
+			tag := field.Tag.Get("xlsx")
+			name := tag
+
+			column, _ := ConvertNumToChars(j)
+			if tag == "" || tag == "-" {
+				continue
+			}
+			// 设置表头
+			if i == 0 {
+				xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", column, i+1), name)
+			}
+			// 设置内容
+			xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", column, i+2), elemValue.Field(j).Interface())
+		}
+	}
+	return xlsx
+}
+
+func ConvertNumToChars(num int) (string, error) {
+	var cols string
+	v := num + 1
+	for v > 0 {
+		k := v % 26
+		if k == 0 {
+			k = 26
+		}
+		v = (v - k) / 26
+		cols = Cols[k] + cols
+	}
+	return cols, nil
+}

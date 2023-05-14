@@ -24,7 +24,7 @@ var (
 	configYml  string
 	generate   bool
 	goAdmin    bool
-	host       string
+	Host       string
 	SystemName string
 	Username   string
 	Password   string
@@ -43,7 +43,7 @@ func init() {
 	StartCmd.PersistentFlags().StringVarP(&configYml, "config", "c", "config/settings.yml", "Start server with provided configuration file")
 	StartCmd.PersistentFlags().BoolVarP(&generate, "generate", "g", false, "generate migration file")
 	StartCmd.PersistentFlags().BoolVarP(&goAdmin, "goAdmin", "a", false, "generate go-admin migration file")
-	StartCmd.PersistentFlags().StringVarP(&host, "domain", "d", "*", "select tenant host")
+	StartCmd.PersistentFlags().StringVarP(&Host, "domain", "d", "localhost:8888", "select tenant host")
 	StartCmd.PersistentFlags().StringVarP(&SystemName, "systemName", "s", "go-admin管理系统", "管理系统名称")
 	StartCmd.PersistentFlags().StringVarP(&Username, "username", "u", "admin", "系统超级管理员登录用户名")
 	StartCmd.PersistentFlags().StringVarP(&Password, "password", "p", "123456", "系统超级管理员登录用户密码")
@@ -65,11 +65,11 @@ func Run() error {
 }
 
 func migrateModel() error {
-	if host == "" {
-		host = "*"
+	if Host == "" {
+		Host = "*"
 	}
-	db := sdk.Runtime.GetDbByKey(host)
-	if config.DatabasesConfig[host].Driver == "mysql" {
+	db := sdk.Runtime.GetDbByKey(Host)
+	if config.DatabasesConfig[Host].Driver == "mysql" {
 		//初始化数据库时候用
 		db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4")
 	}

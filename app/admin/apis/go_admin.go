@@ -566,7 +566,9 @@ func (e Dashboard) CurrentUserDetail(c *gin.Context) {
 		Notice{Id: "xxx5", Title: "Bootstrap", Logo: "https://gw.alipayobjects.com/zos/rmsportal/siCrBXXhmvTQGWPNLBow.png", Description: "凛冬将至", UpdatedAt: "2017-07-23T00:00:00.000Z", Member: "高逼格设计天团", Href: "", MemberLink: ""},
 		Notice{Id: "xxx6", Title: "React", Logo: "https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png", Description: "生命就像一盒巧克力，结果往往出人意料", UpdatedAt: "2017-07-23T00:00:00.000Z", Member: "骗你来学计算机", Href: "", MemberLink: ""},
 	)
-	t5 := T5{Name: userName,
+	t5 := T5{
+		NickName:    userName,
+		Name:        userName,
 		Avatar:      "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
 		Userid:      "00000001",
 		Email:       "antdesign@alipay.com",
@@ -608,6 +610,7 @@ type Geographic struct {
 	City     KV `json:"city"`
 }
 type T5 struct {
+	NickName    string     `json:"nickName"`
 	Name        string     `json:"name"`
 	Avatar      string     `json:"avatar"`
 	Userid      string     `json:"userid"`

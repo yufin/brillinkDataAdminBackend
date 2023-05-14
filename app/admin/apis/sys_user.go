@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"github.com/go-admin-team/go-admin-core/logger"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"go-admin/common/exception"
 	"net/http"
@@ -114,6 +115,7 @@ func (e SysUser) Insert(c *gin.Context) {
 		return
 	}
 	// 设置创建人
+	logger.Warn("host:", c.Request.Host)
 	req.Password = sdk.Runtime.GetConfig(c.Request.Host, "sys_user_initPassword").(string)
 	if req.Password == "" {
 		req.Password = "123456"
