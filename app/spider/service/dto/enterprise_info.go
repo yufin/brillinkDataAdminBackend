@@ -113,9 +113,9 @@ func (s *EnterpriseInfoGetResp) Generate(model *models.EnterpriseInfo) {
 	s.EnterpriseTitle = model.EnterpriseTitle
 	s.EnterpriseTitleEn = model.EnterpriseTitleEn
 	s.BusinessRegistrationNumber = model.BusinessRegistrationNumber
-	s.EstablishedDate = model.EstablishedDate
+	s.EstablishedDate = *model.EstablishedDate
 	s.Region = model.Region
-	s.ApprovedDate = model.ApprovedDate
+	s.ApprovedDate = *model.ApprovedDate
 	s.RegisteredAddress = model.RegisteredAddress
 	s.RegisteredCapital = model.RegisteredCapital
 	s.RegisteredCapitalCurrency = model.RegisteredCapitalCurrency
@@ -133,8 +133,8 @@ func (s *EnterpriseInfoGetResp) Generate(model *models.EnterpriseInfo) {
 	s.OrganizationCode = model.OrganizationCode
 	s.UrlQcc = model.UrlQcc
 	s.UrlHomepage = model.UrlHomepage
-	s.BusinessTermStart = model.BusinessTermStart
-	s.BusinessTermEnd = model.BusinessTermEnd
+	s.BusinessTermStart = *model.BusinessTermStart
+	s.BusinessTermEnd = *model.BusinessTermEnd
 	s.UscId = model.UscId
 	s.StatusCode = model.StatusCode
 	s.CreateBy = model.CreateBy
@@ -173,37 +173,112 @@ type EnterpriseInfoInsertReq struct {
 }
 
 func (s *EnterpriseInfoInsertReq) Generate(model *models.EnterpriseInfo) {
+	minTime := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
 	if s.InfoId == 0 {
 		s.InfoId = utils.NewFlakeId()
 	}
 	model.InfoId = s.InfoId
-	model.EnterpriseTitle = s.EnterpriseTitle
-	model.EnterpriseTitleEn = s.EnterpriseTitleEn
-	model.BusinessRegistrationNumber = s.BusinessRegistrationNumber
-	model.EstablishedDate = s.EstablishedDate
-	model.Region = s.Region
-	model.ApprovedDate = s.ApprovedDate
-	model.RegisteredAddress = s.RegisteredAddress
-	model.RegisteredCapital = s.RegisteredCapital
-	model.RegisteredCapitalCurrency = s.RegisteredCapitalCurrency
-	model.PaidInCapital = s.PaidInCapital
-	model.PaidInCapitalCurrency = s.PaidInCapitalCurrency
-	model.EnterpriseType = s.EnterpriseType
-	model.StuffSize = s.StuffSize
-	model.StuffInsuredNumber = s.StuffInsuredNumber
-	model.BusinessScope = s.BusinessScope
-	model.ImportExportQualificationCode = s.ImportExportQualificationCode
-	model.LegalRepresentative = s.LegalRepresentative
-	model.RegistrationAuthority = s.RegistrationAuthority
-	model.RegistrationStatus = s.RegistrationStatus
-	model.TaxpayerQualification = s.TaxpayerQualification
-	model.OrganizationCode = s.OrganizationCode
-	model.UrlQcc = s.UrlQcc
-	model.UrlHomepage = s.UrlHomepage
-	model.BusinessTermStart = s.BusinessTermStart
-	model.BusinessTermEnd = s.BusinessTermEnd
-	model.UscId = s.UscId
-	model.StatusCode = s.StatusCode
+	if s.EnterpriseTitle != "" {
+		model.EnterpriseTitle = s.EnterpriseTitle
+	}
+	if s.EnterpriseTitleEn != "" {
+		model.EnterpriseTitleEn = s.EnterpriseTitleEn
+	}
+	if s.BusinessRegistrationNumber != "" {
+		model.BusinessRegistrationNumber = s.BusinessRegistrationNumber
+	}
+	if s.EstablishedDate.After(minTime) {
+		model.EstablishedDate = new(time.Time)
+		*model.EstablishedDate = s.EstablishedDate
+	}
+	if s.Region != "" {
+		model.Region = s.Region
+	}
+	if s.ApprovedDate.After(minTime) {
+		model.ApprovedDate = new(time.Time)
+		*model.ApprovedDate = s.ApprovedDate
+	}
+	if s.RegisteredAddress != "" {
+		model.RegisteredAddress = s.RegisteredAddress
+	}
+	if s.RegisteredCapital != 0 {
+		model.RegisteredCapital = s.RegisteredCapital
+	}
+	if s.RegisteredCapitalCurrency != "" {
+		model.RegisteredCapitalCurrency = s.RegisteredCapitalCurrency
+	}
+	if s.BusinessRegistrationNumber != "" {
+		model.BusinessRegistrationNumber = s.BusinessRegistrationNumber
+	}
+	if s.ApprovedDate.After(minTime) {
+		model.ApprovedDate = new(time.Time)
+		*model.ApprovedDate = s.ApprovedDate
+	}
+	if s.RegisteredAddress != "" {
+		model.RegisteredAddress = s.RegisteredAddress
+	}
+	if s.RegisteredCapital != 0 {
+		model.RegisteredCapital = s.RegisteredCapital
+	}
+	if s.RegisteredCapitalCurrency != "" {
+		model.RegisteredCapitalCurrency = s.RegisteredCapitalCurrency
+	}
+	if s.PaidInCapital != 0 {
+		model.PaidInCapital = s.PaidInCapital
+	}
+	if s.PaidInCapitalCurrency != "" {
+		model.PaidInCapitalCurrency = s.PaidInCapitalCurrency
+	}
+	if s.EnterpriseType != "" {
+		model.EnterpriseType = s.EnterpriseType
+	}
+	if s.StuffSize != "" {
+		model.StuffSize = s.StuffSize
+	}
+	if s.StuffInsuredNumber != 0 {
+		model.StuffInsuredNumber = s.StuffInsuredNumber
+	}
+	if s.BusinessScope != "" {
+		model.BusinessScope = s.BusinessScope
+	}
+	if s.ImportExportQualificationCode != "" {
+		model.ImportExportQualificationCode = s.ImportExportQualificationCode
+	}
+	if s.LegalRepresentative != "" {
+		model.LegalRepresentative = s.LegalRepresentative
+	}
+	if s.RegistrationAuthority != "" {
+		model.RegistrationAuthority = s.RegistrationAuthority
+	}
+	if s.RegistrationStatus != "" {
+		model.RegistrationStatus = s.RegistrationStatus
+	}
+	if s.TaxpayerQualification != "" {
+		model.TaxpayerQualification = s.TaxpayerQualification
+	}
+	if s.OrganizationCode != "" {
+		model.OrganizationCode = s.OrganizationCode
+	}
+	if s.UrlQcc != "" {
+		model.UrlQcc = s.UrlQcc
+	}
+	if s.UrlHomepage != "" {
+		model.UrlHomepage = s.UrlHomepage
+	}
+	if s.BusinessTermStart.After(minTime) {
+		model.BusinessTermStart = new(time.Time)
+		*model.BusinessTermStart = s.BusinessTermStart
+	}
+	if s.BusinessTermEnd.After(minTime) {
+		model.BusinessTermEnd = new(time.Time)
+		*model.BusinessTermEnd = s.BusinessTermEnd
+	}
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
 	model.CreateBy = s.CreateBy
 }
 
@@ -244,34 +319,109 @@ type EnterpriseInfoUpdateReq struct {
 }
 
 func (s *EnterpriseInfoUpdateReq) Generate(model *models.EnterpriseInfo) {
+	minTime := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
 	model.InfoId = s.InfoId
-	model.EnterpriseTitle = s.EnterpriseTitle
-	model.EnterpriseTitleEn = s.EnterpriseTitleEn
-	model.BusinessRegistrationNumber = s.BusinessRegistrationNumber
-	model.EstablishedDate = s.EstablishedDate
-	model.Region = s.Region
-	model.ApprovedDate = s.ApprovedDate
-	model.RegisteredAddress = s.RegisteredAddress
-	model.RegisteredCapital = s.RegisteredCapital
-	model.RegisteredCapitalCurrency = s.RegisteredCapitalCurrency
-	model.PaidInCapital = s.PaidInCapital
-	model.PaidInCapitalCurrency = s.PaidInCapitalCurrency
-	model.EnterpriseType = s.EnterpriseType
-	model.StuffSize = s.StuffSize
-	model.StuffInsuredNumber = s.StuffInsuredNumber
-	model.BusinessScope = s.BusinessScope
-	model.ImportExportQualificationCode = s.ImportExportQualificationCode
-	model.LegalRepresentative = s.LegalRepresentative
-	model.RegistrationAuthority = s.RegistrationAuthority
-	model.RegistrationStatus = s.RegistrationStatus
-	model.TaxpayerQualification = s.TaxpayerQualification
-	model.OrganizationCode = s.OrganizationCode
-	model.UrlQcc = s.UrlQcc
-	model.UrlHomepage = s.UrlHomepage
-	model.BusinessTermStart = s.BusinessTermStart
-	model.BusinessTermEnd = s.BusinessTermEnd
-	model.UscId = s.UscId
-	model.StatusCode = s.StatusCode
+	if s.EnterpriseTitle != "" {
+		model.EnterpriseTitle = s.EnterpriseTitle
+	}
+	if s.EnterpriseTitleEn != "" {
+		model.EnterpriseTitleEn = s.EnterpriseTitleEn
+	}
+	if s.BusinessRegistrationNumber != "" {
+		model.BusinessRegistrationNumber = s.BusinessRegistrationNumber
+	}
+	if s.EstablishedDate.After(minTime) {
+		model.EstablishedDate = new(time.Time)
+		*model.EstablishedDate = s.EstablishedDate
+	}
+	if s.Region != "" {
+		model.Region = s.Region
+	}
+	if s.ApprovedDate.After(minTime) {
+		model.ApprovedDate = new(time.Time)
+		*model.ApprovedDate = s.ApprovedDate
+	}
+	if s.RegisteredAddress != "" {
+		model.RegisteredAddress = s.RegisteredAddress
+	}
+	if s.RegisteredCapital != 0 {
+		model.RegisteredCapital = s.RegisteredCapital
+	}
+	if s.RegisteredCapitalCurrency != "" {
+		model.RegisteredCapitalCurrency = s.RegisteredCapitalCurrency
+	}
+	if s.BusinessRegistrationNumber != "" {
+		model.BusinessRegistrationNumber = s.BusinessRegistrationNumber
+	}
+	if s.ApprovedDate.After(minTime) {
+		model.ApprovedDate = new(time.Time)
+		*model.ApprovedDate = s.ApprovedDate
+	}
+	if s.RegisteredAddress != "" {
+		model.RegisteredAddress = s.RegisteredAddress
+	}
+	if s.RegisteredCapital != 0 {
+		model.RegisteredCapital = s.RegisteredCapital
+	}
+	if s.RegisteredCapitalCurrency != "" {
+		model.RegisteredCapitalCurrency = s.RegisteredCapitalCurrency
+	}
+	if s.PaidInCapital != 0 {
+		model.PaidInCapital = s.PaidInCapital
+	}
+	if s.PaidInCapitalCurrency != "" {
+		model.PaidInCapitalCurrency = s.PaidInCapitalCurrency
+	}
+	if s.EnterpriseType != "" {
+		model.EnterpriseType = s.EnterpriseType
+	}
+	if s.StuffSize != "" {
+		model.StuffSize = s.StuffSize
+	}
+	if s.StuffInsuredNumber != 0 {
+		model.StuffInsuredNumber = s.StuffInsuredNumber
+	}
+	if s.BusinessScope != "" {
+		model.BusinessScope = s.BusinessScope
+	}
+	if s.ImportExportQualificationCode != "" {
+		model.ImportExportQualificationCode = s.ImportExportQualificationCode
+	}
+	if s.LegalRepresentative != "" {
+		model.LegalRepresentative = s.LegalRepresentative
+	}
+	if s.RegistrationAuthority != "" {
+		model.RegistrationAuthority = s.RegistrationAuthority
+	}
+	if s.RegistrationStatus != "" {
+		model.RegistrationStatus = s.RegistrationStatus
+	}
+	if s.TaxpayerQualification != "" {
+		model.TaxpayerQualification = s.TaxpayerQualification
+	}
+	if s.OrganizationCode != "" {
+		model.OrganizationCode = s.OrganizationCode
+	}
+	if s.UrlQcc != "" {
+		model.UrlQcc = s.UrlQcc
+	}
+	if s.UrlHomepage != "" {
+		model.UrlHomepage = s.UrlHomepage
+	}
+	if s.BusinessTermStart.After(minTime) {
+		model.BusinessTermStart = new(time.Time)
+		*model.BusinessTermStart = s.BusinessTermStart
+	}
+	if s.BusinessTermEnd.After(minTime) {
+		model.BusinessTermEnd = new(time.Time)
+		*model.BusinessTermEnd = s.BusinessTermEnd
+	}
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
 	model.UpdateBy = s.UpdateBy
 }
 
