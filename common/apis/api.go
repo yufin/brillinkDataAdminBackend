@@ -58,6 +58,11 @@ func (e *Api) SaveUploadedFile(c *gin.Context, file *multipart.FileHeader, filPa
 	return nil
 }
 
+// File 文件输出
+func (e *Api) File(data interface{}) {
+	antd.File(e.Context, data)
+}
+
 // OK 通常成功数据处理
 func (e *Api) OK(data interface{}) {
 	antd.OK(e.Context, data)

@@ -40,6 +40,12 @@ func Failed(c *gin.Context, httpCode, errCode int, errMsg string, showType int) 
 	c.AbortWithStatusJSON(httpCode, res)
 }
 
+func File(c *gin.Context, data interface{}) {
+	c.Set("result", "文件导出")
+	c.File(data.(string))
+	c.AbortWithStatus(http.StatusOK)
+}
+
 // OK 通常成功数据处理
 func OK(c *gin.Context, data interface{}) {
 	var res response
