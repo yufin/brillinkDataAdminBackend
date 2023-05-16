@@ -16,7 +16,7 @@ func init() {
 // registerEnterpriseProductRouter
 func registerEnterpriseProductRouter(v1 *gin.RouterGroup, authMiddleware *jwtauth.GinJWTMiddleware) {
 	api := apis.EnterpriseProduct{}
-	r := v1.Group("/enterprise-product").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
+	r := v1.Group("/spider/enterprise-product").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
 		r.GET("", api.GetPage)
 		r.GET("/:id", api.Get)
@@ -28,12 +28,12 @@ func registerEnterpriseProductRouter(v1 *gin.RouterGroup, authMiddleware *jwtaut
 
 func registerEnterpriseProductRouterNoCheck(v1 *gin.RouterGroup) {
 	api := apis.EnterpriseProduct{}
-	r := v1.Group("/enterprise-product")
+	r := v1.Group("/spider/enterprise-product")
 	{
-		r.GET("", api.GetPage)
-		r.GET("/:id", api.Get)
+		//r.GET("", api.GetPage)
+		//r.GET("/:id", api.Get)
 		r.POST("", api.Insert)
-		r.PUT("/:id", api.Update)
-		r.DELETE("", api.Delete)
+		//r.PUT("/:id", api.Update)
+		//r.DELETE("", api.Delete)
 	}
 }

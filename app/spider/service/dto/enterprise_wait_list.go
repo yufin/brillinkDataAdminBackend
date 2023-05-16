@@ -92,12 +92,24 @@ func (s *EnterpriseWaitListInsertReq) Generate(model *models.EnterpriseWaitList)
 		s.Id = utils.NewFlakeId()
 	}
 	model.Model = common.Model{Id: s.Id}
-	model.EnterpriseName = s.EnterpriseName
-	model.UscId = s.UscId
-	model.Priority = s.Priority
-	model.QccUrl = s.QccUrl
-	model.StatusCode = s.StatusCode
-	model.Source = s.Source
+	if s.EnterpriseName != "" {
+		model.EnterpriseName = s.EnterpriseName
+	}
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.Priority != 0 {
+		model.Priority = s.Priority
+	}
+	if s.QccUrl != "" {
+		model.QccUrl = s.QccUrl
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
+	if s.Source != "" {
+		model.Source = s.Source
+	}
 	model.CreateBy = s.CreateBy
 }
 

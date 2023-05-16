@@ -26,6 +26,7 @@ settings:
           - 'ranking_list'
           - 'rskc_origin_content'
           - 'rskc_trades_detail'
+          - 'task_detail'
   gen:
     dbname: go_admin
     frontpath: ../graphAdminWebserver/src
@@ -49,7 +50,7 @@ settings:
       key:
     graph:
       neo4j:
-        activate: false
+        activate: true
         uri: neo4j://10.0.203.73:7687
         username: neo4j
         password: password

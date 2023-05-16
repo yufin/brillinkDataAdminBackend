@@ -15,10 +15,8 @@ type EnterpriseInfo struct {
 	Region                        string     `json:"region" gorm:"comment:所属地区"`
 	ApprovedDate                  *time.Time `json:"approvedDate" gorm:"comment:核准日期"`
 	RegisteredAddress             string     `json:"registeredAddress" gorm:"comment:注册地址"`
-	RegisteredCapital             float64    `json:"registeredCapital" gorm:"comment:注册资本"`
-	RegisteredCapitalCurrency     string     `json:"registeredCapitalCurrency" gorm:"comment:注册资本币种"`
-	PaidInCapital                 float64    `json:"paidInCapital" gorm:"comment:实缴资本"`
-	PaidInCapitalCurrency         string     `json:"paidInCapitalCurrency" gorm:"comment:实缴资本币种"`
+	RegisteredCapital             string     `json:"registeredCapital" gorm:"comment:注册资本"`
+	PaidInCapital                 string     `json:"paidInCapital" gorm:"comment:实缴资本"`
 	EnterpriseType                string     `json:"enterpriseType" gorm:"comment:企业类型"`
 	StuffSize                     string     `json:"stuffSize" gorm:"comment:人员规模"`
 	StuffInsuredNumber            int        `json:"stuffInsuredNumber" gorm:"comment:参保人数"`

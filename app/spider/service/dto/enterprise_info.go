@@ -18,10 +18,8 @@ type EnterpriseInfoGetPageReq struct {
 	Region                        string    `form:"region"  search:"type:exact;column:region;table:enterprise_info" comment:"所属地区"`
 	ApprovedDate                  time.Time `form:"approvedDate"  search:"type:exact;column:approved_date;table:enterprise_info" comment:"核准日期"`
 	RegisteredAddress             string    `form:"registeredAddress"  search:"type:exact;column:registered_address;table:enterprise_info" comment:"注册地址"`
-	RegisteredCapital             float64   `form:"registeredCapital"  search:"type:exact;column:registered_capital;table:enterprise_info" comment:"注册资本"`
-	RegisteredCapitalCurrency     string    `form:"registeredCapitalCurrency"  search:"type:exact;column:registered_capital_currency;table:enterprise_info" comment:"注册资本币种"`
-	PaidInCapital                 float64   `form:"paidInCapital"  search:"type:exact;column:paid_in_capital;table:enterprise_info" comment:"实缴资本"`
-	PaidInCapitalCurrency         string    `form:"paidInCapitalCurrency"  search:"type:exact;column:paid_in_capital_currency;table:enterprise_info" comment:"实缴资本币种"`
+	RegisteredCapital             string    `form:"registeredCapital"  search:"type:exact;column:registered_capital;table:enterprise_info" comment:"注册资本币种"`
+	PaidInCapital                 string    `form:"paidInCapital"  search:"type:exact;column:paid_in_capital;table:enterprise_info" comment:"实缴资本币种"`
 	EnterpriseType                string    `form:"enterpriseType"  search:"type:exact;column:enterprise_type;table:enterprise_info" comment:"企业类型"`
 	StuffSize                     string    `form:"stuffSize"  search:"type:exact;column:stuff_size;table:enterprise_info" comment:"人员规模"`
 	StuffInsuredNumber            int       `form:"stuffInsuredNumber"  search:"type:exact;column:stuff_insured_number;table:enterprise_info" comment:"参保人数"`
@@ -50,10 +48,8 @@ type EnterpriseInfoPageOrder struct {
 	Region                        string    `form:"regionOrder"  search:"type:order;column:region;table:enterprise_info"`
 	ApprovedDate                  time.Time `form:"approvedDateOrder"  search:"type:order;column:approved_date;table:enterprise_info"`
 	RegisteredAddress             string    `form:"registeredAddressOrder"  search:"type:order;column:registered_address;table:enterprise_info"`
-	RegisteredCapital             float64   `form:"registeredCapitalOrder"  search:"type:order;column:registered_capital;table:enterprise_info"`
-	RegisteredCapitalCurrency     string    `form:"registeredCapitalCurrencyOrder"  search:"type:order;column:registered_capital_currency;table:enterprise_info"`
-	PaidInCapital                 float64   `form:"paidInCapitalOrder"  search:"type:order;column:paid_in_capital;table:enterprise_info"`
-	PaidInCapitalCurrency         string    `form:"paidInCapitalCurrencyOrder"  search:"type:order;column:paid_in_capital_currency;table:enterprise_info"`
+	RegisteredCapital             string    `form:"registeredCapitalOrder"  search:"type:order;column:registered_capital;table:enterprise_info"`
+	PaidInCapital                 string    `form:"paidInCapitalOrder"  search:"type:order;column:paid_in_capital;table:enterprise_info"`
 	EnterpriseType                string    `form:"enterpriseTypeOrder"  search:"type:order;column:enterprise_type;table:enterprise_info"`
 	StuffSize                     string    `form:"stuffSizeOrder"  search:"type:order;column:stuff_size;table:enterprise_info"`
 	StuffInsuredNumber            int       `form:"stuffInsuredNumberOrder"  search:"type:order;column:stuff_insured_number;table:enterprise_info"`
@@ -85,10 +81,8 @@ type EnterpriseInfoGetResp struct {
 	Region                        string    `json:"region"`                        // 所属地区
 	ApprovedDate                  time.Time `json:"approvedDate"`                  // 核准日期
 	RegisteredAddress             string    `json:"registeredAddress"`             // 注册地址
-	RegisteredCapital             float64   `json:"registeredCapital"`             // 注册资本
-	RegisteredCapitalCurrency     string    `json:"registeredCapitalCurrency"`     // 注册资本币种
-	PaidInCapital                 float64   `json:"paidInCapital"`                 // 实缴资本
-	PaidInCapitalCurrency         string    `json:"paidInCapitalCurrency"`         // 实缴资本币种
+	RegisteredCapital             string    `json:"registeredCapital"`             // 注册资本币种
+	PaidInCapital                 string    `json:"paidInCapital"`                 // 实缴资本币种
 	EnterpriseType                string    `json:"enterpriseType"`                // 企业类型
 	StuffSize                     string    `json:"stuffSize"`                     // 人员规模
 	StuffInsuredNumber            int       `json:"stuffInsuredNumber"`            // 参保人数
@@ -118,9 +112,7 @@ func (s *EnterpriseInfoGetResp) Generate(model *models.EnterpriseInfo) {
 	s.ApprovedDate = *model.ApprovedDate
 	s.RegisteredAddress = model.RegisteredAddress
 	s.RegisteredCapital = model.RegisteredCapital
-	s.RegisteredCapitalCurrency = model.RegisteredCapitalCurrency
 	s.PaidInCapital = model.PaidInCapital
-	s.PaidInCapitalCurrency = model.PaidInCapitalCurrency
 	s.EnterpriseType = model.EnterpriseType
 	s.StuffSize = model.StuffSize
 	s.StuffInsuredNumber = model.StuffInsuredNumber
@@ -149,10 +141,8 @@ type EnterpriseInfoInsertReq struct {
 	Region                        string    `json:"region"`                        // 所属地区
 	ApprovedDate                  time.Time `json:"approvedDate"`                  // 核准日期
 	RegisteredAddress             string    `json:"registeredAddress"`             // 注册地址
-	RegisteredCapital             float64   `json:"registeredCapital"`             // 注册资本
-	RegisteredCapitalCurrency     string    `json:"registeredCapitalCurrency"`     // 注册资本币种
-	PaidInCapital                 float64   `json:"paidInCapital"`                 // 实缴资本
-	PaidInCapitalCurrency         string    `json:"paidInCapitalCurrency"`         // 实缴资本币种
+	RegisteredCapital             string    `json:"registeredCapital"`             // 注册资本币种
+	PaidInCapital                 string    `json:"paidInCapital"`                 // 实缴资本币种
 	EnterpriseType                string    `json:"enterpriseType"`                // 企业类型
 	StuffSize                     string    `json:"stuffSize"`                     // 人员规模
 	StuffInsuredNumber            int       `json:"stuffInsuredNumber"`            // 参保人数
@@ -201,11 +191,8 @@ func (s *EnterpriseInfoInsertReq) Generate(model *models.EnterpriseInfo) {
 	if s.RegisteredAddress != "" {
 		model.RegisteredAddress = s.RegisteredAddress
 	}
-	if s.RegisteredCapital != 0 {
+	if s.RegisteredCapital != "" {
 		model.RegisteredCapital = s.RegisteredCapital
-	}
-	if s.RegisteredCapitalCurrency != "" {
-		model.RegisteredCapitalCurrency = s.RegisteredCapitalCurrency
 	}
 	if s.BusinessRegistrationNumber != "" {
 		model.BusinessRegistrationNumber = s.BusinessRegistrationNumber
@@ -217,17 +204,8 @@ func (s *EnterpriseInfoInsertReq) Generate(model *models.EnterpriseInfo) {
 	if s.RegisteredAddress != "" {
 		model.RegisteredAddress = s.RegisteredAddress
 	}
-	if s.RegisteredCapital != 0 {
-		model.RegisteredCapital = s.RegisteredCapital
-	}
-	if s.RegisteredCapitalCurrency != "" {
-		model.RegisteredCapitalCurrency = s.RegisteredCapitalCurrency
-	}
-	if s.PaidInCapital != 0 {
+	if s.PaidInCapital != "" {
 		model.PaidInCapital = s.PaidInCapital
-	}
-	if s.PaidInCapitalCurrency != "" {
-		model.PaidInCapitalCurrency = s.PaidInCapitalCurrency
 	}
 	if s.EnterpriseType != "" {
 		model.EnterpriseType = s.EnterpriseType
@@ -295,10 +273,8 @@ type EnterpriseInfoUpdateReq struct {
 	Region                        string    `json:"region"`                        // 所属地区
 	ApprovedDate                  time.Time `json:"approvedDate"`                  // 核准日期
 	RegisteredAddress             string    `json:"registeredAddress"`             // 注册地址
-	RegisteredCapital             float64   `json:"registeredCapital"`             // 注册资本
-	RegisteredCapitalCurrency     string    `json:"registeredCapitalCurrency"`     // 注册资本币种
-	PaidInCapital                 float64   `json:"paidInCapital"`                 // 实缴资本
-	PaidInCapitalCurrency         string    `json:"paidInCapitalCurrency"`         // 实缴资本币种
+	RegisteredCapital             string    `json:"registeredCapital"`             // 注册资本币种
+	PaidInCapital                 string    `json:"paidInCapital"`                 // 实缴资本币种
 	EnterpriseType                string    `json:"enterpriseType"`                // 企业类型
 	StuffSize                     string    `json:"stuffSize"`                     // 人员规模
 	StuffInsuredNumber            int       `json:"stuffInsuredNumber"`            // 参保人数
@@ -344,12 +320,6 @@ func (s *EnterpriseInfoUpdateReq) Generate(model *models.EnterpriseInfo) {
 	if s.RegisteredAddress != "" {
 		model.RegisteredAddress = s.RegisteredAddress
 	}
-	if s.RegisteredCapital != 0 {
-		model.RegisteredCapital = s.RegisteredCapital
-	}
-	if s.RegisteredCapitalCurrency != "" {
-		model.RegisteredCapitalCurrency = s.RegisteredCapitalCurrency
-	}
 	if s.BusinessRegistrationNumber != "" {
 		model.BusinessRegistrationNumber = s.BusinessRegistrationNumber
 	}
@@ -360,17 +330,11 @@ func (s *EnterpriseInfoUpdateReq) Generate(model *models.EnterpriseInfo) {
 	if s.RegisteredAddress != "" {
 		model.RegisteredAddress = s.RegisteredAddress
 	}
-	if s.RegisteredCapital != 0 {
+	if s.RegisteredCapital != "" {
 		model.RegisteredCapital = s.RegisteredCapital
 	}
-	if s.RegisteredCapitalCurrency != "" {
-		model.RegisteredCapitalCurrency = s.RegisteredCapitalCurrency
-	}
-	if s.PaidInCapital != 0 {
+	if s.PaidInCapital != "" {
 		model.PaidInCapital = s.PaidInCapital
-	}
-	if s.PaidInCapitalCurrency != "" {
-		model.PaidInCapitalCurrency = s.PaidInCapitalCurrency
 	}
 	if s.EnterpriseType != "" {
 		model.EnterpriseType = s.EnterpriseType

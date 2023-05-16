@@ -14,8 +14,8 @@
 
 #http://127.0.0.1:8888/api/v1/rskc/trades-detail/task/sync
 
-#http://127.0.0.1:8888/api/v1/rskc/trades-detail/task/sync-wait
-#
+http://127.0.0.1:8888/api/v1/rskc/trades-detail/task/sync-wait
+
 #http://127.0.0.1:8888/api/v1/spider/enterprise/wait-list/task/check-integrality
 
-http://127.0.0.1:8888/api/v1/rskc/origin-content/task/sync-dependencies
+#http://127.0.0.1:8888/api/v1/rskc/origin-content/task/sync-dependencies

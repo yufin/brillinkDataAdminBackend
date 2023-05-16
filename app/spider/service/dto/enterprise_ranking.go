@@ -61,10 +61,18 @@ func (s *EnterpriseRankingInsertReq) Generate(model *models.EnterpriseRanking) {
 		s.RankId = utils.NewFlakeId()
 	}
 	model.RankId = s.RankId
-	model.UscId = s.UscId
-	model.ListId = s.ListId
-	model.RankingPosition = s.RankingPosition
-	model.RankingEnterpriseTitle = s.RankingEnterpriseTitle
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.ListId != 0 {
+		model.ListId = s.ListId
+	}
+	if s.RankingPosition != 0 {
+		model.RankingPosition = s.RankingPosition
+	}
+	if s.RankingEnterpriseTitle != "" {
+		model.RankingEnterpriseTitle = s.RankingEnterpriseTitle
+	}
 	model.CreateBy = s.CreateBy
 }
 
@@ -83,10 +91,18 @@ type EnterpriseRankingUpdateReq struct {
 
 func (s *EnterpriseRankingUpdateReq) Generate(model *models.EnterpriseRanking) {
 	model.RankId = s.RankId
-	model.UscId = s.UscId
-	model.ListId = s.ListId
-	model.RankingPosition = s.RankingPosition
-	model.RankingEnterpriseTitle = s.RankingEnterpriseTitle
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.ListId != 0 {
+		model.ListId = s.ListId
+	}
+	if s.RankingPosition != 0 {
+		model.RankingPosition = s.RankingPosition
+	}
+	if s.RankingEnterpriseTitle != "" {
+		model.RankingEnterpriseTitle = s.RankingEnterpriseTitle
+	}
 	model.UpdateBy = s.UpdateBy
 }
 

@@ -68,9 +68,10 @@ func (s *EnterpriseCertificationGetResp) Generate(model *models.EnterpriseCertif
 	s.CertificationLevel = model.CertificationLevel
 	s.CertificationType = model.CertificationType
 	s.CertificationSource = model.CertificationSource
-	s.CertificationDate = model.CertificationDate
-	s.CertificationTermStart = model.CertificationTermStart
-	s.CertificationTermEnd = model.CertificationTermEnd
+
+	s.CertificationDate = *model.CertificationDate
+	s.CertificationTermStart = *model.CertificationTermStart
+	s.CertificationTermEnd = *model.CertificationTermEnd
 	s.CertificationAuthority = model.CertificationAuthority
 	s.UscId = model.UscId
 	s.StatusCode = model.StatusCode
@@ -94,21 +95,49 @@ type EnterpriseCertificationInsertReq struct {
 }
 
 func (s *EnterpriseCertificationInsertReq) Generate(model *models.EnterpriseCertification) {
+	minTime := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
 	if s.CertId == 0 {
 		s.CertId = utils.NewFlakeId()
 	}
-	model.CertId = s.CertId
-	model.CertificationTitle = s.CertificationTitle
-	model.CertificationCode = s.CertificationCode
-	model.CertificationLevel = s.CertificationLevel
-	model.CertificationType = s.CertificationType
-	model.CertificationSource = s.CertificationSource
-	model.CertificationDate = s.CertificationDate
-	model.CertificationTermStart = s.CertificationTermStart
-	model.CertificationTermEnd = s.CertificationTermEnd
-	model.CertificationAuthority = s.CertificationAuthority
-	model.UscId = s.UscId
-	model.StatusCode = s.StatusCode
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.CertId != 0 {
+		model.CertId = s.CertId
+	}
+	if s.CertificationTitle != "" {
+		model.CertificationTitle = s.CertificationTitle
+	}
+	if s.CertificationCode != "" {
+		model.CertificationCode = s.CertificationCode
+	}
+	if s.CertificationLevel != "" {
+		model.CertificationLevel = s.CertificationLevel
+	}
+	if s.CertificationType != "" {
+		model.CertificationType = s.CertificationType
+	}
+	if s.CertificationSource != "" {
+		model.CertificationSource = s.CertificationSource
+	}
+	if s.CertificationDate.After(minTime) {
+		model.CertificationDate = new(time.Time)
+		*model.CertificationDate = s.CertificationDate
+	}
+	if s.CertificationTermStart.After(minTime) {
+		model.CertificationTermStart = new(time.Time)
+		*model.CertificationTermStart = s.CertificationTermStart
+	}
+	if s.CertificationTermEnd.After(minTime) {
+		model.CertificationTermEnd = new(time.Time)
+		*model.CertificationTermEnd = s.CertificationTermEnd
+	}
+	if s.CertificationAuthority != "" {
+		model.CertificationAuthority = s.CertificationAuthority
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
 	model.CreateBy = s.CreateBy
 }
 
@@ -133,18 +162,50 @@ type EnterpriseCertificationUpdateReq struct {
 }
 
 func (s *EnterpriseCertificationUpdateReq) Generate(model *models.EnterpriseCertification) {
+	minTime := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	if s.CertId == 0 {
+		s.CertId = utils.NewFlakeId()
+	}
 	model.CertId = s.CertId
-	model.CertificationTitle = s.CertificationTitle
-	model.CertificationCode = s.CertificationCode
-	model.CertificationLevel = s.CertificationLevel
-	model.CertificationType = s.CertificationType
-	model.CertificationSource = s.CertificationSource
-	model.CertificationDate = s.CertificationDate
-	model.CertificationTermStart = s.CertificationTermStart
-	model.CertificationTermEnd = s.CertificationTermEnd
-	model.CertificationAuthority = s.CertificationAuthority
-	model.UscId = s.UscId
-	model.StatusCode = s.StatusCode
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.CertId != 0 {
+		model.CertId = s.CertId
+	}
+	if s.CertificationTitle != "" {
+		model.CertificationTitle = s.CertificationTitle
+	}
+	if s.CertificationCode != "" {
+		model.CertificationCode = s.CertificationCode
+	}
+	if s.CertificationLevel != "" {
+		model.CertificationLevel = s.CertificationLevel
+	}
+	if s.CertificationType != "" {
+		model.CertificationType = s.CertificationType
+	}
+	if s.CertificationSource != "" {
+		model.CertificationSource = s.CertificationSource
+	}
+	if s.CertificationDate.After(minTime) {
+		model.CertificationDate = new(time.Time)
+		*model.CertificationDate = s.CertificationDate
+	}
+	if s.CertificationTermStart.After(minTime) {
+		model.CertificationTermStart = new(time.Time)
+		*model.CertificationTermStart = s.CertificationTermStart
+	}
+	if s.CertificationTermEnd.After(minTime) {
+		model.CertificationTermEnd = new(time.Time)
+		*model.CertificationTermEnd = s.CertificationTermEnd
+	}
+	if s.CertificationAuthority != "" {
+		model.CertificationAuthority = s.CertificationAuthority
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
 	model.UpdateBy = s.UpdateBy
 }
 

@@ -26,6 +26,7 @@ settings:
           - 'ranking_list'
           - 'rskc_origin_content'
           - 'rskc_trades_detail'
+          - 'task_detail'
   gen:
     dbname: brillink_admin
     frontpath: ../graphAdminWebserver/src

@@ -35,8 +35,9 @@ func registerEnterpriseWaitListRouterNoCheck(v1 *gin.RouterGroup) {
 		r.GET("/waiting/match", api.GetPageWaitingForMatch)
 		r.GET("/waiting/collect", api.GetPageWaitingForCollect)
 
-		r.PUT("/ident/:id", api.UpdateMatchedIdent)
+		r.PUT("/waiting/match/:id", api.UpdateMatchedIdent)
 		r.PUT("/as-illegal/:id", api.UpdateAsIllegal)
+		r.GET("/snowflake", api.GetSnowFlakeId)
 		//r.POST("", api.Insert)
 		//r.GET("", api.GetPage)
 		//r.GET("/:id", api.Get)

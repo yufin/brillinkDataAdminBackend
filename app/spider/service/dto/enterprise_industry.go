@@ -56,9 +56,15 @@ func (s *EnterpriseIndustryInsertReq) Generate(model *models.EnterpriseIndustry)
 		s.IndId = utils.NewFlakeId()
 	}
 	model.IndId = s.IndId
-	model.UscId = s.UscId
-	model.IndustryData = s.IndustryData
-	model.StatusCode = s.StatusCode
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.IndustryData != "" {
+		model.IndustryData = s.IndustryData
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
 	model.CreateBy = s.CreateBy
 }
 
@@ -76,9 +82,15 @@ type EnterpriseIndustryUpdateReq struct {
 
 func (s *EnterpriseIndustryUpdateReq) Generate(model *models.EnterpriseIndustry) {
 	model.IndId = s.IndId
-	model.UscId = s.UscId
-	model.IndustryData = s.IndustryData
-	model.StatusCode = s.StatusCode
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.IndustryData != "" {
+		model.IndustryData = s.IndustryData
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
 	model.UpdateBy = s.UpdateBy
 }
 

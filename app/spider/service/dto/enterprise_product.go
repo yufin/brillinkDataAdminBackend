@@ -56,9 +56,15 @@ func (s *EnterpriseProductInsertReq) Generate(model *models.EnterpriseProduct) {
 		s.ProdId = utils.NewFlakeId()
 	}
 	model.ProdId = s.ProdId
-	model.UscId = s.UscId
-	model.ProductData = s.ProductData
-	model.StatusCode = s.StatusCode
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.ProductData != "" {
+		model.ProductData = s.ProductData
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
 	model.CreateBy = s.CreateBy
 }
 
@@ -76,9 +82,15 @@ type EnterpriseProductUpdateReq struct {
 
 func (s *EnterpriseProductUpdateReq) Generate(model *models.EnterpriseProduct) {
 	model.ProdId = s.ProdId
-	model.UscId = s.UscId
-	model.ProductData = s.ProductData
-	model.StatusCode = s.StatusCode
+	if s.UscId != "" {
+		model.UscId = s.UscId
+	}
+	if s.ProductData != "" {
+		model.ProductData = s.ProductData
+	}
+	if s.StatusCode != 0 {
+		model.StatusCode = s.StatusCode
+	}
 	model.UpdateBy = s.UpdateBy
 }
 

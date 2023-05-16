@@ -14,11 +14,35 @@ import (
 	"go-admin/common/exception"
 	"go-admin/common/jwtauth/user"
 	_ "go-admin/common/response/antd"
+	"go-admin/utils"
+	"math"
 	"net/url"
+	"strconv"
 )
 
 type EnterpriseWaitList struct {
 	apis.Api
+}
+
+func (e EnterpriseWaitList) GetSnowFlakeId(c *gin.Context) {
+	err := e.MakeContext(c).Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GetSnowFlakeIdFail", err))
+		return
+	}
+	// amount to int
+	amount, errConv := strconv.Atoi(c.DefaultQuery("amount", "1"))
+	if errConv != nil {
+		amount = 1
+	}
+	// max amount = 99999
+	amount = int(math.Min(float64(amount), 99999))
+	resp := make([]int64, 0)
+	for i := 0; i < amount; i++ {
+		resp = append(resp, utils.NewFlakeId())
+	}
+	e.OK(resp)
 }
 
 // TaskCheckIntegrality 检查数据采集情况任务
@@ -213,6 +237,11 @@ func (e EnterpriseWaitList) UpdateMatchedIdent(c *gin.Context) {
 	err = sWait.Update(&req, p)
 	if err != nil {
 		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
+		return
+	}
+
+	if err := task.SyncTaskDetail(req.UscId); err != nil {
+		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail-syncTaskDetailFail", err))
 		return
 	}
 	e.OK(req.GetId())
