@@ -60,3 +60,6 @@ settings:
         port: '8155'
         username: lhgyl
         password: lhgyl2022
+    nats:
+      uri: nats://dev:password@192.168.44.169:4222
+      activate: true

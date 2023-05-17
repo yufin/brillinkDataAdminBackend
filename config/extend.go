@@ -13,6 +13,7 @@ type Extend struct {
 	AMap  AMap // 这里配置对应配置文件的结构即可
 	Graph Graph
 	Vzoom Vzoom
+	Nats  Nats
 }
 
 type AMap struct {
@@ -39,4 +40,9 @@ type Sftp struct {
 	Port     string
 	Username string
 	Password string
+}
+
+type Nats struct {
+	Activate bool
+	Uri string
 }

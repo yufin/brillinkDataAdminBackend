@@ -49,4 +49,9 @@ func Setup() {
 		}
 		sdk.Runtime.SetLockerAdapter(lockerAdapter)
 	}
+
+	//8. 初始化nats
+	if err := InitNatsConn(); err != nil {
+		log.Fatalf("nats setup error, %s\n", err.Error())
+	}
 }

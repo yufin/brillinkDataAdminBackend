@@ -154,14 +154,18 @@ func run() error {
 	// customized: 添加关闭neo4j方法
 	if database.Neo4jDriverP != nil {
 		if err := (*database.Neo4jDriverP).Close(ctx); err != nil {
-			log.Println("Neo4j Driver Closed")
+			log.Println(pkg.Red(fmt.Sprintf("Neo4j Driver Close error, %v \n", err)))
 		}
 	}
-	//rskc.CloseShhConn()
+	// Close Nats Conn
+	if err := storage.CloseNats(); err != nil {
+		log.Println(pkg.Red(fmt.Sprintf("Nats Conn close error, %s \n", err.Error())))
+	}
 
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal("Server Shutdown:", err)
 	}
+
 	log.Println("Server exiting")
 
 	return nil

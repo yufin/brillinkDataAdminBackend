@@ -11,10 +11,6 @@ import (
 
 var Neo4jDriverP *neo4j.DriverWithContext = nil
 
-//func init() {
-//	initNeo4jDriver()
-//}
-
 func initNeo4jDriver() {
 	if !extConfig.ExtConfig.Graph.Neo4j.Activate {
 		return
