@@ -3,14 +3,13 @@ package task
 import (
 	"fmt"
 	log "github.com/go-admin-team/go-admin-core/logger"
+	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/pkg/sftp"
 	"go-admin/app/rskc/models"
-	"go-admin/app/rskc/service"
 	"go-admin/app/rskc/service/dto"
 	"go-admin/app/rskc/utils"
-	"go-admin/common/actions"
-	cDto "go-admin/common/dto"
 	cModels "go-admin/common/models"
+	"gorm.io/gorm"
 	"io/ioutil"
 	"path"
 	"regexp"
@@ -23,8 +22,19 @@ const (
 	ConcurrencyLimit int = 5
 )
 
+type SyncOriginContentTask struct {
+}
+
+func (t SyncOriginContentTask) Exec(arg interface{}) error {
+	err := SyncOriginJsonContent()
+	if err != nil {
+		log.Errorf("TASK SyncOriginJsonContent Failed:%s \r\n", err)
+	}
+	return nil
+}
+
 // SyncOriginJsonContent 同步微众企业风控数据json数据至数据库
-func SyncOriginJsonContent(s *service.RskcOriginContent, p *actions.DataPermission) error {
+func SyncOriginJsonContent() error {
 	// todo: 添加content校验逻辑,未通过校验不入库
 	// 1. 获取sftp连接
 	sftpClientP, err := utils.GetSftpClient()
@@ -32,14 +42,9 @@ func SyncOriginJsonContent(s *service.RskcOriginContent, p *actions.DataPermissi
 		log.Errorf("GetSftpClient Failed:%s \r\n", err)
 		return err
 	}
+
 	defer utils.CloseShhConn()
-	defer func(sftpClientP *sftp.Client) {
-		err := sftpClientP.Close()
-		if err != nil {
-			log.Error(err)
-			panic(err)
-		}
-	}(sftpClientP)
+	defer sftpClientP.Close()
 
 	// 2. 遍历sftp目录，获取所有的json所属文件文件夹路径
 	dirNames, err := sftpClientP.Glob("/taxDataPreloanFile/*")
@@ -63,21 +68,23 @@ func SyncOriginJsonContent(s *service.RskcOriginContent, p *actions.DataPermissi
 	var mutex sync.Mutex
 	limitCh := make(chan struct{}, ConcurrencyLimit)
 
+	var tb models.RskcTradesDetail
+	db := sdk.Runtime.GetDbByKey(tb.TableName())
 	for i, _ := range dirInfos {
 		limitCh <- struct{}{}
 		wg.Add(1)
-		go func(index int, sOriginContent *service.RskcOriginContent, dataP *actions.DataPermission) {
+		go func(index int, cdb *gorm.DB) {
 			defer wg.Done()
 			mutex.Lock()
 			dirInfoP := &dirInfos[index]
 			mutex.Unlock()
 
-			err := CheckIfInfoRecorded(dirInfoP, sOriginContent, dataP)
+			err := CheckIfInfoRecorded(dirInfoP, cdb)
 			if err != nil {
 				log.Errorf("CheckIfInfoRecorded Error: %s \r\n", err)
 			}
 			<-limitCh
-		}(i, s, p)
+		}(i, db)
 	}
 	wg.Wait()
 
@@ -91,11 +98,15 @@ func SyncOriginJsonContent(s *service.RskcOriginContent, p *actions.DataPermissi
 				StatusCode: 1,
 				ControlBy:  cModels.ControlBy{CreateBy: 0},
 			}
-			err := s.Insert(&insertReq)
+			var data models.RskcOriginContent
+			insertReq.Generate(&data)
+			err := db.Model(&data).Create(&data).Error
 			if err != nil {
 				log.Errorf("SyncRskcOriginContent Insert Error: %s \r\n", err)
 			} else {
 				log.Infof("SyncRskcOriginContent Insert Success: USCID:%s; ImportedAt:%s \r\n", insertReq.UscId, insertReq.YearMonth)
+				// TODO: 添加nats发布者
+				// publish data.Id
 			}
 		}
 	}
@@ -136,17 +147,15 @@ type DirInfo struct {
 	notExist     bool
 }
 
-func CheckIfInfoRecorded(dirInfo *DirInfo, s *service.RskcOriginContent, p *actions.DataPermission) error {
-	req := dto.RskcOriginContentGetPageReq{
-		Pagination: cDto.Pagination{PageIndex: 1, PageSize: 100},
-		UscId:      dirInfo.UscId,
-		YearMonth:  dirInfo.YearMonth,
-	}
+func CheckIfInfoRecorded(dirInfo *DirInfo, db *gorm.DB) error {
+	var tb models.RskcOriginContent
 	var count int64
-	list := make([]models.RskcOriginContentInfo, 0)
-	err := s.GetPageNoContent(&req, p, &list, &count)
+	err := db.Model(&tb).
+		Where("usc_id = ?", dirInfo.UscId).
+		Where("`year_month` = ?", dirInfo.YearMonth).
+		Count(&count).
+		Error
 	if err != nil {
-		log.Errorf("GetPageWithoutContent CheckIfInfoRecorded Error: %s \r\n", err)
 		return err
 	}
 	if count == 0 {

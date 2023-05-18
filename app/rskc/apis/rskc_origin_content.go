@@ -203,23 +203,23 @@ func (e RskcOriginContent) Delete(c *gin.Context) {
 	e.OK(req.GetId())
 }
 
-func (e RskcOriginContent) TaskSyncOriginContent(c *gin.Context) {
-	s := service.RskcOriginContent{}
-	err := e.MakeContext(c).MakeOrm().MakeService(&s.Service).Errors
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncOriginContentFail", err))
-		return
-	}
-	p := actions.GetPermissionFromContext(c)
-	err = task.SyncOriginJsonContent(&s, p)
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncOriginContentFail", err))
-		return
-	}
-	e.OK(nil)
-}
+//func (e RskcOriginContent) TaskSyncOriginContent(c *gin.Context) {
+//	s := service.RskcOriginContent{}
+//	err := e.MakeContext(c).MakeOrm().MakeService(&s.Service).Errors
+//	if err != nil {
+//		e.Logger.Error(err)
+//		panic(exception.WithMsg(50000, "TaskSyncOriginContentFail", err))
+//		return
+//	}
+//	p := actions.GetPermissionFromContext(c)
+//	err = task.SyncOriginJsonContent(&s, p)
+//	if err != nil {
+//		e.Logger.Error(err)
+//		panic(exception.WithMsg(50000, "TaskSyncOriginContentFail", err))
+//		return
+//	}
+//	e.OK(nil)
+//}
 
 func (e RskcOriginContent) TaskSyncDependencies(c *gin.Context) {
 	sw := task.ServiceWrapRskc{}

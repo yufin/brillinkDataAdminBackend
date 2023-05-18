@@ -21,7 +21,7 @@ func SyncTaskDetail(uscId string) error {
 	}
 	existingTopics := make([]string, 0)
 	var tb models.TaskDetail
-	db := sdk.Runtime.GetDbByKey("task_detail")
+	db := sdk.Runtime.GetDbByKey(tb.TableName())
 	err := db.Model(&tb).
 		Where("usc_id = ?", uscId).
 		Pluck("topic", &existingTopics).
