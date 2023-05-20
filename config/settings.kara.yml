@@ -46,6 +46,9 @@ settings:
     memory:
       poolSize: 100
   extend:
+    nats:
+      uri: "nats://dev:password@192.168.31.158:4222"
+      activate: true
     vzoom:
       sftp:
         host: 192.168.31.158

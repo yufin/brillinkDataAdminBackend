@@ -11,6 +11,7 @@ func InitJob() {
 	jobList = map[string]JobsExec{
 		"ExamplesOne":       ExamplesOne{},
 		"SyncOriginContent": task.SyncOriginContentTask{},
+		"SyncTradesDetail":  task.SyncTradesDetailTask{},
 		// ...
 	}
 }
@@ -32,6 +33,5 @@ func (t ExamplesOne) Exec(arg interface{}) error {
 		}
 		break
 	}
-
 	return nil
 }

@@ -7,6 +7,7 @@ import (
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service"
 	"go-admin/common/logger"
+	"go-admin/common/natsclient"
 	"log"
 	"net/http"
 	"os"
@@ -158,8 +159,8 @@ func run() error {
 		}
 	}
 	// Close Nats Conn
-	if err := storage.CloseNats(); err != nil {
-		log.Println(pkg.Red(fmt.Sprintf("Nats Conn close error, %s \n", err.Error())))
+	if err := natsclient.CloseActivity(natsclient.TaskStream{}); err != nil {
+		log.Println(pkg.Red(fmt.Sprintf("natsclient CloseActivity error, %v\n", err.Error())))
 	}
 
 	if err := srv.Shutdown(ctx); err != nil {

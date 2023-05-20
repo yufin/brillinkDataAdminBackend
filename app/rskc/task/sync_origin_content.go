@@ -1,14 +1,16 @@
 package task
 
 import (
+	"encoding/binary"
 	"fmt"
 	log "github.com/go-admin-team/go-admin-core/logger"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/pkg/sftp"
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service/dto"
-	"go-admin/app/rskc/utils"
 	cModels "go-admin/common/models"
+	"go-admin/common/natsclient"
+	cUtils "go-admin/utils"
 	"gorm.io/gorm"
 	"io/ioutil"
 	"path"
@@ -17,9 +19,9 @@ import (
 )
 
 const (
-	UscIdPattern         = `^[a-zA-Z0-9]{18}$`
-	YearMonthPattern     = `^[0-9]{6}$`
-	ConcurrencyLimit int = 5
+	UscIdPattern     string = `^[a-zA-Z0-9]{18}$`
+	YearMonthPattern string = `^[0-9]{6}$`
+	ConcurrencyLimit int    = 5
 )
 
 type SyncOriginContentTask struct {
@@ -37,13 +39,13 @@ func (t SyncOriginContentTask) Exec(arg interface{}) error {
 func SyncOriginJsonContent() error {
 	// todo: 添加content校验逻辑,未通过校验不入库
 	// 1. 获取sftp连接
-	sftpClientP, err := utils.GetSftpClient()
+	sftpClientP, err := cUtils.GetSftpClient()
 	if err != nil {
 		log.Errorf("GetSftpClient Failed:%s \r\n", err)
 		return err
 	}
 
-	defer utils.CloseShhConn()
+	defer cUtils.CloseShhConn()
 	defer sftpClientP.Close()
 
 	// 2. 遍历sftp目录，获取所有的json所属文件文件夹路径
@@ -105,8 +107,16 @@ func SyncOriginJsonContent() error {
 				log.Errorf("SyncRskcOriginContent Insert Error: %s \r\n", err)
 			} else {
 				log.Infof("SyncRskcOriginContent Insert Success: USCID:%s; ImportedAt:%s \r\n", insertReq.UscId, insertReq.YearMonth)
-				// TODO: 添加nats发布者
 				// publish data.Id
+				err := func() error {
+					msg := make([]byte, 8)
+					binary.BigEndian.PutUint64(msg, uint64(data.Id))
+					_, err := natsclient.TaskJs.Publish(natsclient.TopicContentNew, msg)
+					return err
+				}()
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}

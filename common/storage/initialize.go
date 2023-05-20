@@ -8,6 +8,7 @@
 package storage
 
 import (
+	"go-admin/common/natsclient"
 	"log"
 
 	"github.com/go-admin-team/go-admin-core/sdk"
@@ -51,7 +52,11 @@ func Setup() {
 	}
 
 	//8. 初始化nats
-	if err := InitNatsConn(); err != nil {
+	if err := natsclient.InitNatsConn(); err != nil {
 		log.Fatalf("nats setup error, %s\n", err.Error())
+	}
+
+	if err := natsclient.InitActivity(natsclient.TaskStream{}); err != nil {
+		log.Fatalf("nats impl init fail %v", err)
 	}
 }
