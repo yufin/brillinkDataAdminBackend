@@ -2,9 +2,6 @@ package apis
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-admin/app/rskc/task"
-	service2 "go-admin/app/spider/service"
-
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service"
 	"go-admin/app/rskc/service/dto"
@@ -231,69 +228,69 @@ func (e RskcTradesDetail) Delete(c *gin.Context) {
 	e.OK(req.GetId())
 }
 
-// TaskSyncTradesDetail 同步客户、供应商交易细节
-func (e RskcTradesDetail) TaskSyncTradesDetail(c *gin.Context) {
-	s := service.RskcTradesDetail{}
-	err := e.MakeContext(c).MakeOrm().MakeService(&s.Service).Errors
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
-		return
-	}
-	sContent := service.RskcOriginContent{}
-	err = e.MakeContext(c).MakeOrm().MakeService(&sContent.Service).Errors
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
-		return
-	}
+//// TaskSyncTradesDetail 同步客户、供应商交易细节
+//func (e RskcTradesDetail) TaskSyncTradesDetail(c *gin.Context) {
+//	s := service.RskcTradesDetail{}
+//	err := e.MakeContext(c).MakeOrm().MakeService(&s.Service).Errors
+//	if err != nil {
+//		e.Logger.Error(err)
+//		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
+//		return
+//	}
+//	sContent := service.RskcOriginContent{}
+//	err = e.MakeContext(c).MakeOrm().MakeService(&sContent.Service).Errors
+//	if err != nil {
+//		e.Logger.Error(err)
+//		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
+//		return
+//	}
+//
+//	p := actions.GetPermissionFromContext(c)
+//	err = task.SyncTradesDetail(&s, &sContent, p)
+//	if err != nil {
+//		e.Logger.Error(err)
+//		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
+//		return
+//	}
+//	e.OK(nil)
+//}
 
-	p := actions.GetPermissionFromContext(c)
-	err = task.SyncTradesDetail(&s, &sContent, p)
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
-		return
-	}
-	e.OK(nil)
-}
-
-// TaskSyncWaitList 同步未爬取数据至待爬取列表
-func (e RskcTradesDetail) TaskSyncWaitList(c *gin.Context) {
-	sDetail := service.RskcTradesDetail{}
-	err := e.MakeContext(c).MakeOrm().MakeService(&sDetail.Service).Errors
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
-		return
-	}
-	sContent := service.RskcOriginContent{}
-	err = e.MakeContext(c).MakeOrm().MakeService(&sContent.Service).Errors
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
-		return
-	}
-	sWait := service2.EnterpriseWaitList{}
-	err = e.MakeContext(c).MakeOrm().MakeService(&sWait.Service).Errors
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
-		return
-	}
-
-	p := actions.GetPermissionFromContext(c)
-	sw := task.ServicesWrap{
-		SWait:    &sWait,
-		SContent: &sContent,
-		SDetail:  &sDetail,
-		P:        p,
-	}
-	err = task.SyncWaitList(&sw)
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
-		return
-	}
-	e.OK(nil)
-}
+//// TaskSyncWaitList 同步未爬取数据至待爬取列表
+//func (e RskcTradesDetail) TaskSyncWaitList(c *gin.Context) {
+//	sDetail := service.RskcTradesDetail{}
+//	err := e.MakeContext(c).MakeOrm().MakeService(&sDetail.Service).Errors
+//	if err != nil {
+//		e.Logger.Error(err)
+//		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
+//		return
+//	}
+//	sContent := service.RskcOriginContent{}
+//	err = e.MakeContext(c).MakeOrm().MakeService(&sContent.Service).Errors
+//	if err != nil {
+//		e.Logger.Error(err)
+//		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
+//		return
+//	}
+//	sWait := service2.EnterpriseWaitList{}
+//	err = e.MakeContext(c).MakeOrm().MakeService(&sWait.Service).Errors
+//	if err != nil {
+//		e.Logger.Error(err)
+//		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
+//		return
+//	}
+//
+//	p := actions.GetPermissionFromContext(c)
+//	sw := task.ServicesWrap{
+//		SWait:    &sWait,
+//		SContent: &sContent,
+//		SDetail:  &sDetail,
+//		P:        p,
+//	}
+//	err = task.SyncWaitList(&sw)
+//	if err != nil {
+//		e.Logger.Error(err)
+//		panic(exception.WithMsg(50000, "TaskSyncTradesDetailFail", err))
+//		return
+//	}
+//	e.OK(nil)
+//}

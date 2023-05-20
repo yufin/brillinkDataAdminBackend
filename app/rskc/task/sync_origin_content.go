@@ -27,7 +27,11 @@ const (
 type SyncOriginContentTask struct {
 }
 
+var mutexSoct = &sync.Mutex{}
+
 func (t SyncOriginContentTask) Exec(arg interface{}) error {
+	mutexSoct.Lock()
+	defer mutexSoct.Unlock()
 	err := SyncOriginJsonContent()
 	if err != nil {
 		log.Errorf("TASK SyncOriginJsonContent Failed:%s \r\n", err)
@@ -70,7 +74,7 @@ func SyncOriginJsonContent() error {
 	var mutex sync.Mutex
 	limitCh := make(chan struct{}, ConcurrencyLimit)
 
-	var tb models.RskcTradesDetail
+	var tb models.RskcOriginContent
 	db := sdk.Runtime.GetDbByKey(tb.TableName())
 	for i, _ := range dirInfos {
 		limitCh <- struct{}{}

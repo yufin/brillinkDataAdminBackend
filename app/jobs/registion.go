@@ -12,7 +12,7 @@ func InitJob() {
 		"ExamplesOne":       ExamplesOne{},
 		"SyncOriginContent": task.SyncOriginContentTask{},
 		"SyncTradesDetail":  task.SyncTradesDetailTask{},
-		// ...
+		"SyncWaitList":      task.SyncWaitListTask{},
 	}
 }
 

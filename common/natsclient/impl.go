@@ -10,13 +10,13 @@ import (
 var (
 	TaskJs        nats.JetStreamContext
 	SubContentNew *nats.Subscription
+	SubTradeNew   *nats.Subscription
 )
 
 type TaskStream struct {
 }
 
 func (TaskStream) StreamName() string {
-
 	return "TASK"
 }
 
@@ -57,6 +57,12 @@ func (e TaskStream) InitSubscription() error {
 			log.Error(pkg.Blue(fmt.Sprintf("Add Subscribe error: %v", err)))
 		}
 	}
+	if SubTradeNew == nil {
+		SubTradeNew, err = TaskJs.PullSubscribe(TopicTradeNew, "sub-trade-new", nats.BindStream(e.StreamName()))
+		if err != nil {
+			log.Error(pkg.Blue(fmt.Sprintf("Add Subscribe error: %v", err)))
+		}
+	}
 	return nil
 }
 
@@ -74,6 +80,9 @@ func (e TaskStream) Setup() error {
 
 func (e TaskStream) OnClose() error {
 	if err := SubContentNew.Unsubscribe(); err != nil {
+		return err
+	}
+	if err := SubTradeNew.Unsubscribe(); err != nil {
 		return err
 	}
 	if err := CloseNats(); err != nil {
