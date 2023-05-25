@@ -73,11 +73,30 @@ func syncWaitListFromTrades(tradesId int64) error {
 		return err
 	}
 	if count == 0 {
+		// query enterprise_info by enterprise_name, if exist, get UscId and insert with StatusCode=2
+		var tbInfo sModels.EnterpriseInfo
+		dbInfo := sdk.Runtime.GetDbByKey(tbInfo.TableName())
+		err = dbInfo.Model(&tbInfo).
+			Where("enterprise_title = ?", dataTrades.EnterpriseName).
+			Order("updated_at desc").
+			First(&tbInfo).
+			Error
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		var uscId string
+		var statusCode = 1
+		if tbInfo.InfoId != 0 && tbInfo.UscId != "" {
+			uscId = tbInfo.UscId
+			statusCode = 3
+		}
+
 		// insert into wait_list
 		insertReq := sDto.EnterpriseWaitListInsertReq{
 			EnterpriseName: dataTrades.EnterpriseName,
+			UscId:          uscId,
 			Priority:       9,
-			StatusCode:     1,
+			StatusCode:     statusCode,
 		}
 		var dataInsert sModels.EnterpriseWaitList
 		insertReq.Generate(&dataInsert)

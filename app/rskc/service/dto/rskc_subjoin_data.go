@@ -1,7 +1,9 @@
 package dto
 
+import "encoding/json"
+
 type SubjoinData struct {
-	MajorCommodityProportion *float32               `json:"majorCommodityProportion"`
+	MajorCommodityProportion *float64               `json:"majorCommodityProportion"`
 	IndustryTag              *[]string              `json:"industryTag"`
 	AuthorizedTag            *[]AuthorizedTagDetail `json:"authorizedTag"`
 	CompanyInfo              *CompanyInfoDetail     `json:"companyInfo"`
@@ -10,9 +12,20 @@ type SubjoinData struct {
 }
 
 type AuthorizedTagDetail struct {
-	AuthClass string `json:"authClass"`
-	TagTitle  string `json:"tagTitle"`
-	Authority string `json:"authority"`
+	AuthClass      string `json:"authClass"`
+	TagTitle       string `json:"tagTitle"`
+	Authority      string `json:"authority"`
+	AuthorizedDate string `json:"authorizedDate"`
+}
+
+func (e *AuthorizedTagDetail) GenMap() map[string]any {
+	if e == nil {
+		return nil
+	}
+	var m map[string]any
+	b, _ := json.Marshal(*e)
+	_ = json.Unmarshal(b, &m)
+	return m
 }
 
 type CompanyInfoDetail struct {
@@ -21,10 +34,30 @@ type CompanyInfoDetail struct {
 	CapitalPaidIn  string `json:"capitalPaidIn"`
 }
 
+func (e *CompanyInfoDetail) GenMap() *map[string]any {
+	if e == nil {
+		return nil
+	}
+	var m map[string]any
+	b, _ := json.Marshal(*e)
+	_ = json.Unmarshal(b, &m)
+	return &m
+}
+
 type RankingTagDetail struct {
 	DatePublished string `json:"datePublished"`
 	TagTitle      string `json:"tagTitle"`
 	Authority     string `json:"authority"`
 	Ranking       int    `json:"ranking"`
 	Total         int    `json:"total"`
+}
+
+func (e *RankingTagDetail) GenMap() *map[string]any {
+	if e == nil {
+		return nil
+	}
+	var m map[string]any
+	b, _ := json.Marshal(*e)
+	_ = json.Unmarshal(b, &m)
+	return &m
 }

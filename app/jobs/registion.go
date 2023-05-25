@@ -9,10 +9,12 @@ import (
 // 字典 key 可以配置到 自动任务 调用目标 中；
 func InitJob() {
 	jobList = map[string]JobsExec{
-		"ExamplesOne":       ExamplesOne{},
-		"SyncOriginContent": task.SyncOriginContentTask{},
-		"SyncTradesDetail":  task.SyncTradesDetailTask{},
-		"SyncWaitList":      task.SyncWaitListTask{},
+		"ExamplesOne":        ExamplesOne{},
+		"SyncOriginContent":  task.SyncOriginContentTask{},
+		"SyncTradesDetail":   task.SyncTradesDetailTask{},
+		"SyncWaitList":       task.SyncWaitListTask{},
+		"VerifyContentReady": task.VerifyContentReadyTask{},
+		"CollateContent":     task.CollateContentTask{},
 	}
 }
 

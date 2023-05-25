@@ -28,6 +28,12 @@ func (t SyncTradesDetailTask) Exec(arg interface{}) error {
 func pullContentNew() error {
 	// TODO: add log at this layer
 	for {
+		// get total msg count by subscriber
+		//totalPending, _, err := natsclient.SubContentNew.Pending()
+		//if err == nil {
+		//	fmt.Println("SubContentNew msg totalPending:", totalPending)
+		//}
+
 		msgs, err := natsclient.SubContentNew.Fetch(1, nats.MaxWait(5*time.Second))
 		if err != nil {
 			if err == nats.ErrTimeout {
@@ -42,7 +48,9 @@ func pullContentNew() error {
 			if err != nil {
 				return err
 			} else {
-				msg.AckSync()
+				if err := msg.AckSync(); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -62,7 +70,8 @@ func parseContentToDetails(contentId int64) error {
 	var tbTrades models.RskcTradesDetail
 	dbTrades := sdk.Runtime.GetDbByKey(tbTrades.TableName())
 	// with unscoped, db exec hard delete instead of soft delete.
-	err = dbTrades.Unscoped().
+	err = dbTrades.
+		Unscoped().
 		Where("content_id = ?", contentId).
 		Delete(&models.RskcTradesDetail{}).
 		Error

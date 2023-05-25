@@ -10,7 +10,7 @@ import (
 
 func init() {
 	routerCheckRole = append(routerCheckRole, registerRskcOriginContentRouter)
-	routerNoCheckRole = append(routerNoCheckRole, registerRskcOriginContentRouterNoAuth)
+	//routerNoCheckRole = append(routerNoCheckRole, registerRskcOriginContentRouterNoAuth)
 }
 
 // registerRskcOriginContentRouter
@@ -26,11 +26,10 @@ func registerRskcOriginContentRouter(v1 *gin.RouterGroup, authMiddleware *jwtaut
 	}
 }
 
-func registerRskcOriginContentRouterNoAuth(v1 *gin.RouterGroup) {
-	api := apis.RskcOriginContent{}
-	r := v1.Group("/rskc/origin-content")
-	{
-		//r.GET("/task/sync", api.TaskSyncOriginContent)
-		r.GET("/task/sync-dependencies", api.TaskSyncDependencies)
-	}
-}
+//func registerRskcOriginContentRouterNoAuth(v1 *gin.RouterGroup) {
+//	api := apis.RskcOriginContent{}
+//	r := v1.Group("/rskc/origin-content")
+//	{
+//		//r.GET("/task/sync", api.TaskSyncOriginContent)
+//	}
+//}

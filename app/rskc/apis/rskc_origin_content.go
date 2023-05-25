@@ -2,8 +2,6 @@ package apis
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-admin/app/rskc/task"
-
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service"
 	"go-admin/app/rskc/service/dto"
@@ -201,40 +199,4 @@ func (e RskcOriginContent) Delete(c *gin.Context) {
 		return
 	}
 	e.OK(req.GetId())
-}
-
-//func (e RskcOriginContent) TaskSyncOriginContent(c *gin.Context) {
-//	s := service.RskcOriginContent{}
-//	err := e.MakeContext(c).MakeOrm().MakeService(&s.Service).Errors
-//	if err != nil {
-//		e.Logger.Error(err)
-//		panic(exception.WithMsg(50000, "TaskSyncOriginContentFail", err))
-//		return
-//	}
-//	p := actions.GetPermissionFromContext(c)
-//	err = task.SyncOriginJsonContent(&s, p)
-//	if err != nil {
-//		e.Logger.Error(err)
-//		panic(exception.WithMsg(50000, "TaskSyncOriginContentFail", err))
-//		return
-//	}
-//	e.OK(nil)
-//}
-
-func (e RskcOriginContent) TaskSyncDependencies(c *gin.Context) {
-	sw := task.ServiceWrapRskc{}
-	err := sw.GenServiceWrapRskc(&e.Api, c)
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncDependenciesFail", err))
-		return
-	}
-	p := actions.GetPermissionFromContext(c)
-	err = task.SyncDependencies(&sw, p)
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "TaskSyncDependenciesFail", err))
-		return
-	}
-	e.OK(nil)
 }

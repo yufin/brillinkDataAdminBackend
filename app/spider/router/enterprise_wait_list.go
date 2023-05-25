@@ -30,12 +30,9 @@ func registerEnterpriseWaitListRouterNoCheck(v1 *gin.RouterGroup) {
 	api := apis.EnterpriseWaitList{}
 	r := v1.Group("/spider/enterprise/wait-list")
 	{
-		r.GET("/task/check-integrality", api.TaskCheckIntegrality)
-
-		r.GET("/waiting/match", api.GetPageWaitingForMatch)
-		r.GET("/waiting/collect", api.GetPageWaitingForCollect)
-
-		r.PUT("/waiting/match/:id", api.UpdateMatchedIdent)
+		r.GET("/to-collect", api.GetPageWaitingForCollect)
+		r.GET("/to-ident", api.GetPageWaitingForIdent)
+		r.PUT("/to-ident/:id", api.UpdateMatchedIdent)
 		r.PUT("/as-illegal/:id", api.UpdateAsIllegal)
 		r.GET("/snowflake", api.GetSnowFlakeId)
 		//r.POST("", api.Insert)

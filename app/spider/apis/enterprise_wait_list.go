@@ -45,70 +45,6 @@ func (e EnterpriseWaitList) GetSnowFlakeId(c *gin.Context) {
 	e.OK(resp)
 }
 
-// TaskCheckIntegrality 检查数据采集情况任务
-// @Summary 更新状态码, (1.待匹配qccUrl&uscId,2.待爬取,3.爬取完成,-1.爬取失败,9非法公司(自动忽略))"
-func (e EnterpriseWaitList) TaskCheckIntegrality(c *gin.Context) {
-	req := dto.EnterpriseWaitListGetPageReq{
-		Pagination: dtoCommon.Pagination{PageSize: 3000, PageIndex: 1},
-		StatusCode: 2,
-		EnterpriseWaitListPageOrder: dto.EnterpriseWaitListPageOrder{
-			PriorityOrder: "desc",
-		},
-	}
-	s := service.EnterpriseWaitList{}
-	err := e.MakeContext(c).
-		MakeOrm().
-		MakeService(&s.Service).
-		Errors
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
-		return
-	}
-
-	p := actions.GetPermissionFromContext(c)
-	list := make([]models.EnterpriseWaitList, 0)
-	var count int64
-
-	err = s.GetPage(&req, p, &list, &count)
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
-		return
-	}
-
-	sw, err := task.GenServiceWrap(&e.Api, c)
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "GenServiceSwapEnterpriseWaitListFail", err))
-		return
-	}
-
-	updateBy := int64(user.GetUserId(c))
-	for _, v := range list {
-		collectionStatusP, err := task.GetDataCollectionDetailByUscId(v.UscId, p, sw)
-		if err != nil {
-			e.Logger.Error(err)
-			panic(exception.WithMsg(50000, "CheckIfAllCollectedEnterpriseWaitListFail", err))
-			return
-		}
-		if task.CheckIfAllCollected(collectionStatusP) {
-			// update statusCode
-			updateReq := dto.EnterpriseWaitListUpdateReq{
-				Id:         v.Id,
-				StatusCode: 3,
-			}
-			updateReq.SetUpdateBy(updateBy)
-			if err := s.Update(&updateReq, p); err != nil {
-				e.Logger.Error(err)
-				panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
-				return
-			}
-		}
-	}
-	e.PageOK(nil, count, req.GetPageIndex(), req.GetPageSize())
-}
-
 // GetPageWaitingForCollect 获取等待采集的等待列表(statusCode=2)
 func (e EnterpriseWaitList) GetPageWaitingForCollect(c *gin.Context) {
 	paginationReq := dtoCommon.Pagination{}
@@ -140,50 +76,8 @@ func (e EnterpriseWaitList) GetPageWaitingForCollect(c *gin.Context) {
 		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
 		return
 	}
-	// (lazy) check data integrality(if true:statusCode=2 update to 3)
-	sw, err := task.GenServiceWrap(&e.Api, c)
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "GenServiceSwapEnterpriseWaitListFail", err))
-		return
-	}
 
-	listChecked := make([]struct {
-		dto.EnterpriseWaitListWaitingGetPageResp
-		CollectionStatus []task.CollectionStatus `json:"collectionStatus"`
-	}, 0)
-	updateBy := int64(user.GetUserId(c))
-	for _, v := range list {
-		statusListP, err := task.GetDataCollectionDetailByUscId(v.UscId, p, sw)
-		if err != nil {
-			e.Logger.Error(err)
-			panic(exception.WithMsg(50000, "CheckIfAllCollectedEnterpriseWaitListFail", err))
-			return
-		}
-		if task.CheckIfAllCollected(statusListP) {
-			// update statusCode
-			updateReq := dto.EnterpriseWaitListUpdateReq{
-				Id:         v.Id,
-				StatusCode: 3,
-			}
-			updateReq.SetUpdateBy(updateBy)
-			if err := s.Update(&updateReq, p); err != nil {
-				e.Logger.Error(err)
-				panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
-				return
-			}
-			count -= 1
-		} else {
-			resp := dto.EnterpriseWaitListWaitingGetPageResp{}
-			resp.Generate(&v)
-			resStruct := struct {
-				dto.EnterpriseWaitListWaitingGetPageResp
-				CollectionStatus []task.CollectionStatus `json:"collectionStatus"`
-			}{resp, *statusListP}
-			listChecked = append(listChecked, resStruct)
-		}
-	}
-	e.PageOK(listChecked, count, paginationReq.GetPageIndex(), paginationReq.GetPageSize())
+	e.PageOK(list, count, paginationReq.GetPageIndex(), paginationReq.GetPageSize())
 }
 
 // UpdateMatchedIdent 插入匹配的url,并检查数据完整性，修改为对应的状态码
@@ -211,35 +105,13 @@ func (e EnterpriseWaitList) UpdateMatchedIdent(c *gin.Context) {
 		panic(exception.WithMsg(500, "UpdateEnterpriseWaitListFail", err))
 		return
 	}
-
 	p := actions.GetPermissionFromContext(c)
-	sw, err := task.GenServiceWrap(&e.Api, c)
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "GenServiceSwapEnterpriseWaitListFail", err))
-		return
-	}
-	collectionStatusP, err := task.GetDataCollectionDetailByUscId(req.UscId, p, sw)
-	if err != nil {
-		e.Logger.Error(err)
-		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
-		return
-	}
-
-	// 1.待匹配qccUrl&uscId,2.待爬取,3.爬取完成,-1.爬取失败,9非法公司(自动忽略)
-	if task.CheckIfAllCollected(collectionStatusP) {
-		req.StatusCode = 3
-	} else {
-		req.StatusCode = 2
-	}
-
 	req.SetUpdateBy(int64(user.GetUserId(c)))
-	err = sWait.Update(&req, p)
+	err := sWait.Update(&req, p)
 	if err != nil {
 		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail", err))
 		return
 	}
-
 	if err := task.SyncTaskDetail(req.UscId); err != nil {
 		panic(exception.WithMsg(50000, "UpdateEnterpriseWaitListFail-syncTaskDetailFail", err))
 		return
@@ -247,13 +119,13 @@ func (e EnterpriseWaitList) UpdateMatchedIdent(c *gin.Context) {
 	e.OK(req.GetId())
 }
 
-// GetPageWaitingForMatch 获取企业等待匹配列表
+// GetPageWaitingForIdent 获取企业等待匹配列表
 // @Summary 获取企业等待匹配url的列表: 条件: qccUrl为空字符串, statusCode=0
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Param statusCode query int 状态码: 1.等待匹配url 2.等待爬取主体信息(enterprise_info), 3.等待爬取其他信息(tag,industry...)，4.完成爬取
 // @Router /api/v1/enterprise-wait-lit/waiting [get]
-func (e EnterpriseWaitList) GetPageWaitingForMatch(c *gin.Context) {
+func (e EnterpriseWaitList) GetPageWaitingForIdent(c *gin.Context) {
 	paginationReq := dtoCommon.Pagination{}
 	s := service.EnterpriseWaitList{}
 	err := e.MakeContext(c).
@@ -284,14 +156,6 @@ func (e EnterpriseWaitList) GetPageWaitingForMatch(c *gin.Context) {
 		panic(exception.WithMsg(50000, "GetPageEnterpriseWaitListFail", err))
 		return
 	}
-
-	//respList := make([]dto.EnterpriseWaitListWaitingGetPageResp, 0)
-	//for _, v := range list {
-	//	resp := dto.EnterpriseWaitListWaitingGetPageResp{}
-	//	resp.Generate(&v)
-	//	respList = append(respList, resp)
-	//}
-
 	e.PageOK(list, count, paginationReq.GetPageIndex(), paginationReq.GetPageSize())
 }
 
