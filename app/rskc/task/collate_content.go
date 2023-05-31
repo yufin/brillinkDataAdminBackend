@@ -127,16 +127,21 @@ func collateContent(contentId int64, nameDataMap map[string]*dto.SubjoinData, ev
 			mItem, ok := item.(map[string]any)
 			if ok {
 
-				companyName := func() string {
+				companyNameTemp := func() any {
 					keyCompany := map[string]string{
 						"customerDetail_12":  "PURCHASER_NAME",
 						"customerDetail_24":  "PURCHASER_NAME",
 						"supplierRanking_12": "SALES_NAME",
 						"supplierRanking_24": "SALES_NAME",
 					}[key]
-					return mItem[keyCompany].(string)
+					return mItem[keyCompany]
 				}()
-				subjoinData := nameDataMap[companyName]
+				// determine if companyName is empty
+				companyName, ok := companyNameTemp.(string)
+				var subjoinData *dto.SubjoinData
+				if ok {
+					subjoinData = nameDataMap[companyName]
+				}
 				if subjoinData != nil {
 					contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["industryTag"] = subjoinData.IndustryTag
 					contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["productTag"] = subjoinData.ProductTag

@@ -56,6 +56,17 @@ func pullContentNew() error {
 	}
 }
 
+func markContentAsCompleteAsync(contentId int64) error {
+	// set status code to 2, which means all dependency data collected.
+	var data models.RskcOriginContent
+	dbContent := sdk.Runtime.GetDbByKey(data.TableName())
+	err := dbContent.Model(&data).Where("id = ?", contentId).Update("status_code", 1).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func parseContentToDetails(contentId int64) error {
 	// get content by contentId
 	var tbContent models.RskcOriginContent
@@ -116,6 +127,11 @@ func parseContentToDetails(contentId int64) error {
 			}
 		}
 	}
+
+	if err := markContentAsCompleteAsync(contentId); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -88,11 +88,11 @@ func dataCollectionCheckByContentId(contentId int64) (bool, error) {
 		Where("content_id = ?", contentId).
 		Scan(&result)
 
+	var tbInfo sModels.EnterpriseInfo
+	dbInfo := sdk.Runtime.GetDbByKey(tbInfo.TableName())
 	for _, r := range result {
 		if len(r.UscId) == 18 {
 			// check if exist in enterprise_info by usc_id
-			var tbInfo sModels.EnterpriseInfo
-			dbInfo := sdk.Runtime.GetDbByKey(tbInfo.TableName())
 			var countInfo int64
 			err := dbInfo.Model(&tbInfo).Where("usc_id = ?", r.UscId).Count(&countInfo).Error
 			if err != nil {

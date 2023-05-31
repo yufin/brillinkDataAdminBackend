@@ -101,7 +101,7 @@ func SyncOriginJsonContent() error {
 				UscId:      dirInfo.UscId,
 				YearMonth:  dirInfo.YearMonth,
 				Content:    string(GetFileContentFromSftp(sftpClientP, dirInfo.DataFilePath)),
-				StatusCode: 1,
+				StatusCode: 0,
 				ControlBy:  cModels.ControlBy{CreateBy: 0},
 			}
 			var data models.RskcOriginContent
