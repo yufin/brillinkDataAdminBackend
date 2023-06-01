@@ -44,5 +44,5 @@ type Sftp struct {
 
 type Nats struct {
 	Activate bool
-	Uri string
+	Uri      string
 }

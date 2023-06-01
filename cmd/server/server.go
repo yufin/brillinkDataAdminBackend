@@ -7,7 +7,7 @@ import (
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service"
 	"go-admin/common/logger"
-	"go-admin/common/natsclient"
+	"go-admin/pkg/natsclient"
 	"log"
 	"net/http"
 	"os"

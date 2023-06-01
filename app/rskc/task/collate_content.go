@@ -10,7 +10,7 @@ import (
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service/dto"
 	eModels "go-admin/app/spider/models"
-	"go-admin/common/natsclient"
+	"go-admin/pkg/natsclient"
 	"gorm.io/gorm"
 	"time"
 )

@@ -8,7 +8,7 @@ import (
 	"go-admin/app/rskc/models"
 	sModels "go-admin/app/spider/models"
 	sDto "go-admin/app/spider/service/dto"
-	"go-admin/common/natsclient"
+	"go-admin/pkg/natsclient"
 	"gorm.io/gorm"
 	"sync"
 	"time"

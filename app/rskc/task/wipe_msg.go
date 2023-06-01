@@ -2,7 +2,7 @@ package task
 
 import (
 	"github.com/nats-io/nats.go"
-	"go-admin/common/natsclient"
+	"go-admin/pkg/natsclient"
 	"time"
 )
 

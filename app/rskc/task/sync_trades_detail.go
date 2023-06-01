@@ -8,7 +8,7 @@ import (
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service/dto"
 	cModels "go-admin/common/models"
-	"go-admin/common/natsclient"
+	"go-admin/pkg/natsclient"
 	"strings"
 	"sync"
 	"time"

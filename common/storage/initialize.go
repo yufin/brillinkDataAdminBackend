@@ -8,7 +8,7 @@
 package storage
 
 import (
-	"go-admin/common/natsclient"
+	"go-admin/pkg/natsclient"
 	"log"
 
 	"github.com/go-admin-team/go-admin-core/sdk"

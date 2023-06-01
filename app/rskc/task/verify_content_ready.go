@@ -8,7 +8,7 @@ import (
 	"github.com/go-admin-team/go-admin-core/sdk/pkg"
 	"go-admin/app/rskc/models"
 	sModels "go-admin/app/spider/models"
-	"go-admin/common/natsclient"
+	"go-admin/pkg/natsclient"
 )
 
 type VerifyContentReadyTask struct {
