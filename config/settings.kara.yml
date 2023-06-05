@@ -26,6 +26,7 @@ settings:
           - 'ranking_list'
           - 'rskc_origin_content'
           - 'rskc_trades_detail'
+          - 'rskc_processed_content'
           - 'task_detail'
   gen:
     dbname: brillink_admin

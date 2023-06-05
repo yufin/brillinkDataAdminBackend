@@ -24,6 +24,7 @@ require (
 	github.com/jinzhu/now v1.1.5
 	github.com/mattn/go-isatty v0.0.17
 	github.com/mssola/user_agent v0.5.2
+	github.com/nats-io/nats.go v1.25.0
 	github.com/neo4j/neo4j-go-driver/v5 v5.6.0
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.9.1
@@ -118,7 +119,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/mojocn/base64Captcha v1.3.1 // indirect
-	github.com/nats-io/nats.go v1.25.0 // indirect
 	github.com/nats-io/nkeys v0.4.4 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/nsqio/go-nsq v1.1.0 // indirect

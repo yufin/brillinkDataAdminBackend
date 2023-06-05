@@ -2,6 +2,7 @@ package task
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	log "github.com/go-admin-team/go-admin-core/logger"
 	"github.com/go-admin-team/go-admin-core/sdk"
@@ -27,11 +28,11 @@ const (
 type SyncOriginContentTask struct {
 }
 
-var mutexSoct = &sync.Mutex{}
+var mutex = &sync.Mutex{}
 
 func (t SyncOriginContentTask) Exec(arg interface{}) error {
-	mutexSoct.Lock()
-	defer mutexSoct.Unlock()
+	mutex.Lock()
+	defer mutex.Unlock()
 	err := SyncOriginJsonContent()
 	if err != nil {
 		log.Errorf("TASK SyncOriginJsonContent Failed:%s \r\n", err)
@@ -97,12 +98,21 @@ func SyncOriginJsonContent() error {
 	// 遍历dirInfos,读取文件录入数据库
 	for _, dirInfo := range dirInfos {
 		if dirInfo.notExist == true {
+			content := string(GetFileContentFromSftp(sftpClientP, dirInfo.DataFilePath))
+			var en string
+			en, err = parseEnterpriseName(content)
+			if err != nil {
+				log.Errorf("parseEnterpriseName Error: %s \r\n", err)
+				return err
+			}
+
 			insertReq := dto.RskcOriginContentInsertReq{
-				UscId:      dirInfo.UscId,
-				YearMonth:  dirInfo.YearMonth,
-				Content:    string(GetFileContentFromSftp(sftpClientP, dirInfo.DataFilePath)),
-				StatusCode: 0,
-				ControlBy:  cModels.ControlBy{CreateBy: 0},
+				UscId:          dirInfo.UscId,
+				EnterpriseName: en,
+				YearMonth:      dirInfo.YearMonth,
+				Content:        content,
+				StatusCode:     0,
+				ControlBy:      cModels.ControlBy{CreateBy: 0},
 			}
 			var data models.RskcOriginContent
 			insertReq.Generate(&data)
@@ -205,4 +215,18 @@ func GetDirInfo(dirPath string, client *sftp.Client, dirInfos *[]DirInfo) {
 			DataFilePath: JsonFilePathArray[0],
 		})
 	}
+}
+
+func parseEnterpriseName(content string) (string, error) {
+	var contentMap map[string]any
+	err := json.Unmarshal([]byte(content), &contentMap)
+	if err != nil {
+		return "", err
+	}
+	s := contentMap["impExpEntReport"].(map[string]any)["businessInfo"].(map[string]any)["QYMC"]
+	// determine enterprise name is nil or string
+	if _, ok := s.(string); ok {
+		return s.(string), nil
+	}
+	return "", fmt.Errorf("enterprise name is not string")
 }

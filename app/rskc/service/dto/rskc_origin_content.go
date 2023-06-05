@@ -10,6 +10,7 @@ import (
 type RskcOriginContentGetPageReq struct {
 	dto.Pagination `search:"-"`
 	UscId          string `form:"uscId"  search:"type:exact;column:usc_id;table:rskc_origin_content" comment:"统一社会信用代码"`
+	EnterpriseName string `form:"enterpriseName"  search:"type:exact;column:enterprise_name;table:rskc_origin_content" comment:"企业名称"`
 	YearMonth      string `form:"yearMonth"  search:"type:exact;column:year_month;table:rskc_origin_content" comment:"数据更新年月"`
 	StatusCode     int    `form:"statusCode"  search:"type:exact;column:status_code;table:rskc_origin_content" comment:"状态码"`
 	RskcOriginContentPageOrder
@@ -27,11 +28,12 @@ func (m *RskcOriginContentGetPageReq) GetNeedSearch() interface{} {
 }
 
 type RskcOriginContentGetResp struct {
-	Id         int64  `json:"id"`         // 主键
-	UscId      string `json:"uscId"`      // 统一社会信用代码
-	YearMonth  string `json:"yearMonth"`  // 数据更新年月
-	Content    string `json:"content"`    // 原始JSON STRING数据
-	StatusCode int    `json:"statusCode"` // 状态码
+	Id             int64  `json:"id"`             // 主键
+	UscId          string `json:"uscId"`          // 统一社会信用代码
+	EnterpriseName string `json:"enterpriseName"` // 企业名称
+	YearMonth      string `json:"yearMonth"`      // 数据更新年月
+	Content        string `json:"content"`        // 原始JSON STRING数据
+	StatusCode     int    `json:"statusCode"`     // 状态码
 	common.ControlBy
 }
 
@@ -40,6 +42,7 @@ func (s *RskcOriginContentGetResp) Generate(model *models.RskcOriginContent) {
 		s.Id = model.Id
 	}
 	s.UscId = model.UscId
+	s.EnterpriseName = model.EnterpriseName
 	s.YearMonth = model.YearMonth
 	s.Content = model.Content
 	s.StatusCode = model.StatusCode
@@ -47,11 +50,12 @@ func (s *RskcOriginContentGetResp) Generate(model *models.RskcOriginContent) {
 }
 
 type RskcOriginContentInsertReq struct {
-	Id         int64  `json:"-"`          // 主键
-	UscId      string `json:"uscId"`      // 统一社会信用代码
-	YearMonth  string `json:"yearMonth"`  // 数据更新年月
-	Content    string `json:"content"`    // 原始JSON STRING数据
-	StatusCode int    `json:"statusCode"` // 状态码
+	Id             int64  `json:"-"`              // 主键
+	UscId          string `json:"uscId"`          // 统一社会信用代码
+	EnterpriseName string `json:"enterpriseName"` // 企业名称
+	YearMonth      string `json:"yearMonth"`      // 数据更新年月
+	Content        string `json:"content"`        // 原始JSON STRING数据
+	StatusCode     int    `json:"statusCode"`     // 状态码
 	common.ControlBy
 }
 
@@ -62,6 +66,7 @@ func (s *RskcOriginContentInsertReq) Generate(model *models.RskcOriginContent) {
 	}
 	model.Model = common.Model{Id: s.Id}
 	model.UscId = s.UscId
+	model.EnterpriseName = s.EnterpriseName
 	model.YearMonth = s.YearMonth
 	model.Content = s.Content
 	model.StatusCode = s.StatusCode
@@ -73,11 +78,12 @@ func (s *RskcOriginContentInsertReq) GetId() interface{} {
 }
 
 type RskcOriginContentUpdateReq struct {
-	Id         int64  `uri:"id"`          // 主键
-	UscId      string `json:"uscId"`      // 统一社会信用代码
-	YearMonth  string `json:"yearMonth"`  // 数据更新年月
-	Content    string `json:"content"`    // 原始JSON STRING数据
-	StatusCode int    `json:"statusCode"` // 状态码
+	Id             int64  `uri:"id"`              // 主键
+	UscId          string `json:"uscId"`          // 统一社会信用代码
+	EnterpriseName string `json:"enterpriseName"` // 企业名称
+	YearMonth      string `json:"yearMonth"`      // 数据更新年月
+	Content        string `json:"content"`        // 原始JSON STRING数据
+	StatusCode     int    `json:"statusCode"`     // 状态码
 	common.ControlBy
 }
 
@@ -86,6 +92,9 @@ func (s *RskcOriginContentUpdateReq) Generate(model *models.RskcOriginContent) {
 
 	if s.UscId != "" {
 		model.UscId = s.UscId
+	}
+	if s.EnterpriseName != "" {
+		model.EnterpriseName = s.EnterpriseName
 	}
 	if s.YearMonth != "" {
 		model.YearMonth = s.YearMonth
