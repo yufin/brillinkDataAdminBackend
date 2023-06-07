@@ -61,3 +61,25 @@ func (e *RankingTagDetail) GenMap() *map[string]any {
 	_ = json.Unmarshal(b, &m)
 	return &m
 }
+
+type SubjectCompanyTags struct {
+	IndustryTag       *[]string              `json:"industryTag"`
+	AuthorizedTag     *[]AuthorizedTagDetail `json:"authorizedTag"`
+	ProductProportion *[]ProductProportion   `json:"productProportion"`
+	RankingTag        *[]RankingTagDetail    `json:"rankingTag"`
+}
+
+type ProductProportion struct {
+	Proportion string `json:"proportion"`
+	Category   string `json:"category"`
+}
+
+func (e *ProductProportion) GenMap() *map[string]any {
+	if e == nil {
+		return nil
+	}
+	var m map[string]any
+	b, _ := json.Marshal(*e)
+	_ = json.Unmarshal(b, &m)
+	return &m
+}

@@ -28,11 +28,11 @@ const (
 type SyncOriginContentTask struct {
 }
 
-var mutex = &sync.Mutex{}
+var mutexSoct = &sync.Mutex{}
 
 func (t SyncOriginContentTask) Exec(arg interface{}) error {
-	mutex.Lock()
-	defer mutex.Unlock()
+	mutexSoct.Lock()
+	defer mutexSoct.Unlock()
 	err := SyncOriginJsonContent()
 	if err != nil {
 		log.Errorf("TASK SyncOriginJsonContent Failed:%s \r\n", err)

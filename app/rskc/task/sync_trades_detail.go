@@ -5,10 +5,14 @@ import (
 	"encoding/json"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/nats-io/nats.go"
+	"github.com/pkg/errors"
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service/dto"
+	sModels "go-admin/app/spider/models"
+	sDto "go-admin/app/spider/service/dto"
 	cModels "go-admin/common/models"
 	"go-admin/pkg/natsclient"
+	"gorm.io/gorm"
 	"strings"
 	"sync"
 	"time"
@@ -56,6 +60,68 @@ func pullContentNew() error {
 	}
 }
 
+// syncSubjectEnterprise2WaitList sync subject enterprise2WaitList
+func syncSubjectEnterprise2WaitList(contentId int64) error {
+	var tb models.RskcOriginContentInfo
+	db := sdk.Runtime.GetDbByKey(tb.TableName())
+	err := db.
+		Model(&models.RskcOriginContentInfo{}).
+		Where("id = ?", contentId).
+		First(&tb).
+		Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+		return err
+	}
+
+	var tbTrades models.RskcTradesDetail
+	var tbWait sModels.EnterpriseWaitList
+	//var dataWait sModels.EnterpriseWaitList
+	dbWait := sdk.Runtime.GetDbByKey(tbTrades.TableName())
+	var count int64
+	err = dbWait.Model(&tbWait).
+		Where("enterprise_name = ?", tb.EnterpriseName).
+		Count(&count).Error
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		// query enterprise_info by enterprise_name, if exist, get UscId and insert with StatusCode=2
+		var tbInfo sModels.EnterpriseInfo
+		dbInfo := sdk.Runtime.GetDbByKey(tbInfo.TableName())
+		err = dbInfo.Model(&tbInfo).
+			Where("enterprise_title = ?", tb.EnterpriseName).
+			Order("updated_at desc").
+			First(&tbInfo).
+			Error
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		//var uscId string
+		var statusCode = 2
+		if tbInfo.InfoId != 0 && tbInfo.UscId != "" {
+			statusCode = 3
+		}
+
+		// insert into wait_list
+		insertReq := sDto.EnterpriseWaitListInsertReq{
+			EnterpriseName: tb.EnterpriseName,
+			UscId:          tb.UscId,
+			Priority:       9,
+			StatusCode:     statusCode,
+		}
+		var dataInsert sModels.EnterpriseWaitList
+		insertReq.Generate(&dataInsert)
+		err = dbWait.Model(&tbWait).Create(&dataInsert).Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func markContentAsCompleteAsync(contentId int64) error {
 	// set status code to 2, which means all dependency data collected.
 	var data models.RskcOriginContent
@@ -68,6 +134,11 @@ func markContentAsCompleteAsync(contentId int64) error {
 }
 
 func parseContentToDetails(contentId int64) error {
+	// 同步主体信息至待采集列表
+	if err := syncSubjectEnterprise2WaitList(contentId); err != nil {
+		return err
+	}
+
 	// get content by contentId
 	var tbContent models.RskcOriginContent
 	var dataContent models.RskcOriginContent

@@ -129,10 +129,10 @@ func collateContent(contentId int64, nameDataMap map[string]*dto.SubjoinData, ev
 
 				companyNameTemp := func() any {
 					keyCompany := map[string]string{
-						"customerDetail_12":   "PURCHASER_NAME",
-						"customerDetail_24":   "PURCHASER_NAME",
-						"supplierRanking_12":  "SALES_NAME",
-						"suppliezrRanking_24": "SALES_NAME",
+						"customerDetail_12":  "PURCHASER_NAME",
+						"customerDetail_24":  "PURCHASER_NAME",
+						"supplierRanking_12": "SALES_NAME",
+						"supplierRanking_24": "SALES_NAME",
 					}[key]
 					return mItem[keyCompany]
 				}()
