@@ -69,6 +69,16 @@ type SubjectCompanyTags struct {
 	RankingTag        *[]RankingTagDetail    `json:"rankingTag"`
 }
 
+func (e *SubjectCompanyTags) GenMap() *map[string]any {
+	if e == nil {
+		return nil
+	}
+	var m map[string]any
+	b, _ := json.Marshal(*e)
+	_ = json.Unmarshal(b, &m)
+	return &m
+}
+
 type ProductProportion struct {
 	Proportion string `json:"proportion"`
 	Category   string `json:"category"`

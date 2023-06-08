@@ -105,7 +105,24 @@ func dataCollectionCheckByContentId(contentId int64) (bool, error) {
 			return false, nil
 		}
 	}
-	// all passed
+
+	// 检查OriginContent公司主体是否采集
+	var contentInfo models.RskcOriginContentInfo
+	err := db.Model(&contentInfo).
+		Where("id = ?", contentId).
+		First(&contentInfo).
+		Error
+	if err != nil {
+		return false, err
+	}
+	var countInfo int64
+	err = dbInfo.Model(&tbInfo).Where("usc_id = ?", contentInfo.UscId).Count(&countInfo).Error
+	if err != nil {
+		return false, err
+	}
+	if countInfo == 0 {
+		return false, nil
+	}
 	return true, nil
 }
 
@@ -119,3 +136,16 @@ func markContentAsSend(contentId int64) error {
 	}
 	return nil
 }
+
+// debug sql: check integrality
+//select t.*, ei.usc_id
+//from
+//(
+//select rskc_origin_content.id as content_id, rskc_origin_content.status_code as content_status,
+//rskc_trades_detail.enterprise_name as enterprise_name, enterprise_wait_list.usc_id as usc_id,
+//enterprise_wait_list.status_code as ident_status
+//from rskc_origin_content
+//right join rskc_trades_detail on rskc_origin_content.id = rskc_trades_detail.content_id
+//left join enterprise_wait_list on rskc_trades_detail.enterprise_name = enterprise_wait_list.enterprise_name) t
+//left join enterprise_info ei on t.usc_id = ei.usc_id
+//where content_id = 464191697715211414

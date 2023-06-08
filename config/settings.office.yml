@@ -27,6 +27,7 @@ settings:
           - 'rskc_origin_content'
           - 'rskc_trades_detail'
           - 'rskc_processed_content'
+          - 'rc_selling_sta'
           - 'task_detail'
   gen:
     dbname: go_admin

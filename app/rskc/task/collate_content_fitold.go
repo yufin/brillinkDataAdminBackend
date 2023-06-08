@@ -12,6 +12,7 @@ import (
 	eModels "go-admin/app/spider/models"
 	"go-admin/pkg/natsclient"
 	"gorm.io/gorm"
+	"strings"
 	"time"
 )
 
@@ -69,6 +70,9 @@ func collateDependencyForContent(contentId int64) error {
 		Scan(&nameIdents).
 		Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
 		return err
 	}
 
@@ -76,6 +80,9 @@ func collateDependencyForContent(contentId int64) error {
 	dbContent := sdk.Runtime.GetDbByKey(tbContent.TableName())
 	err = dbContent.Model(models.RskcOriginContent{}).First(&tbContent, contentId).Scan(&tbContent).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
 		return err
 	}
 	evalTime, err := time.Parse("2006-01-02", tbContent.YearMonth+"-01")
@@ -111,6 +118,13 @@ func collateContent(contentId int64, nameDataMap map[string]*dto.SubjoinData, ev
 		return err
 	}
 
+	// 组装subjectCompanyTags
+	sct, err := collateSubjectCompanyTags(data.UscId, contentId, evalTime)
+	if err != nil {
+		return err
+	}
+	contentMap["impExpEntReport"].(map[string]any)["subjectCompanyTags"] = sct.GenMap()
+
 	contentMap["impExpEntReport"].(map[string]any)["impJsonDate"] = evalTime.Format("2006-01-02")
 	for _, key := range []string{"customerDetail_12", "customerDetail_24", "supplierRanking_12", "supplierRanking_24"} {
 		dt := map[string]int{
@@ -126,7 +140,6 @@ func collateContent(contentId int64, nameDataMap map[string]*dto.SubjoinData, ev
 		for idx, item := range contentMap["impExpEntReport"].(map[string]any)[key].([]interface{}) {
 			mItem, ok := item.(map[string]any)
 			if ok {
-
 				companyNameTemp := func() any {
 					keyCompany := map[string]string{
 						"customerDetail_12":  "PURCHASER_NAME",
@@ -143,40 +156,49 @@ func collateContent(contentId int64, nameDataMap map[string]*dto.SubjoinData, ev
 					subjoinData = nameDataMap[companyName]
 				}
 				if subjoinData != nil {
-					contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["industryTag"] = subjoinData.IndustryTag
-					contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["productTag"] = subjoinData.ProductTag
+					// 规则处理：企业名称包含‘供应链’时不匹配标签
 					contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["companyInfo"] = subjoinData.CompanyInfo.GenMap()
-					contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["rankingTag"] = func() *[]map[string]any {
-						rt := make([]map[string]any, 0)
-						if subjoinData.RankingTag == nil {
-							return nil
-						}
-						for _, r := range *subjoinData.RankingTag {
-							rt = append(rt, *r.GenMap())
-						}
-						return &rt
-					}()
-					contentMap["impExpEntReport"].(map[string]any)[key].([]any)[idx].(map[string]any)["authorizedTag"] = func() *[]map[string]any {
-						rt := make([]map[string]any, 0)
-						if subjoinData.AuthorizedTag == nil {
-							return nil
-						}
-						for _, at := range *subjoinData.AuthorizedTag {
-							rt = append(rt, at.GenMap())
-						}
-						return &rt
-					}()
-					contentMap["impExpEntReport"].(map[string]any)[key].([]any)[idx].(map[string]any)["major_commodity_proportion"] = func() *float64 {
-						if commodityProp == nil {
-							return nil
-						}
-						for _, v := range *commodityProp {
-							if v.EnterpriseName == companyName {
-								return &v.MajorityRatio
+					if !strings.Contains(companyName, "供应链") {
+						contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["industryTag"] = subjoinData.IndustryTag
+						contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["productTag"] = subjoinData.ProductTag
+						contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["rankingTag"] = func() *[]map[string]any {
+							rt := make([]map[string]any, 0)
+							if subjoinData.RankingTag == nil {
+								return nil
 							}
-						}
-						return nil
-					}()
+							for _, r := range *subjoinData.RankingTag {
+								rt = append(rt, *r.GenMap())
+							}
+							return &rt
+						}()
+						contentMap["impExpEntReport"].(map[string]any)[key].([]any)[idx].(map[string]any)["authorizedTag"] = func() *[]map[string]any {
+							rt := make([]map[string]any, 0)
+							if subjoinData.AuthorizedTag == nil {
+								return nil
+							}
+							for _, at := range *subjoinData.AuthorizedTag {
+								rt = append(rt, at.GenMap())
+							}
+							return &rt
+						}()
+						contentMap["impExpEntReport"].(map[string]any)[key].([]any)[idx].(map[string]any)["major_commodity_proportion"] = func() *float64 {
+							if commodityProp == nil {
+								return nil
+							}
+							for _, v := range *commodityProp {
+								if v.EnterpriseName == companyName {
+									return &v.MajorityRatio
+								}
+							}
+							return nil
+						}()
+					} else {
+						contentMap["impExpEntReport"].(map[string]any)[key].([]any)[idx].(map[string]any)["major_commodity_proportion"] = nil
+						contentMap["impExpEntReport"].(map[string]any)[key].([]any)[idx].(map[string]any)["authorizedTag"] = nil
+						contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["industryTag"] = nil
+						contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["productTag"] = nil
+						contentMap["impExpEntReport"].(map[string]any)[key].([]interface{})[idx].(map[string]any)["rankingTag"] = nil
+					}
 				}
 			}
 		}
@@ -283,6 +305,10 @@ func collateProductTags(uscId string) (*[]string, error) {
 		return nil, err
 	}
 	var result []string
+
+	if data.ProductData == "" {
+		return nil, nil
+	}
 	err = json.Unmarshal([]byte(data.ProductData), &result)
 	if err != nil {
 		return nil, err
@@ -305,6 +331,9 @@ func collateIndustryTags(uscId string) (*[]string, error) {
 		return nil, err
 	}
 	var result []string
+	if data.IndustryData == "" {
+		return nil, nil
+	}
 	err = json.Unmarshal([]byte(data.IndustryData), &result)
 	if err != nil {
 		return nil, err
@@ -391,4 +420,49 @@ func collateAuthorizedTagDetail(uscId string, evalTime time.Time) (*[]dto.Author
 		})
 	}
 	return &result, nil
+}
+
+// collateSubjectCompanyTags collate subject company tags
+func collateSubjectCompanyTags(uscId string, contentId int64, evalTime time.Time) (*dto.SubjectCompanyTags, error) {
+	it, err := collateIndustryTags(uscId)
+	if err != nil {
+		return nil, err
+	}
+	at, err := collateAuthorizedTagDetail(uscId, evalTime)
+	if err != nil {
+		return nil, err
+	}
+	rt, err := collateRankingTagDetail(uscId, evalTime)
+	if err != nil {
+		return nil, err
+	}
+	poros, err := collateSubjectEnterpriseProductProportion(contentId)
+	if err != nil {
+		return nil, err
+	}
+	return &dto.SubjectCompanyTags{
+		IndustryTag:       it,
+		AuthorizedTag:     at,
+		RankingTag:        rt,
+		ProductProportion: poros,
+	}, nil
+}
+
+func collateSubjectEnterpriseProductProportion(contentId int64) (*[]dto.ProductProportion, error) {
+	var tbSst models.RcSellingSta
+	dbSst := sdk.Runtime.GetDbByKey(tbSst.TableName())
+	props := make([]dto.ProductProportion, 0)
+	err := dbSst.Raw(
+		`select SUBSTRING_INDEX(SUBSTRING_INDEX(ssspxl, '*', 2), '*', -1) as category,
+        concat(sum(cast(Replace(jezb, '%', '') as DECIMAL(10,2))), '%')as proportion
+        from rc_selling_sta where content_id = ? and  SSSPDL not in ('合计', '其他')
+        group by category`, contentId).
+		Scan(&props).Error
+	if err != nil {
+		return nil, err
+	}
+	if len(props) == 0 {
+		return nil, nil
+	}
+	return &props, nil
 }

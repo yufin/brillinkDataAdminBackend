@@ -126,7 +126,10 @@ func SyncOriginJsonContent() error {
 					msg := make([]byte, 8)
 					binary.BigEndian.PutUint64(msg, uint64(data.Id))
 					_, err := natsclient.TaskJs.Publish(natsclient.TopicContentNew, msg)
-					return err
+					if err != nil {
+						return err
+					}
+					return nil
 				}()
 				if err != nil {
 					return err

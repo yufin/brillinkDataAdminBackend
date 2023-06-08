@@ -1,11 +1,10 @@
 package task
 
 import (
-	"encoding/binary"
+	"encoding/json"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/nats-io/nats.go"
 	"github.com/pkg/errors"
-	"go-admin/app/rskc/models"
 	sModels "go-admin/app/spider/models"
 	sDto "go-admin/app/spider/service/dto"
 	"go-admin/pkg/natsclient"
@@ -37,8 +36,11 @@ func pullTradesNew() error {
 			}
 		}
 		for _, msg := range msgs {
-			tradesId := int64(binary.BigEndian.Uint64(msg.Data))
-			err := syncWaitListFromTrades(tradesId)
+			m, err := parseEnterpriseIdentMsg(msg)
+			if err != nil {
+				return err
+			}
+			err = syncWaitListFromMsg(m)
 			if err != nil {
 				return err
 			} else {
@@ -48,52 +50,80 @@ func pullTradesNew() error {
 	}
 }
 
-func syncWaitListFromTrades(tradesId int64) error {
-	var tbTrades models.RskcTradesDetail
-	dbTrades := sdk.Runtime.GetDbByKey(tbTrades.TableName())
-
-	var dataTrades models.RskcTradesDetail
-
-	err := dbTrades.Model(&tbTrades).First(&dataTrades, tradesId).Error
+func parseEnterpriseIdentMsg(msg *nats.Msg) (map[string]string, error) {
+	var m map[string]string
+	err := json.Unmarshal(msg.Data, &m)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil
-		}
-		return err
+		return nil, err
 	}
+	_, ok := m["enterprise_name"]
+	if !ok {
+		return nil, errors.Errorf("key enterprise_name not found in msg: %s", string(msg.Data))
+	}
+	_, ok = m["usc_id"]
+	if !ok {
+		return nil, errors.Errorf("key usc_id not found in msg: %s", string(msg.Data))
+	}
+	return m, nil
+}
+
+func syncWaitListFromMsg(enterpriseIdentMap map[string]string) error {
+
+	enterpriseName := enterpriseIdentMap["enterprise_name"]
+	uscIdInput := enterpriseIdentMap["usc_id"]
 
 	var tbWait sModels.EnterpriseWaitList
-	//var dataWait sModels.EnterpriseWaitList
-	dbWait := sdk.Runtime.GetDbByKey(tbTrades.TableName())
+	dbWait := sdk.Runtime.GetDbByKey(tbWait.TableName())
 	var count int64
-	err = dbWait.Model(&tbWait).
-		Where("enterprise_name = ?", dataTrades.EnterpriseName).
+	err := dbWait.Model(&tbWait).
+		Where("enterprise_name = ?", enterpriseName).
 		Count(&count).Error
 	if err != nil {
 		return err
 	}
+
 	if count == 0 {
-		// query enterprise_info by enterprise_name, if exist, get UscId and insert with StatusCode=2
+		// query enterprise_info by enterprise_name, if exists, get UscId and insert with StatusCode=3
 		var tbInfo sModels.EnterpriseInfo
 		dbInfo := sdk.Runtime.GetDbByKey(tbInfo.TableName())
+
+		var queryCond = "enterprise_title = ?"
+		var queryArg = enterpriseName
+		if len(uscIdInput) == 18 {
+			queryCond = "usc_id = ?"
+			queryArg = uscIdInput
+		}
 		err = dbInfo.Model(&tbInfo).
-			Where("enterprise_title = ?", dataTrades.EnterpriseName).
+			Where(queryCond, queryArg).
 			Order("updated_at desc").
 			First(&tbInfo).
 			Error
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err
 		}
-		var uscId string
 		var statusCode = 1
-		if tbInfo.InfoId != 0 && tbInfo.UscId != "" {
-			uscId = tbInfo.UscId
+		var uscId string
+		if len(uscIdInput) == 18 {
+			uscId = uscIdInput
+		}
+
+		if tbInfo.InfoId != 0 {
 			statusCode = 3
+			if uscId == "" {
+				// 已匹配info,uscIdInput非空
+				uscId = tbInfo.UscId
+				statusCode = 3
+			}
+		} else {
+			if uscId != "" {
+				// 未匹配info,uscIdInput非空
+				statusCode = 2 // wait for data collection
+			}
 		}
 
 		// insert into wait_list
 		insertReq := sDto.EnterpriseWaitListInsertReq{
-			EnterpriseName: dataTrades.EnterpriseName,
+			EnterpriseName: enterpriseName,
 			UscId:          uscId,
 			Priority:       9,
 			StatusCode:     statusCode,
