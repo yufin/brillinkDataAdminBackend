@@ -4,12 +4,15 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	log "github.com/go-admin-team/go-admin-core/logger"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/nats-io/nats.go"
+	"github.com/pkg/errors"
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service/dto"
 	cModels "go-admin/common/models"
 	"go-admin/pkg/natsclient"
+	"gorm.io/gorm"
 	"strings"
 	"sync"
 	"time"
@@ -32,7 +35,7 @@ func pullContentNew() error {
 		// get total msg count by subscriber
 		totalPending, _, err := natsclient.SubContentNew.Pending()
 		if err == nil {
-			fmt.Println("SubContentNew msg totalPending:", totalPending)
+			fmt.Println("SyncDependencyTableTask msg totalPending:", totalPending)
 		}
 
 		msgs, err := natsclient.SubContentNew.Fetch(1, nats.MaxWait(5*time.Second))
@@ -45,22 +48,48 @@ func pullContentNew() error {
 		}
 		for _, msg := range msgs {
 			contentId := int64(binary.BigEndian.Uint64(msg.Data))
-			var err1, err2 error
+
+			exists, err := CheckContentIdExist(contentId)
+			if err != nil {
+				return err
+			} else {
+				if !exists {
+					if err := msg.AckSync(); err != nil {
+						return err
+					}
+					break
+				}
+			}
+
+			log.Infof("开始解析并同步依赖数据: contentId = %d\r\n", contentId)
+			var err1, err2, err3 error
 			var wg sync.WaitGroup
-			wg.Add(2)
+			wg.Add(1)
 			go func() {
 				defer wg.Done()
 				err1 = parseContentToDetails(contentId)
 			}()
+			wg.Add(1)
 			go func() {
 				defer wg.Done()
 				err2 = syncSellingStaFromContent(contentId)
+			}()
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				err3 = syncDecisionParamFromContent(contentId)
 			}()
 			wg.Wait()
 			if err1 != nil {
 				return err
 			}
 			if err2 != nil {
+				return err
+			}
+			if err3 != nil {
+				return err
+			}
+			if err := markContentAsCompleteAsync(contentId); err != nil {
 				return err
 			}
 			if err := msg.AckSync(); err != nil {
@@ -147,11 +176,6 @@ func parseContentToDetails(contentId int64) error {
 			}
 		}
 	}
-
-	if err := markContentAsCompleteAsync(contentId); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -178,6 +202,7 @@ func tradesDetailKeyList() []string {
 		"supplierRanking_24",
 	}
 }
+
 func detailTypeDict() map[string]int {
 	return map[string]int{
 		"customerDetail_12":  1,
@@ -206,4 +231,17 @@ func verifyMapField(m map[string]any, key string) string {
 		return str
 	}
 	return "-"
+}
+
+func CheckContentIdExist(contentId int64) (bool, error) {
+	var data models.RskcOriginContent
+	db := sdk.Runtime.GetDbByKey(data.TableName())
+	err := db.Model(&data).Where("id = ?", contentId).First(&data).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }

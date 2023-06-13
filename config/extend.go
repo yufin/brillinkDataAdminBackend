@@ -32,7 +32,8 @@ type Neo4j struct {
 }
 
 type Vzoom struct {
-	Sftp Sftp
+	Sftp           Sftp
+	DecisionEngine DecisionEngine
 }
 
 type Sftp struct {
@@ -40,6 +41,10 @@ type Sftp struct {
 	Port     string
 	Username string
 	Password string
+}
+
+type DecisionEngine struct {
+	Uri string
 }
 
 type Nats struct {

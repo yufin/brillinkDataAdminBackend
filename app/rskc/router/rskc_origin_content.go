@@ -9,8 +9,8 @@ import (
 )
 
 func init() {
-	routerCheckRole = append(routerCheckRole, registerRskcOriginContentRouter)
-	//routerNoCheckRole = append(routerNoCheckRole, registerRskcOriginContentRouterNoAuth)
+	//routerCheckRole = append(routerCheckRole, registerRskcOriginContentRouter)
+	routerNoCheckRole = append(routerNoCheckRole, registerRskcOriginContentRouterNoAuth)
 }
 
 // registerRskcOriginContentRouter
@@ -19,17 +19,17 @@ func registerRskcOriginContentRouter(v1 *gin.RouterGroup, authMiddleware *jwtaut
 	r := v1.Group("/rskc/origin-content").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
 		r.GET("", api.GetPage)
-		r.GET("/:id", api.Get)
+		//r.GET("/:id", api.Get)
 		r.POST("", api.Insert)
 		r.PUT("/:id", api.Update)
 		r.DELETE("", api.Delete)
 	}
 }
 
-//func registerRskcOriginContentRouterNoAuth(v1 *gin.RouterGroup) {
-//	api := apis.RskcOriginContent{}
-//	r := v1.Group("/rskc/origin-content")
-//	{
-//		//r.GET("/task/sync", api.TaskSyncOriginContent)
-//	}
-//}
+func registerRskcOriginContentRouterNoAuth(v1 *gin.RouterGroup) {
+	api := apis.RskcOriginContent{}
+	r := v1.Group("/rskc/origin-content")
+	{
+		r.GET("/:id", api.Get)
+	}
+}

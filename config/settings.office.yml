@@ -27,8 +27,12 @@ settings:
           - 'rskc_origin_content'
           - 'rskc_trades_detail'
           - 'rskc_processed_content'
-          - 'rc_selling_sta'
           - 'task_detail'
+          - 'rc_selling_sta'
+          - 'rc_decision_param'
+          - 'rc_decision_result'
+          - 'rc_i18n_content'
+          - 'rc_dependency_data'
   gen:
     dbname: go_admin
     frontpath: ../graphAdminWebserver/src
@@ -62,6 +66,8 @@ settings:
         port: '8155'
         username: lhgyl
         password: lhgyl2022
+      decisionEngine:
+        uri: "http://127.0.0.1:8080"
     nats:
       uri: "nats://dev:password@192.168.44.169:4222"
       activate: true

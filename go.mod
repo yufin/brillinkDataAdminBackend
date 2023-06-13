@@ -10,6 +10,7 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1754
 	github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20190307165228-86c17b95fcd5
 	github.com/bitly/go-simplejson v0.5.0
+	github.com/buger/jsonparser v1.1.1
 	github.com/bytedance/go-tagexpr/v2 v2.7.12
 	github.com/casbin/casbin/v2 v2.69.0
 	github.com/gin-gonic/gin v1.9.0
@@ -33,6 +34,7 @@ require (
 	github.com/qiniu/go-sdk/v7 v7.11.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/shirou/gopsutil/v3 v3.22.1
+	github.com/shopspring/decimal v1.2.0
 	github.com/sony/sonyflake v1.1.0
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.0.0

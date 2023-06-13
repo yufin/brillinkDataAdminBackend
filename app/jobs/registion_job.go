@@ -15,7 +15,6 @@ func InitJob() {
 		"SyncWaitList":        task.SyncWaitListTask{},
 		"VerifyContentReady":  task.VerifyContentReadyTask{},
 		"CollateContent":      task.CollateContentTask{},
-
 		//"WipeMsg":            task.WipeMsgTask{},
 	}
 }
