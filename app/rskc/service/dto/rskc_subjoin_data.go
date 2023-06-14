@@ -29,9 +29,9 @@ func (e *AuthorizedTagDetail) GenMap() map[string]any {
 }
 
 type CompanyInfoDetail struct {
-	EstablishDate  string `json:"establishDate"`
-	EnterpriseType string `json:"enterpriseType"`
-	CapitalPaidIn  string `json:"capitalPaidIn"`
+	EstablishDate  *string `json:"establishDate"`
+	EnterpriseType string  `json:"enterpriseType"`
+	CapitalPaidIn  string  `json:"capitalPaidIn"`
 }
 
 func (e *CompanyInfoDetail) GenMap() *map[string]any {

@@ -409,3 +409,91 @@ type RcDecisionParamExport struct {
 	SwJcxxClnx              decimal.NullDecimal `json:"sw_jcxx_clnx" gorm:"comment:SwJcxxClnx" xlsx:"SwJcxxClnx"`
 	StatusCode              int                 `json:"statusCode" gorm:"comment:StatusCode" xlsx:"StatusCode"`
 }
+
+type RcDecisionParamDecisionRequestBody struct {
+	Id                      int64               `uri:"-"`                             // id
+	ContentId               int64               `json:"-"`                            //
+	SwSdsnbCyrs             *int                `json:"sw_sdsnb_cyrs"`                //
+	GsGdct                  *int                `json:"gs_gdct"`                      //
+	GsGdwdx                 *int                `json:"gs_gdwdx"`                     //
+	GsFrwdx                 *int                `json:"gs_frwdx"`                     //
+	LhCylwz                 *int                `json:"lh_cylwz"`                     //
+	LhMdPpjzl               *int                `json:"lh_md_ppjzl"`                  //
+	MdQybq                  *int                `json:"md_qybq"`                      //
+	SwCwbbYyzjzzts          *int                `json:"sw_cwbb_yyzjzzts"`             //
+	SfFhSsqkQy              *int                `json:"sf_fh_ssqk_qy"`                // 纳税信用评级
+	SwJcxxNsrxypj           *string             `json:"sw_jcxx_nsrxypj"`              //
+	ZxYhsxqk                *int                `json:"zx_yhsxqk"`                    //
+	ZxDsfsxqk               *int                `json:"zx_dsfsxqk"`                   //
+	LhQylx                  *int                `json:"lh_qylx"`                      //
+	Nsrsbh                  *string             `json:"nsrsbh"`                       //
+	SwSbNszeZzsqysds12m     decimal.NullDecimal `json:"sw_sb_nsze_zzsqysds_12m"`      //
+	SwSbNszezzlZzsqysds12mA decimal.NullDecimal `json:"sw_sb_nszezzl_zzsqysds_12m_a"` //
+	SwSdsnbGzxjzzjezzl      decimal.NullDecimal `json:"sw_sdsnb_gzxjzzjezzl"`         //
+	SwSbzsSflhypld12m       decimal.NullDecimal `json:"sw_sbzs_sflhypld_12m"`         //
+	SwSdsnbYjfy             decimal.NullDecimal `json:"sw_sdsnb_yjfy"`                //
+	FpJxLxfy12m             decimal.NullDecimal `json:"fp_jx_lxfy_12m"`               //
+	SwCwbbSszb              decimal.NullDecimal `json:"sw_cwbb_sszb"`                 //
+	FpJySychjeZb12mLh       decimal.NullDecimal `json:"fp_jy_sychje_zb_12m_lh"`       //
+	FpJxZyjyjezb12mLh       decimal.NullDecimal `json:"fp_jx_zyjyjezb_12m_lh"`        //
+	FpXxXychjeZb12mLh       decimal.NullDecimal `json:"fp_xx_xychje_zb_12m_lh"`       //
+	FpXxZyjyjezb12mLh       decimal.NullDecimal `json:"fp_xx_zyjyjezb_12m_lh"`        //
+	SwSbQbxse12m            decimal.NullDecimal `json:"sw_sb_qbxse_12m"`              //
+	SwSbQbxsezzl12m         decimal.NullDecimal `json:"sw_sb_qbxsezzl_12m"`           //
+	SwSbLsxs12m             decimal.NullDecimal `json:"sw_sb_lsxs_12m"`               //
+	SwCwbbChzztsCb          decimal.NullDecimal `json:"sw_cwbb_chzzts_cb"`            //
+	SwCwbbZcfzl             decimal.NullDecimal `json:"sw_cwbb_zcfzl"`                //
+	SwCwbbMlrzzlv           decimal.NullDecimal `json:"sw_cwbb_mlrzzlv"`              //
+	SwCwbbJlrzzlv           decimal.NullDecimal `json:"sw_cwbb_jlrzzlv"`              //
+	SwCwbbJzcszlv           decimal.NullDecimal `json:"sw_cwbb_jzcszlv"`              //
+	SwJcxxClnx              decimal.NullDecimal `json:"sw_jcxx_clnx"`                 //
+	StatusCode              int                 `json:"-"`                            //
+	DecisionInputParam
+}
+
+type DecisionInputParam struct {
+	ApplyTime string `json:"apply_time"`
+	OrderNo   string `json:"order_no"`
+}
+
+func (s *RcDecisionParamDecisionRequestBody) Assignment(model *models.RcDecisionParam, dip *DecisionInputParam) {
+	s.Id = model.Id
+	s.ContentId = model.ContentId
+	s.SwSdsnbCyrs = model.SwSdsnbCyrs
+	s.GsGdct = model.GsGdct
+	s.GsGdwdx = model.GsGdwdx
+	s.GsFrwdx = model.GsFrwdx
+	s.LhCylwz = model.LhCylwz
+	s.LhMdPpjzl = model.LhMdPpjzl
+	s.MdQybq = model.MdQybq
+	s.SwCwbbYyzjzzts = model.SwCwbbYyzjzzts
+	s.SfFhSsqkQy = model.SfFhSsqkQy
+	s.SwJcxxNsrxypj = model.SwJcxxNsrxypj
+	s.ZxYhsxqk = model.ZxYhsxqk
+	s.ZxDsfsxqk = model.ZxDsfsxqk
+	s.LhQylx = model.LhQylx
+	s.Nsrsbh = model.Nsrsbh
+	s.SwSbNszeZzsqysds12m = model.SwSbNszeZzsqysds12m
+	s.SwSbNszezzlZzsqysds12mA = model.SwSbNszezzlZzsqysds12mA
+	s.SwSdsnbGzxjzzjezzl = model.SwSdsnbGzxjzzjezzl
+	s.SwSbzsSflhypld12m = model.SwSbzsSflhypld12m
+	s.SwSdsnbYjfy = model.SwSdsnbYjfy
+	s.FpJxLxfy12m = model.FpJxLxfy12m
+	s.SwCwbbSszb = model.SwCwbbSszb
+	s.FpJySychjeZb12mLh = model.FpJySychjeZb12mLh
+	s.FpJxZyjyjezb12mLh = model.FpJxZyjyjezb12mLh
+	s.FpXxXychjeZb12mLh = model.FpXxXychjeZb12mLh
+	s.FpXxZyjyjezb12mLh = model.FpXxZyjyjezb12mLh
+	s.SwSbQbxse12m = model.SwSbQbxse12m
+	s.SwSbQbxsezzl12m = model.SwSbQbxsezzl12m
+	s.SwSbLsxs12m = model.SwSbLsxs12m
+	s.SwCwbbChzztsCb = model.SwCwbbChzztsCb
+	s.SwCwbbZcfzl = model.SwCwbbZcfzl
+	s.SwCwbbMlrzzlv = model.SwCwbbMlrzzlv
+	s.SwCwbbJlrzzlv = model.SwCwbbJlrzzlv
+	s.SwCwbbJzcszlv = model.SwCwbbJzcszlv
+	s.SwJcxxClnx = model.SwJcxxClnx
+	s.StatusCode = model.StatusCode
+	s.ApplyTime = dip.ApplyTime
+	s.OrderNo = dip.OrderNo
+}

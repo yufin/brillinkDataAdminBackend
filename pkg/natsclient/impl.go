@@ -8,10 +8,11 @@ import (
 )
 
 var (
-	TaskJs               nats.JetStreamContext
-	SubContentNew        *nats.Subscription
-	SubTradeNew          *nats.Subscription
-	SubContentProcessNew *nats.Subscription
+	TaskJs                  nats.JetStreamContext
+	SubContentNew           *nats.Subscription
+	SubTradeNew             *nats.Subscription
+	SubContentProcessNew    *nats.Subscription
+	SubToRequestDecisionNew *nats.Subscription
 )
 
 type TaskStream struct {
@@ -66,6 +67,12 @@ func (e TaskStream) InitSubscription() error {
 	}
 	if SubContentProcessNew == nil {
 		SubContentProcessNew, err = TaskJs.PullSubscribe(TopicContentToProcessNew, "sub-contenttoprocess-new", nats.BindStream(e.StreamName()))
+		if err != nil {
+			log.Error(pkg.Blue(fmt.Sprintf("Add Subscribe error: %v", err)))
+		}
+	}
+	if SubToRequestDecisionNew == nil {
+		SubToRequestDecisionNew, err = TaskJs.PullSubscribe(TopicToRequestDecisionNew, "sub-requestdecision-new", nats.BindStream(e.StreamName()))
 		if err != nil {
 			log.Error(pkg.Blue(fmt.Sprintf("Add Subscribe error: %v", err)))
 		}

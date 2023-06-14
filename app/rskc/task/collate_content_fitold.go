@@ -355,8 +355,15 @@ func collateCompanyInfoDetail(uscId string) (*dto.CompanyInfoDetail, error) {
 		}
 		return nil, err
 	}
+	estDate := func() *string {
+		if data.EstablishedDate != nil {
+			v := data.EstablishedDate.Format("2006-01-02")
+			return &v
+		}
+		return nil
+	}()
 	return &dto.CompanyInfoDetail{
-		EstablishDate:  data.EstablishedDate.Format("2006-01-02"),
+		EstablishDate:  estDate,
 		EnterpriseType: data.EnterpriseType,
 		CapitalPaidIn:  data.PaidInCapital,
 	}, nil
