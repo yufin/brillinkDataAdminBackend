@@ -5,7 +5,6 @@ import (
 	"github.com/go-admin-team/go-admin-core/sdk/pkg"
 	"github.com/google/uuid"
 	"go-admin/common"
-	"os"
 
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service"
@@ -22,23 +21,23 @@ type RcDecisionResult struct {
 	apis.Api
 }
 
-// GetPage 获取列表
-// @Summary 获取列表
-// @Description 获取列表
-// @Tags
-// @Param id query int64 false ""
-// @Param paramId query int64 false ""
-// @Param taskId query string false "任务id"
+// GetPage 获取wezoom decision engine returend result列表
+// @Summary 获取wezoom decision engine returend result列表
+// @Description 获取wezoom decision engine returend result列表
+// @Tags wezoom decision engine returend result
+// @Param id query int64 false "主键"
+// @Param paramId query int64 false "rc_decision_param"
+// @Param taskId query string false "task_id"
 // @Param finalResult query string false "决策建议结果(REFUSE:拒绝，PASS:通过)"
-// @Param aphScore query float64 false "APH分数"
+// @Param aphScore query string false "APH分数"
 // @Param fxSwJxccClnx query string false "经营年限"
 // @Param lhQylx query int false "1:生产型，2:贸易型"
 // @Param msg query string false "返回结果描述"
-// @Param createdAt query string false ""
-// @Param updatedAt query string false ""
-// @Param deletedAt query string false ""
-// @Param createBy query int64 false ""
-// @Param updateBy query int64 false ""
+// @Param update_by query string false "更新人"
+// @Param create_by query string false "创建人"
+// @Param deleted_at query time.Time false "删除时间"
+// @Param updated_at query time.Time false "更新时间"
+// @Param created_at query time.Time false "创建时间"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Success 200 {object} antd.Response{data=antd.Pages{list=[]models.RcDecisionResult}} "{"code": 200, "data": [...]}"
@@ -72,10 +71,10 @@ func (e RcDecisionResult) GetPage(c *gin.Context) {
 	e.PageOK(list, count, req.GetPageIndex(), req.GetPageSize())
 }
 
-// Get 获取
-// @Summary 获取
-// @Description 获取
-// @Tags
+// Get 获取wezoom decision engine returend result
+// @Summary 获取wezoom decision engine returend result
+// @Description 获取wezoom decision engine returend result
+// @Tags wezoom decision engine returend result
 // @Param id path string false "id"
 // @Success 200 {object} antd.Response{data=models.RcDecisionResult} "{"code": 200, "data": [...]}"
 // @Router /api/v1/rc-decision-result/{id} [get]
@@ -106,10 +105,10 @@ func (e RcDecisionResult) Get(c *gin.Context) {
 	e.OK(resp)
 }
 
-// Insert 创建
-// @Summary 创建
-// @Description 创建
-// @Tags
+// Insert 创建wezoom decision engine returend result
+// @Summary 创建wezoom decision engine returend result
+// @Description 创建wezoom decision engine returend result
+// @Tags wezoom decision engine returend result
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.RcDecisionResultInsertReq true "data"
@@ -141,10 +140,10 @@ func (e RcDecisionResult) Insert(c *gin.Context) {
 	e.OK(req.GetId())
 }
 
-// Update 修改
-// @Summary 修改
-// @Description 修改
-// @Tags
+// Update 修改wezoom decision engine returend result
+// @Summary 修改wezoom decision engine returend result
+// @Description 修改wezoom decision engine returend result
+// @Tags wezoom decision engine returend result
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.RcDecisionResultUpdateReq true "body"
@@ -175,10 +174,10 @@ func (e RcDecisionResult) Update(c *gin.Context) {
 	e.OK(req.GetId())
 }
 
-// Delete 删除
-// @Summary 删除
-// @Description 删除
-// @Tags
+// Delete 删除wezoom decision engine returend result
+// @Summary 删除wezoom decision engine returend result
+// @Description 删除wezoom decision engine returend result
+// @Tags wezoom decision engine returend result
 // @Param ids body []int false "ids"
 // @Success 200 {object} antd.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/rc-decision-result [delete]
@@ -208,23 +207,23 @@ func (e RcDecisionResult) Delete(c *gin.Context) {
 	e.OK(req.GetId())
 }
 
-// Export 导出列表
-// @Summary 导出列表
-// @Description 导出列表
-// @Tags
-// @Param id query int64 false ""
-// @Param paramId query int64 false ""
-// @Param taskId query string false "任务id"
+// Export 导出wezoom decision engine returend result列表
+// @Summary 导出wezoom decision engine returend result列表
+// @Description 导出wezoom decision engine returend result列表
+// @Tags wezoom decision engine returend result
+// @Param id query int64 false "主键"
+// @Param paramId query int64 false "rc_decision_param"
+// @Param taskId query string false "task_id"
 // @Param finalResult query string false "决策建议结果(REFUSE:拒绝，PASS:通过)"
-// @Param aphScore query float64 false "APH分数"
+// @Param aphScore query string false "APH分数"
 // @Param fxSwJxccClnx query string false "经营年限"
 // @Param lhQylx query int false "1:生产型，2:贸易型"
 // @Param msg query string false "返回结果描述"
-// @Param createdAt query string false ""
-// @Param updatedAt query string false ""
-// @Param deletedAt query string false ""
-// @Param createBy query int64 false ""
-// @Param updateBy query int64 false ""
+// @Param update_by query string false "更新人"
+// @Param create_by query string false "创建人"
+// @Param deleted_at query time.Time false "删除时间"
+// @Param updated_at query time.Time false "更新时间"
+// @Param created_at query time.Time false "创建时间"
 // @Router /api/v1/rc-decision-result/export [get]
 // @Security Bearer
 func (e RcDecisionResult) Export(c *gin.Context) {

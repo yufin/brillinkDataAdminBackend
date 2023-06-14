@@ -82,8 +82,6 @@ func syncDecisionParamFromContent(contentId int64) error {
 	return nil
 }
 
-//sw_cwbb_jzcszlv
-
 func safeGetDecimalFromMap(m map[string]any, key string) decimal.NullDecimal {
 	nullDecimal := decimal.NullDecimal{Valid: false}
 	if v, ok := m[key]; ok {

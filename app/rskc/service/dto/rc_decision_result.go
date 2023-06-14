@@ -9,16 +9,13 @@ import (
 type RcDecisionResultGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	Id           int64   `form:"id"  search:"type:exact;column:id;table:rc_decision_result" comment:""`
-	ParamId      int64   `form:"paramId"  search:"type:exact;column:param_id;table:rc_decision_result" comment:""`
-	TaskId       string  `form:"taskId"  search:"type:exact;column:task_id;table:rc_decision_result" comment:"任务id"`
-	FinalResult  string  `form:"finalResult"  search:"type:exact;column:final_result;table:rc_decision_result" comment:"决策建议结果(REFUSE:拒绝，PASS:通过)"`
-	AphScore     float64 `form:"aphScore"  search:"type:exact;column:aph_score;table:rc_decision_result" comment:"APH分数"`
-	FxSwJxccClnx string  `form:"fxSwJxccClnx"  search:"type:exact;column:fx_sw_jxcc_clnx;table:rc_decision_result" comment:"经营年限"`
-	LhQylx       int     `form:"lhQylx"  search:"type:exact;column:lh_qylx;table:rc_decision_result" comment:"1:生产型，2:贸易型"`
-	Msg          string  `form:"msg"  search:"type:exact;column:msg;table:rc_decision_result" comment:"返回结果描述"`
-	StartTime    string  `form:"startTime" search:"type:gte;column:created_at;table:rc_decision_result" comment:"创建时间"`
-	EndTime      string  `form:"endTime" search:"type:lte;column:created_at;table:rc_decision_result" comment:"创建时间"`
+	ParamId      int64  `form:"paramId"  search:"type:exact;column:param_id;table:rc_decision_result" comment:"rc_decision_param"`
+	TaskId       string `form:"taskId"  search:"type:exact;column:task_id;table:rc_decision_result" comment:"task_id"`
+	FinalResult  string `form:"finalResult"  search:"type:exact;column:final_result;table:rc_decision_result" comment:"决策建议结果(REFUSE:拒绝，PASS:通过)"`
+	AphScore     string `form:"aphScore"  search:"type:exact;column:aph_score;table:rc_decision_result" comment:"APH分数"`
+	FxSwJxccClnx string `form:"fxSwJxccClnx"  search:"type:exact;column:fx_sw_jxcc_clnx;table:rc_decision_result" comment:"经营年限"`
+	LhQylx       int    `form:"lhQylx"  search:"type:exact;column:lh_qylx;table:rc_decision_result" comment:"1:生产型，2:贸易型"`
+	Msg          string `form:"msg"  search:"type:exact;column:msg;table:rc_decision_result" comment:"返回结果描述"`
 	RcDecisionResultPageOrder
 }
 
@@ -38,14 +35,14 @@ func (m *RcDecisionResultGetPageReq) GetNeedSearch() interface{} {
 }
 
 type RcDecisionResultGetResp struct {
-	Id           int64   `json:"id"`           //
-	ParamId      int64   `json:"paramId"`      //
-	TaskId       string  `json:"taskId"`       // 任务id
-	FinalResult  string  `json:"finalResult"`  // 决策建议结果(REFUSE:拒绝，PASS:通过)
-	AphScore     float64 `json:"aphScore"`     // APH分数
-	FxSwJxccClnx string  `json:"fxSwJxccClnx"` // 经营年限
-	LhQylx       int     `json:"lhQylx"`       // 1:生产型，2:贸易型
-	Msg          string  `json:"msg"`          // 返回结果描述
+	Id           int64  `json:"id"`           // 主键
+	ParamId      int64  `json:"paramId"`      // rc_decision_param
+	TaskId       string `json:"taskId"`       // task_id
+	FinalResult  string `json:"finalResult"`  // 决策建议结果(REFUSE:拒绝，PASS:通过)
+	AphScore     string `json:"aphScore"`     // APH分数
+	FxSwJxccClnx string `json:"fxSwJxccClnx"` // 经营年限
+	LhQylx       int    `json:"lhQylx"`       // 1:生产型，2:贸易型
+	Msg          string `json:"msg"`          // 返回结果描述
 	common.ControlBy
 }
 
@@ -64,14 +61,14 @@ func (s *RcDecisionResultGetResp) Generate(model *models.RcDecisionResult) {
 }
 
 type RcDecisionResultInsertReq struct {
-	Id           int64   `json:"-"`            //
-	ParamId      int64   `json:"paramId"`      //
-	TaskId       string  `json:"taskId"`       // 任务id
-	FinalResult  string  `json:"finalResult"`  // 决策建议结果(REFUSE:拒绝，PASS:通过)
-	AphScore     float64 `json:"aphScore"`     // APH分数
-	FxSwJxccClnx string  `json:"fxSwJxccClnx"` // 经营年限
-	LhQylx       int     `json:"lhQylx"`       // 1:生产型，2:贸易型
-	Msg          string  `json:"msg"`          // 返回结果描述
+	Id           int64  `json:"-"`            // 主键
+	ParamId      int64  `json:"paramId"`      // rc_decision_param
+	TaskId       string `json:"taskId"`       // task_id
+	FinalResult  string `json:"finalResult"`  // 决策建议结果(REFUSE:拒绝，PASS:通过)
+	AphScore     string `json:"aphScore"`     // APH分数
+	FxSwJxccClnx string `json:"fxSwJxccClnx"` // 经营年限
+	LhQylx       int    `json:"lhQylx"`       // 1:生产型，2:贸易型
+	Msg          string `json:"msg"`          // 返回结果描述
 	common.ControlBy
 }
 
@@ -94,14 +91,14 @@ func (s *RcDecisionResultInsertReq) GetId() interface{} {
 }
 
 type RcDecisionResultUpdateReq struct {
-	Id           int64   `uri:"id"`            //
-	ParamId      int64   `json:"paramId"`      //
-	TaskId       string  `json:"taskId"`       // 任务id
-	FinalResult  string  `json:"finalResult"`  // 决策建议结果(REFUSE:拒绝，PASS:通过)
-	AphScore     float64 `json:"aphScore"`     // APH分数
-	FxSwJxccClnx string  `json:"fxSwJxccClnx"` // 经营年限
-	LhQylx       int     `json:"lhQylx"`       // 1:生产型，2:贸易型
-	Msg          string  `json:"msg"`          // 返回结果描述
+	Id           int64  `uri:"id"`            // 主键
+	ParamId      int64  `json:"paramId"`      // rc_decision_param
+	TaskId       string `json:"taskId"`       // task_id
+	FinalResult  string `json:"finalResult"`  // 决策建议结果(REFUSE:拒绝，PASS:通过)
+	AphScore     string `json:"aphScore"`     // APH分数
+	FxSwJxccClnx string `json:"fxSwJxccClnx"` // 经营年限
+	LhQylx       int    `json:"lhQylx"`       // 1:生产型，2:贸易型
+	Msg          string `json:"msg"`          // 返回结果描述
 	common.ControlBy
 }
 
@@ -142,12 +139,12 @@ func (s *RcDecisionResultDeleteReq) GetId() interface{} {
 }
 
 type RcDecisionResultExport struct {
-	Id           int64   `json:"id" gorm:"primaryKey;comment:Id" xlsx:"Id"`
-	ParamId      int64   `json:"paramId" gorm:"comment:ParamId" xlsx:"ParamId"`
-	TaskId       string  `json:"taskId" gorm:"comment:任务id" xlsx:"任务id"`
-	FinalResult  string  `json:"finalResult" gorm:"comment:决策建议结果(REFUSE:拒绝，PASS:通过)" xlsx:"决策建议结果(REFUSE:拒绝，PASS:通过)"`
-	AphScore     float64 `json:"aphScore" gorm:"comment:APH分数" xlsx:"APH分数"`
-	FxSwJxccClnx string  `json:"fxSwJxccClnx" gorm:"comment:经营年限" xlsx:"经营年限"`
-	LhQylx       int     `json:"lhQylx" gorm:"comment:1:生产型，2:贸易型" xlsx:"1:生产型，2:贸易型"`
-	Msg          string  `json:"msg" gorm:"comment:返回结果描述" xlsx:"返回结果描述"`
+	Id           int64  `json:"id" gorm:"primaryKey;autoIncrement;comment:主键" xlsx:"主键"`
+	ParamId      int64  `json:"paramId" gorm:"comment:rc_decision_param" xlsx:"rc_decision_param"`
+	TaskId       string `json:"taskId" gorm:"comment:task_id" xlsx:"task_id"`
+	FinalResult  string `json:"finalResult" gorm:"comment:决策建议结果(REFUSE:拒绝，PASS:通过)" xlsx:"决策建议结果(REFUSE:拒绝，PASS:通过)"`
+	AphScore     string `json:"aphScore" gorm:"comment:APH分数" xlsx:"APH分数"`
+	FxSwJxccClnx string `json:"fxSwJxccClnx" gorm:"comment:经营年限" xlsx:"经营年限"`
+	LhQylx       int    `json:"lhQylx" gorm:"comment:1:生产型，2:贸易型" xlsx:"1:生产型，2:贸易型"`
+	Msg          string `json:"msg" gorm:"comment:返回结果描述" xlsx:"返回结果描述"`
 }

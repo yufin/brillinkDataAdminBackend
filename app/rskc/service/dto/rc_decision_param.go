@@ -9,8 +9,7 @@ import (
 )
 
 type RcDecisionParamGetPageReq struct {
-	dto.Pagination `search:"-"`
-
+	dto.Pagination          `search:"-"`
 	Id                      int64               `form:"id"  search:"type:exact;column:id;table:rc_decision_param" comment:"id"`
 	ContentId               int64               `form:"contentId"  search:"type:exact;column:content_id;table:rc_decision_param" comment:""`
 	SwSdsnbCyrs             *int                `form:"sw_sdsnb_cyrs"  search:"type:exact;column:sw_sdsnb_cyrs;table:rc_decision_param" comment:""`
@@ -309,7 +308,7 @@ type RcDecisionParamUpdateReq struct {
 
 func (s *RcDecisionParamUpdateReq) Generate(model *models.RcDecisionParam) {
 	if s.Id == 0 {
-		model.Model = common.Model{Id: s.Id}
+		model.Model = common.Model{Id: utils.NewFlakeId()}
 	}
 	model.SwSdsnbCyrs = s.SwSdsnbCyrs
 	model.GsGdct = s.GsGdct
