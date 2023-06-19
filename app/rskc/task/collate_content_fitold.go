@@ -355,13 +355,10 @@ func collateCompanyInfoDetail(uscId string) (*dto.CompanyInfoDetail, error) {
 		}
 		return nil, err
 	}
-	estDate := func() *string {
-		if data.EstablishedDate != nil {
-			v := data.EstablishedDate.Format("2006-01-02")
-			return &v
-		}
-		return nil
-	}()
+	estDate := ""
+	if data.EstablishedDate != nil {
+		estDate = data.EstablishedDate.Format("2006-01-02")
+	}
 	return &dto.CompanyInfoDetail{
 		EstablishDate:  estDate,
 		EnterpriseType: data.EnterpriseType,

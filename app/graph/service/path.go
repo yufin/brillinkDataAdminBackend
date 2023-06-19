@@ -8,8 +8,11 @@ import (
 	"math"
 )
 
+type PathService struct {
+}
+
 // ExpandPathFromSource returns the path from sourceId to the end of the graph (depth constrained by depth)
-func ExpandPathFromSource(ctx context.Context, sourceId string, depth int, limit int) ([]neo4j.Path, error) {
+func (s *PathService) ExpandPathFromSource(ctx context.Context, sourceId string, depth int, limit int) ([]neo4j.Path, error) {
 	depth = int(math.Min(float64(depth), 2))
 	cypher := fmt.Sprintf(
 		"MATCH (startNode {id: $sourceId}) "+
@@ -32,7 +35,7 @@ func ExpandPathFromSource(ctx context.Context, sourceId string, depth int, limit
 }
 
 // GetPathBetween returns the path between two nodes (filtered by filterStmt, which is cypher stmt) By given sourceId and targetId.
-func GetPathBetween(ctx context.Context, sourceId string, targetId string, filterStmt string) ([]neo4j.Path, error) {
+func (s *PathService) GetPathBetween(ctx context.Context, sourceId string, targetId string, filterStmt string) ([]neo4j.Path, error) {
 	cypher := fmt.Sprintf(
 		"MATCH (s {id: $sourceId}) "+
 			"MATCH (t {id: $targetId}) "+
@@ -56,7 +59,7 @@ func GetPathBetween(ctx context.Context, sourceId string, targetId string, filte
 }
 
 // GetPathToChildren returns the paginated(pageSize counts on relationship) path to children of a node By given sourceId.
-func GetPathToChildren(ctx context.Context, sourceId string, pageSize int, pageNum int) ([]neo4j.Path, int64, error) {
+func (s *PathService) GetPathToChildren(ctx context.Context, sourceId string, pageSize int, pageNum int) ([]neo4j.Path, int64, error) {
 	pageNum = int(math.Max(float64(pageNum), 1))
 	cypher := "MATCH p=(n {id: $sourceId})-[r]->(m) return p skip $skip limit $limit;"
 	cypherCount := "MATCH p=(n {id: $sourceId})-[r]->(m) return count(p) as total;"
@@ -78,7 +81,7 @@ func GetPathToChildren(ctx context.Context, sourceId string, pageSize int, pageN
 }
 
 // GetPathToParents returns the paginated(pageSize counts on relationship) path to parents of a node By given sourceId.
-func GetPathToParents(ctx context.Context, targetId string, pageSize int, pageNum int) ([]neo4j.Path, int64, error) {
+func (s *PathService) GetPathToParents(ctx context.Context, targetId string, pageSize int, pageNum int) ([]neo4j.Path, int64, error) {
 	pageNum = int(math.Max(float64(pageNum), 1))
 	cypher := "MATCH p=(n)-[r]->(m {id: $targetId}) return p skip $skip limit $limit;"
 	cypherCount := "MATCH p=(n)-[r]->(m {id: $targetId}) return count(p) as total;"
@@ -100,7 +103,7 @@ func GetPathToParents(ctx context.Context, targetId string, pageSize int, pageNu
 }
 
 // GetPathFromSourceByIds returns the path from sourceId to targetIds (filtered by expectLabels and expectRels)
-func GetPathFromSourceByIds(
+func (s *PathService) GetPathFromSourceByIds(
 	ctx context.Context, sourceId string, targetIds []string, expectLabels []string, expectRels []string) ([]neo4j.Path, error) {
 
 	cypher := fmt.Sprintf("MATCH (rootNode {id: $sourceId}) " +

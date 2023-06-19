@@ -78,7 +78,7 @@ func requestDecisionEngine(paramId int64) error {
 	return nil
 }
 
-// mergeDependencyDataToParam update dependency data to RcDecisionParam
+// updateDependencyDataToParam update dependency data to RcDecisionParam
 func updateDependencyDataToParam(contentId int64) error {
 	var tbParam models.RcDecisionParam
 	dbParam := sdk.Runtime.GetDbByKey(tbParam.TableName())
@@ -115,5 +115,11 @@ func updateDependencyDataToParam(contentId int64) error {
 	if err != nil {
 		return err
 	}
+
+	// request decision engine
+	if err := requestDecisionEngine(modelParam.Id); err != nil {
+		return err
+	}
+
 	return nil
 }

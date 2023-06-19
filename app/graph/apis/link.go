@@ -46,7 +46,9 @@ func (e LinkApi) ExpandNetFromSource(c *gin.Context) {
 	if err != nil {
 		limit = 50
 	}
-	result, err := service.ExpandPathFromSource(
+
+	s := service.PathService{}
+	result, err := s.ExpandPathFromSource(
 		c.Request.Context(), c.DefaultQuery("sourceId", constant.LinkRootId), depth, limit)
 	if err != nil {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
@@ -74,7 +76,9 @@ func (e LinkApi) GetRootNode(c *gin.Context) {
 		e.Logger.Error(err)
 		return
 	}
-	nodeArr, err := service.GetNodeById(c.Request.Context(), constant.LinkRootId)
+
+	s := service.NodeService{}
+	nodeArr, err := s.GetNodeById(c.Request.Context(), constant.LinkRootId)
 	if err != nil {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return
@@ -102,7 +106,8 @@ func (e LinkApi) GetNodeById(c *gin.Context) {
 		return
 	}
 	id := c.Query("id")
-	nodeArr, err := service.GetNodeById(c.Request.Context(), id)
+	s := service.NodeService{}
+	nodeArr, err := s.GetNodeById(c.Request.Context(), id)
 	if err != nil {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return
@@ -142,7 +147,8 @@ func (e LinkApi) GetNetToChildren(c *gin.Context) {
 	if errConv != nil {
 		pageNumInt = 1
 	}
-	neoPath, total, err := service.GetPathToChildren(c.Request.Context(), id, pageSizeInt, pageNumInt)
+	s := service.PathService{}
+	neoPath, total, err := s.GetPathToChildren(c.Request.Context(), id, pageSizeInt, pageNumInt)
 	if err != nil {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return
@@ -183,7 +189,8 @@ func (e LinkApi) GetNetToParents(c *gin.Context) {
 	if errConv != nil {
 		pageNumInt = 1
 	}
-	neoPath, total, err := service.GetPathToParents(c.Request.Context(), id, pageSizeInt, pageNumInt)
+	s := service.PathService{}
+	neoPath, total, err := s.GetPathToParents(c.Request.Context(), id, pageSizeInt, pageNumInt)
 	if err != nil {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return

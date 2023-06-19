@@ -9,8 +9,11 @@ import (
 	"go-admin/app/graph/util"
 )
 
+type NodeService struct {
+}
+
 // GetNodeById returns the node By given id.
-func GetNodeById(ctx context.Context, id string) ([]neo4j.Node, error) {
+func (s *NodeService) GetNodeById(ctx context.Context, id string) ([]neo4j.Node, error) {
 	cypher := "MATCH (n {id: $id}) RETURN n;"
 	result, err := models.CypherQuery(ctx, cypher, map[string]any{"id": id})
 	var nodeArr = make([]neo4j.Node, 0)
@@ -30,7 +33,7 @@ func GetNodeById(ctx context.Context, id string) ([]neo4j.Node, error) {
 }
 
 // GetChildrenById returns the children of a node By given id, expect relationship constrained by expectRel.
-func GetChildrenById(ctx context.Context, id string, pageSize int, pageNum int, expectRel []string) ([]neo4j.Node, int64, error) {
+func (s *NodeService) GetChildrenById(ctx context.Context, id string, pageSize int, pageNum int, expectRel []string) ([]neo4j.Node, int64, error) {
 	expectRelStmt := util.GetRelConstraintStmt(expectRel, "r", true)
 	cypher := fmt.Sprintf(
 		"MATCH (n{id: $id})-[r]->(m) %s return m skip $skip limit $limit;", expectRelStmt)
@@ -42,7 +45,7 @@ func GetChildrenById(ctx context.Context, id string, pageSize int, pageNum int, 
 	total := func() int64 {
 		cypherCount := fmt.Sprintf(
 			"MATCH (n{id: $id})-[r]->(m) %s return count(m) as total;", expectRelStmt)
-		count, err := CountChildren(ctx, cypherCount, "total", map[string]any{"id": id})
+		count, err := s.CountChildren(ctx, cypherCount, "total", map[string]any{"id": id})
 		if err != nil {
 			count = 0
 		}
@@ -59,7 +62,7 @@ func GetChildrenById(ctx context.Context, id string, pageSize int, pageNum int, 
 	return resp, total, nil
 }
 
-func CountChildren(ctx context.Context, cypher string, resKey string, params map[string]any) (int64, error) {
+func (s *NodeService) CountChildren(ctx context.Context, cypher string, resKey string, params map[string]any) (int64, error) {
 	result, err := models.CypherQuery(ctx, cypher, params)
 	if err != nil {
 		return 0, err

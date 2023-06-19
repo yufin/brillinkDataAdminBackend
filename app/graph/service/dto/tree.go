@@ -81,11 +81,12 @@ func SerializeTreeNode(neoNode neo4j.Node) *TreeNode {
 		data[k] = v
 	}
 
+	s := service.NodeService{}
 	total := func(id string) int64 {
 		treeExpectNodeLabelStmt := util.GetRelConstraintStmt(constant.LabelExpectRels, "r", true)
 		cypherCountChildren := fmt.Sprintf(
 			"MATCH (n {id: $id})-[r]->(c) %s return count(c) as total;", treeExpectNodeLabelStmt)
-		result, _ := service.CountChildren(
+		result, _ := s.CountChildren(
 			context.Background(), cypherCountChildren, "total", map[string]any{"id": id})
 		return result
 	}(neoNode.Props["id"].(string))

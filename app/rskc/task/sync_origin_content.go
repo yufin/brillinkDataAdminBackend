@@ -13,7 +13,7 @@ import (
 	"go-admin/pkg/natsclient"
 	cUtils "go-admin/utils"
 	"gorm.io/gorm"
-	"io/ioutil"
+	"io"
 	"path"
 	"regexp"
 	"sync"
@@ -147,7 +147,7 @@ func GetFileContentFromSftp(client *sftp.Client, filePath string) []byte {
 		panic(err)
 	}
 	defer remoteFile.Close()
-	fileContent, err := ioutil.ReadAll(remoteFile)
+	fileContent, err := io.ReadAll(remoteFile)
 	if err != nil {
 		log.Errorf("Read file content error!:%s \r\n", err)
 		panic(err)

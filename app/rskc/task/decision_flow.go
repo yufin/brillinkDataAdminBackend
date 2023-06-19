@@ -33,6 +33,7 @@ func (t DecisionFlowTask) Exec(arg interface{}) error {
 			return err
 		}
 	}
+
 	for _, msg := range msgs {
 		contentId := int64(binary.BigEndian.Uint64(msg.Data))
 		exists, err := CheckContentIdExist(contentId)
@@ -47,7 +48,7 @@ func (t DecisionFlowTask) Exec(arg interface{}) error {
 			}
 		}
 		log.Infof("开始请求决策引擎: contentId = %d\r\n", contentId)
-		if err := requestDecisionEngine(contentId); err != nil {
+		if err := updateDependencyDataToParam(contentId); err != nil {
 			log.Errorf("requestDecisionEngine Failed:%v \r\n", err)
 			return err
 		}

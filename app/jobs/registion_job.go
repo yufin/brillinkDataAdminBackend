@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"github.com/go-admin-team/go-admin-core/logger"
+	gTask "go-admin/app/graph/task"
 	"go-admin/app/rskc/task"
 )
 
@@ -15,6 +16,7 @@ func InitJob() {
 		"SyncWaitList":        task.SyncWaitListTask{},
 		"VerifyContentReady":  task.VerifyContentReadyTask{},
 		"CollateContent":      task.CollateContentTask{},
+		"SyncGraph":           gTask.SyncGraphTask{},
 		//"WipeMsg":            task.WipeMsgTask{},
 	}
 }

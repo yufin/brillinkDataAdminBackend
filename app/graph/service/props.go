@@ -6,8 +6,11 @@ import (
 	"go-admin/app/graph/models"
 )
 
+type PropsService struct {
+}
+
 // GetCompanyTitleAutoComplete Return a list of company title that match the keyword(keyWord is Company.title or Company.titleShort)
-func GetCompanyTitleAutoComplete(ctx context.Context, keyWord string, pageSize int, pageNum int) ([]any, error) {
+func (s *PropsService) GetCompanyTitleAutoComplete(ctx context.Context, keyWord string, pageSize int, pageNum int) ([]any, error) {
 	cypher := fmt.Sprintf("match (:Tag)-[:ATTACH_TO]-(n:Company) "+
 		"where n.title =~ '(?i).*%s.*' "+
 		"with distinct n "+
@@ -24,7 +27,7 @@ func GetCompanyTitleAutoComplete(ctx context.Context, keyWord string, pageSize i
 }
 
 // CountCompanyTitleAutoComplete Return the number of company title that match the keyword(keyWord is Company.title or Company.titleShort)
-func CountCompanyTitleAutoComplete(ctx context.Context, keyWord string) (int64, error) {
+func (s *PropsService) CountCompanyTitleAutoComplete(ctx context.Context, keyWord string) (int64, error) {
 	cypher := fmt.Sprintf("match (:tag)-[:ATTACH_TO]-(n:Company) "+
 		"where n.title =~ '(?i).*%s.*' "+
 		"with DISTINCT n "+
@@ -38,7 +41,7 @@ func CountCompanyTitleAutoComplete(ctx context.Context, keyWord string) (int64, 
 }
 
 // GetLabelTitleAutoComplete Return a list of label title that match the keyword(keyWord is Label.title)
-func GetLabelTitleAutoComplete(ctx context.Context, keyWord string, pageSize int, pageNum int) ([]any, error) {
+func (s *PropsService) GetLabelTitleAutoComplete(ctx context.Context, keyWord string, pageSize int, pageNum int) ([]any, error) {
 	cypher := fmt.Sprintf("match ()-[:CLASSIFY_OF]->(n:Tag) "+
 		"where n.title =~ '(?i).*%s.*' "+
 		"with DISTINCT n "+
@@ -54,7 +57,7 @@ func GetLabelTitleAutoComplete(ctx context.Context, keyWord string, pageSize int
 }
 
 // CountLabelTitleAutoComplete Return the number of label title that match the keyword(keyWord is Label.title)
-func CountLabelTitleAutoComplete(ctx context.Context, keyWord string) (int64, error) {
+func (s *PropsService) CountLabelTitleAutoComplete(ctx context.Context, keyWord string) (int64, error) {
 	cypher := fmt.Sprintf("match ()-[:CLASSIFY_OF]->(n:Tag) "+
 		"where n.title =~ '(?i).*%s.*' "+
 		"with DISTINCT n "+

@@ -28,3 +28,11 @@ func (e *EnterpriseRanking) Generate() models.ActiveRecord {
 func (e *EnterpriseRanking) GetId() interface{} {
 	return e.RankId
 }
+
+type EnterpriseRankingList struct {
+	RankingList
+	RankId                 int64  `json:"rankId" gorm:"comment:主键"`
+	RankingPosition        int    `json:"rankingPosition" gorm:"comment:榜内位置"`
+	RankingEnterpriseTitle string `json:"rankingEnterpriseTitle" gorm:"comment:榜单中的企业名称"`
+	UscId                  string `json:"uscId" gorm:"comment:社会统一信用代码"`
+}

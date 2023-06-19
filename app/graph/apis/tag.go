@@ -31,7 +31,8 @@ func (e LabelApi) GetNodeById(c *gin.Context) {
 		return
 	}
 	id := c.Query("id")
-	nodeArr, err := service.GetNodeById(c.Request.Context(), id)
+	s := service.NodeService{}
+	nodeArr, err := s.GetNodeById(c.Request.Context(), id)
 	if err != nil {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return
@@ -58,7 +59,8 @@ func (e LabelApi) GetLabelRootNode(c *gin.Context) {
 		e.Logger.Error(err)
 		return
 	}
-	nodeArr, err := service.GetNodeById(c.Request.Context(), constant.LabelRootId)
+	s := service.NodeService{}
+	nodeArr, err := s.GetNodeById(c.Request.Context(), constant.LabelRootId)
 	if err != nil {
 		e.Error(http.StatusNoContent, err.Error(), "1")
 		return
@@ -104,7 +106,9 @@ func (e LabelApi) GetChildrenNode(c *gin.Context) {
 	}
 	pageNum = int(math.Max(1, float64(pageNum)))
 	pageSize = int(math.Max(1, float64(pageSize)))
-	children, count, err := service.GetChildrenById(c.Request.Context(), id, pageSize, pageNum, constant.LabelExpectRels)
+
+	s := service.NodeService{}
+	children, count, err := s.GetChildrenById(c.Request.Context(), id, pageSize, pageNum, constant.LabelExpectRels)
 	if err != nil {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return
@@ -158,15 +162,18 @@ func (e LabelApi) GetCompanyTitleAutoCompleteByKeyWord(c *gin.Context) {
 		result int64
 		err    error
 	})
+
+	s := service.PropsService{}
+
 	go func() {
-		rTotal, err := service.CountCompanyTitleAutoComplete(c.Request.Context(), title)
+		rTotal, err := s.CountCompanyTitleAutoComplete(c.Request.Context(), title)
 		cTotal <- struct {
 			result int64
 			err    error
 		}{result: rTotal, err: err}
 	}()
 	go func() {
-		res, err := service.GetCompanyTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
+		res, err := s.GetCompanyTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
 		cRes <- struct {
 			result []any
 			err    error
@@ -226,15 +233,17 @@ func (e LabelApi) GetLabelTitleAutoCompleteByKeyWord(c *gin.Context) {
 		result int64
 		err    error
 	})
+
+	s := service.PropsService{}
 	go func() {
-		rTotal, err := service.CountLabelTitleAutoComplete(c.Request.Context(), title)
+		rTotal, err := s.CountLabelTitleAutoComplete(c.Request.Context(), title)
 		cTotal <- struct {
 			result int64
 			err    error
 		}{result: rTotal, err: err}
 	}()
 	go func() {
-		res, err := service.GetLabelTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
+		res, err := s.GetLabelTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
 		cRes <- struct {
 			result []any
 			err    error
@@ -268,10 +277,13 @@ func (e LabelApi) GetPathBetween(c *gin.Context) {
 		e.Logger.Error(err)
 		return
 	}
+
 	targetId := c.Query("targetId")
 	sourceId := c.DefaultQuery("sourceId", constant.LabelRootId)
 	filterStmt := "WHERE all(rel in relationships(p) WHERE not type(rel) in ['TRADING'])"
-	neoPath, err := service.GetPathBetween(c.Request.Context(), sourceId, targetId, filterStmt)
+
+	s := service.PathService{}
+	neoPath, err := s.GetPathBetween(c.Request.Context(), sourceId, targetId, filterStmt)
 	if err != nil {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return
@@ -321,15 +333,18 @@ func (e LabelApi) FuzzyMatchTagsFromSourceByTitle(c *gin.Context) {
 		result int64
 		err    error
 	})
+
+	s := service.PropsService{}
+
 	go func() {
-		rMatched, err := service.GetLabelTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
+		rMatched, err := s.GetLabelTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
 		cMatched <- struct {
 			result []any
 			err    error
 		}{result: rMatched, err: err}
 	}()
 	go func() {
-		rTotal, err := service.CountLabelTitleAutoComplete(c.Request.Context(), title)
+		rTotal, err := s.CountLabelTitleAutoComplete(c.Request.Context(), title)
 		cTotal <- struct {
 			result int64
 			err    error
@@ -354,7 +369,9 @@ func (e LabelApi) FuzzyMatchTagsFromSourceByTitle(c *gin.Context) {
 	for _, item := range matched.result {
 		ids = append(ids, item.(map[string]any)["id"].(string))
 	}
-	resp, err := service.GetPathFromSourceByIds(c.Request.Context(), constant.LabelRootId, ids, []string{"Label"}, constant.LabelExpectRels)
+
+	ps := service.PathService{}
+	resp, err := ps.GetPathFromSourceByIds(c.Request.Context(), constant.LabelRootId, ids, []string{"Label"}, constant.LabelExpectRels)
 	if err != nil {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return
@@ -402,15 +419,18 @@ func (e LabelApi) FuzzyMatchCompanyFromSourceByTitle(c *gin.Context) {
 		result int64
 		err    error
 	})
+
+	s := service.PropsService{}
+
 	go func() {
-		rMatched, err := service.GetCompanyTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
+		rMatched, err := s.GetCompanyTitleAutoComplete(c.Request.Context(), title, pageSize, pageNum)
 		cMatched <- struct {
 			result []any
 			err    error
 		}{result: rMatched, err: err}
 	}()
 	go func() {
-		rTotal, err := service.CountCompanyTitleAutoComplete(c.Request.Context(), title)
+		rTotal, err := s.CountCompanyTitleAutoComplete(c.Request.Context(), title)
 		cTotal <- struct {
 			result int64
 			err    error
@@ -435,7 +455,10 @@ func (e LabelApi) FuzzyMatchCompanyFromSourceByTitle(c *gin.Context) {
 	for _, item := range matched.result {
 		ids = append(ids, item.(map[string]any)["id"].(string))
 	}
-	resp, err := service.GetPathFromSourceByIds(c.Request.Context(), constant.LabelRootId, ids, []string{"Company"}, constant.LabelExpectRels)
+
+	ps := service.PathService{}
+
+	resp, err := ps.GetPathFromSourceByIds(c.Request.Context(), constant.LabelRootId, ids, []string{"Company"}, constant.LabelExpectRels)
 	if err != nil {
 		e.Error(http.StatusInternalServerError, err.Error(), "1")
 		return

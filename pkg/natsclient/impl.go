@@ -13,6 +13,7 @@ var (
 	SubTradeNew             *nats.Subscription
 	SubContentProcessNew    *nats.Subscription
 	SubToRequestDecisionNew *nats.Subscription
+	SubToSyncGraphNew       *nats.Subscription
 )
 
 type TaskStream struct {
@@ -77,6 +78,12 @@ func (e TaskStream) InitSubscription() error {
 			log.Error(pkg.Blue(fmt.Sprintf("Add Subscribe error: %v", err)))
 		}
 	}
+	if SubToSyncGraphNew == nil {
+		SubToSyncGraphNew, err = TaskJs.PullSubscribe(TopicToSyncGraphNew, "sub-syncgraph-new", nats.BindStream(e.StreamName()))
+		if err != nil {
+			log.Error(pkg.Blue(fmt.Sprintf("Add Subscribe error: %v", err)))
+		}
+	}
 	return nil
 }
 
@@ -97,6 +104,15 @@ func (e TaskStream) OnClose() error {
 		return err
 	}
 	if err := SubTradeNew.Unsubscribe(); err != nil {
+		return err
+	}
+	if err := SubContentProcessNew.Unsubscribe(); err != nil {
+		return err
+	}
+	if err := SubToRequestDecisionNew.Unsubscribe(); err != nil {
+		return err
+	}
+	if err := SubToSyncGraphNew.Unsubscribe(); err != nil {
 		return err
 	}
 	if err := CloseNats(); err != nil {
