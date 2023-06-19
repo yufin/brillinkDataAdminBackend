@@ -9,9 +9,9 @@ import (
 var Cols = []string{"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 
 func WriteXlsx(sheet string, records interface{}) *excelize.File {
-	xlsx := excelize.NewFile()    // new file
-	index := xlsx.NewSheet(sheet) // new sheet
-	xlsx.SetActiveSheet(index)    // set active (default) sheet
+	xlsx := excelize.NewFile()       // new file
+	index, _ := xlsx.NewSheet(sheet) // new sheet
+	xlsx.SetActiveSheet(index)       // set active (default) sheet
 	t := reflect.TypeOf(records)
 
 	if t.Kind() != reflect.Slice {
@@ -34,10 +34,16 @@ func WriteXlsx(sheet string, records interface{}) *excelize.File {
 			}
 			// 设置表头
 			if i == 0 {
-				xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", column, i+1), name)
+				err := xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", column, i+1), name)
+				if err != nil {
+					return nil
+				}
 			}
 			// 设置内容
-			xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", column, i+2), elemValue.Field(j).Interface())
+			err := xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", column, i+2), elemValue.Field(j).Interface())
+			if err != nil {
+				return nil
+			}
 		}
 	}
 	return xlsx

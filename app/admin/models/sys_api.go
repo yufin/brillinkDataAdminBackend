@@ -28,7 +28,7 @@ type SysApi struct {
 	Project   string `json:"project" gorm:"size:128;comment:项目"`
 	Bus       string `json:"bus" gorm:"size:128;comment:业务模块"`
 	Func      string `json:"func" gorm:"size:128;comment:func"`
-	IsHistory bool   `json:"isHistory" gorm:"comment:是否历史接口"`
+	IsHistory int64  `json:"isHistory" gorm:"comment:是否历史接口"`
 	models.ModelTime
 	models.ControlBy
 }
@@ -147,7 +147,7 @@ func checkApi(routers *[]runtime.Router, db *gorm.DB) (err error) {
 			if apiName == "" || api.Name == apiName {
 				continue
 			}
-			err = db.Model(api).Update("name", apiName).Update("is_history", false).Error
+			err = db.Model(api).Update("name", apiName).Update("is_history", 0).Error
 			if err != nil {
 				err = errors.WithStack(err)
 				return err
@@ -158,7 +158,7 @@ func checkApi(routers *[]runtime.Router, db *gorm.DB) (err error) {
 	if len(updateIds) > 0 {
 		err = db.Model(SysApi{}).
 			Where("id in ?", updateIds).
-			Update("is_history", true).
+			Update("is_history", 1).
 			Error
 		if err != nil {
 			err = errors.WithStack(err)

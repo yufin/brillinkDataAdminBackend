@@ -44,8 +44,8 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.489
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sts v1.0.489
 	github.com/unrolled/secure v1.0.8
-	github.com/xuri/excelize/v2 v2.6.1
-	golang.org/x/crypto v0.6.0
+	github.com/xuri/excelize/v2 v2.7.1
+	golang.org/x/crypto v0.8.0
 	gorm.io/driver/mysql v1.5.0
 	gorm.io/driver/postgres v1.5.0
 	gorm.io/driver/sqlite v1.5.0
@@ -149,13 +149,13 @@ require (
 	go.uber.org/multierr v1.5.0 // indirect
 	go.uber.org/zap v1.15.0 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
-	golang.org/x/image v0.1.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/image v0.5.0 // indirect
+	golang.org/x/net v0.9.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
-	golang.org/x/tools v0.1.12 // indirect
+	golang.org/x/tools v0.6.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/AlecAivazis/survey.v1 v1.8.5 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect

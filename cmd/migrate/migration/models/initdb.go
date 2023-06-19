@@ -34,7 +34,7 @@ func ExecSql(db *gorm.DB, filePath string) error {
 		return err
 	}
 	if sql == "" {
-		logger.Warn("数据库基础数据初始化脚本为空！")
+		logger.Warn("数据库基础数据初始化脚本内容为空！")
 		return nil
 	}
 
@@ -60,7 +60,6 @@ func Ioutil(filePath string) (string, error) {
 	if contents, err := ioutil.ReadFile(filePath); err == nil {
 		//因为contents是[]byte类型，直接转换成string类型后会多一行空格,需要使用strings.Replace替换换行符
 		result := strings.Replace(string(contents), "\n", "", 1)
-		logger.Info("Use IoUtil.ReadFile to read a file:", result)
 		return result, nil
 	} else {
 		return "", err
