@@ -8,13 +8,23 @@ import (
 	"github.com/nats-io/nats.go"
 	"go-admin/app/rskc/models"
 	"go-admin/pkg/natsclient"
+	"sync/atomic"
 	"time"
 )
 
 type DecisionFlowTask struct {
 }
 
+var decisionRunning int32
+
 func (t DecisionFlowTask) Exec(arg interface{}) error {
+	if atomic.LoadInt32(&decisionRunning) == 1 {
+		log.Info("DecisionFlow任务已经在执行中，跳过本次调度")
+		return nil
+	}
+	atomic.StoreInt32(&decisionRunning, 1)
+	defer atomic.StoreInt32(&decisionRunning, 0)
+
 	if err := pubIdsToRequestDecision(); err != nil {
 		log.Errorf("selectWaitForRequest Failed:%v \r\n", err)
 		return err
@@ -52,6 +62,9 @@ func (t DecisionFlowTask) Exec(arg interface{}) error {
 			log.Errorf("requestDecisionEngine Failed:%v \r\n", err)
 			return err
 		}
+		if err := msg.AckSync(); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -85,7 +98,7 @@ func pubIdsToRequestDecision() error {
 		if err != nil {
 			return err
 		}
-		err = db.Table(tbParam.TableName()).
+		err = db.Model(models.RcDecisionParam{}).
 			Where("content_id = ?", id).
 			Update("status_code", 1).
 			Error

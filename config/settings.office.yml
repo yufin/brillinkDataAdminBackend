@@ -67,7 +67,7 @@ settings:
         username: lhgyl
         password: lhgyl2022
       decisionEngine:
-        uri: "http://127.0.0.1:8080"
+        uri: "http://10.0.203.188:8086"
     nats:
       uri: "nats://dev:password@192.168.44.169:4222"
       activate: true

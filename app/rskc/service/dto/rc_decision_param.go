@@ -309,7 +309,11 @@ type RcDecisionParamUpdateReq struct {
 
 func (s *RcDecisionParamUpdateReq) Generate(model *models.RcDecisionParam) {
 	if s.Id == 0 {
-		model.Model = common.Model{Id: utils.NewFlakeId()}
+		s.Id = utils.NewFlakeId()
+	}
+	model.Id = s.Id
+	if s.ContentId != 0 {
+		model.ContentId = s.ContentId
 	}
 	model.SwSdsnbCyrs = s.SwSdsnbCyrs
 	model.GsGdct = s.GsGdct
@@ -412,7 +416,7 @@ type RcDecisionParamExport struct {
 }
 
 type RcDecisionParamDecisionRequestBody struct {
-	Id                      int64               `uri:"-"`                             // id
+	Id                      int64               `json:"-"`                            // id
 	ContentId               int64               `json:"-"`                            //
 	SwSdsnbCyrs             *int                `json:"sw_sdsnb_cyrs"`                //
 	GsGdct                  *int                `json:"gs_gdct"`                      //

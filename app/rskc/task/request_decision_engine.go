@@ -4,11 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/buger/jsonparser"
 	log "github.com/go-admin-team/go-admin-core/logger"
 	"github.com/go-admin-team/go-admin-core/sdk"
+	"github.com/pkg/errors"
+	"github.com/shopspring/decimal"
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service/dto"
+	cModels "go-admin/common/models"
 	"go-admin/config"
+	"go-admin/utils"
 	"io"
 	"net/http"
 	"strconv"
@@ -32,7 +37,7 @@ func (t DecisionReqClient) SceneCode() string {
 }
 
 func (t DecisionReqClient) ProductCode() string {
-	return "LH_APH_SCR"
+	return "LH_AHP_SCR"
 }
 
 func (t DecisionReqClient) request(url string, jsonPayload []byte) (int, []byte, error) {
@@ -67,12 +72,15 @@ func requestDecisionEngine(paramId int64) error {
 	if err != nil {
 		return err
 	}
-	var decisionReqBody dto.RcDecisionParamDecisionRequestBody
+	var decisionReqParam dto.RcDecisionParamDecisionRequestBody
 	inputParam := dto.DecisionInputParam{
 		ApplyTime: time.Now().Format("2006-01-02"),
 		OrderNo:   strconv.FormatInt(paramId, 10),
 	}
-	decisionReqBody.Assignment(&dataParam, &inputParam)
+	decisionReqParam.Assignment(&dataParam, &inputParam)
+	decisionReqBody := map[string]any{
+		"param": decisionReqParam,
+	}
 	bodyBytes, err := json.Marshal(decisionReqBody)
 	if err != nil {
 		return err
@@ -81,20 +89,88 @@ func requestDecisionEngine(paramId int64) error {
 	var (
 		statusCode int
 		resp       []byte
+		respCode   string
+		respMsg    string
 	)
 	statusCode, resp, err = cli.request(cli.requestUrl(), bodyBytes)
-	fmt.Println(statusCode, resp)
+	if err != nil {
+		return err
+	}
+	if statusCode != 200 {
+		return errors.Errorf("request statusCode: %d, err: url: %s, err: %v", statusCode, cli.requestUrl(), err)
+	}
+	respCode, err = jsonparser.GetString(resp, "code")
+	if err != nil {
+		return err
+	}
+	respMsg, _ = jsonparser.GetString(resp, "msg")
+	if respCode != "000000" {
+		return errors.Errorf("decision flow resp Code != 000000, msg:%s", respMsg)
+	}
+	if err := saveDecisionResult(resp, paramId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func saveDecisionResult(resp []byte, paramId int64) error {
+	var (
+		taskId       string
+		finalResult  string
+		ahpScore     float64
+		fxSwJxccClnx string
+		lhQylx       int64
+	)
+
+	msg, err := jsonparser.GetString(resp, "msg")
+	if err != nil {
+		return err
+	}
+	taskId, err = jsonparser.GetString(resp, "data", "object", "taskId")
+	if err != nil {
+		return err
+	}
+	finalResult, err = jsonparser.GetString(resp, "data", "object", "result", "final_result")
+	if err != nil {
+		return err
+	}
+	ahpScore, err = jsonparser.GetFloat(resp, "data", "object", "result", "AHP_SCORE")
+	if err != nil {
+		return err
+	}
+	fxSwJxccClnx, err = jsonparser.GetString(resp, "data", "object", "result", "fx_sw_jxcc_clnx")
+	if err != nil {
+		return err
+	}
+	lhQylx, err = jsonparser.GetInt(resp, "data", "object", "result", "lh_qylx")
+	if err != nil {
+		return err
+	}
+	decisionResult := models.RcDecisionResult{
+		Model:        cModels.Model{Id: utils.NewFlakeId()},
+		ParamId:      paramId,
+		TaskId:       taskId,
+		FinalResult:  finalResult,
+		AhpScore:     decimal.NullDecimal{Decimal: decimal.NewFromFloat(ahpScore), Valid: true},
+		FxSwJxccClnx: fxSwJxccClnx,
+		LhQylx:       int(lhQylx),
+		Msg:          msg,
+	}
+	dbRes := sdk.Runtime.GetDbByKey(decisionResult.TableName())
+	if err := dbRes.Create(&decisionResult).Error; err != nil {
+		return err
+	}
 	return nil
 }
 
 // updateDependencyDataToParam update dependency data to RcDecisionParam
 func updateDependencyDataToParam(contentId int64) error {
-	var tbParam models.RcDecisionParam
-	dbParam := sdk.Runtime.GetDbByKey(tbParam.TableName())
-	err := dbParam.Model(&tbParam).
+	var dtParam models.RcDecisionParam
+	dbParam := sdk.Runtime.GetDbByKey(dtParam.TableName())
+	err := dbParam.Model(&models.RcDecisionParam{}).
 		Where("content_id = ?", contentId).
 		Order("updated_at desc").
-		First(&tbParam).Error
+		First(&dtParam).Error
 	if err != nil {
 		return err
 	}
@@ -107,26 +183,21 @@ func updateDependencyDataToParam(contentId int64) error {
 	if err != nil {
 		return err
 	}
-	updateReq := dto.RcDecisionParamInsertReq{
-		Id:        tbParam.Id,
-		LhQylx:    dataDepd.LhQylx,
-		LhCylwz:   dataDepd.LhCylwz,
-		MdQybq:    dataDepd.LhQybq,
-		GsGdct:    dataDepd.LhGdct,
-		ZxYhsxqk:  dataDepd.LhYhsx,
-		ZxDsfsxqk: dataDepd.LhSfsx,
-	}
-	var modelParam models.RcDecisionParam
-	updateReq.Generate(&modelParam)
-	err = dbParam.Model(&modelParam).
-		Save(&modelParam).
+	dtParam.LhQylx = dataDepd.LhQylx
+	dtParam.LhCylwz = dataDepd.LhCylwz
+	dtParam.MdQybq = dataDepd.LhQybq
+	dtParam.GsGdct = dataDepd.LhGdct
+	dtParam.ZxYhsxqk = dataDepd.LhYhsx
+	dtParam.ZxDsfsxqk = dataDepd.LhSfsx
+	err = dbParam.
+		Save(&dtParam).
 		Error
 	if err != nil {
 		return err
 	}
 
 	// request decision engine
-	if err := requestDecisionEngine(modelParam.Id); err != nil {
+	if err := requestDecisionEngine(dtParam.Id); err != nil {
 		return err
 	}
 

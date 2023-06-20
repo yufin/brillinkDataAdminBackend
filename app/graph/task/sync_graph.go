@@ -82,19 +82,26 @@ func (t SyncGraphTask) AssigningTask() error {
 
 	for {
 		uscIds := make([]string, 0)
+		var temp []struct {
+			InfoId int64
+			UscId  string
+		}
 		err := dbInfo.Table(dtInfo.TableName()).
-			Select("DISTINCT usc_id").
-			Order("usc_id").
+			Select("DISTINCT usc_id, info_id").
+			Order("info_id desc").
 			Limit(limit).
 			Offset(offset).
-			Pluck("usc_id", &uscIds).
+			Scan(&temp).
 			Error
 		if err != nil {
 			return errors.WithStack(err)
 		}
 
-		if len(uscIds) == 0 {
+		if len(temp) == 0 {
 			break
+		}
+		for _, v := range temp {
+			uscIds = append(uscIds, v.UscId)
 		}
 
 		cypher := `
