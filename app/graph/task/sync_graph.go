@@ -3,6 +3,7 @@ package task
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	log "github.com/go-admin-team/go-admin-core/logger"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/nats-io/nats.go"
@@ -15,18 +16,36 @@ import (
 	"gorm.io/gorm"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
 const signalMergeDuplicate = "signMergeDuplicate"
 
+var running int32
+
 type SyncGraphTask struct {
 }
 
 func (t SyncGraphTask) Exec(arg interface{}) error {
-	//if err := t.AssigningTask(); err != nil {
-	//	return err
-	//}
+	if atomic.LoadInt32(&running) == 1 {
+		log.Info("SyncGraph任务已经在执行中，跳过本次调度")
+		return nil
+	}
+	atomic.StoreInt32(&running, 1)
+	defer atomic.StoreInt32(&running, 0)
+	md := mergeGraphDuplicated{}
+	defer func() {
+		err := md.mergeAll()
+		if err != nil {
+			log.Errorf("Defer exec mergeAll error: %v", err)
+		}
+	}()
+
+	if err := t.AssigningTask(); err != nil {
+		return err
+	}
+
 	for {
 		msgs, err := natsclient.SubToSyncGraphNew.Fetch(1, nats.MaxWait(5*time.Second))
 		if err != nil {
@@ -38,7 +57,7 @@ func (t SyncGraphTask) Exec(arg interface{}) error {
 		for _, msg := range msgs {
 			msgStr := string(msg.Data)
 			if msgStr == signalMergeDuplicate {
-				if err := MergeGraphDuplicated(); err != nil {
+				if err := md.mergeAll(); err != nil {
 					return err
 				}
 			} else {
@@ -46,44 +65,32 @@ func (t SyncGraphTask) Exec(arg interface{}) error {
 				if err != nil {
 					return errors.WithStack(err)
 				}
-				if err := msg.AckSync(); err != nil {
-					return errors.WithStack(err)
-				}
+			}
+			if err := msg.AckSync(); err != nil {
+				return errors.WithStack(err)
 			}
 		}
 	}
 }
 
-//type distinctUscId struct {
-//	UscId string
-//}
-
 func (t SyncGraphTask) AssigningTask() error {
 	limit := 1000
 	offset := 0
+	sentCounter := 0
 	var dtInfo modelsSp.EnterpriseInfo
 	dbInfo := sdk.Runtime.GetDbByKey(dtInfo.TableName())
 
 	for {
-		var res []struct {
-			UscId     string
-			CreatedAt time.Time
-		}
-		//uscIds := make([]string, 0)
+		uscIds := make([]string, 0)
 		err := dbInfo.Table(dtInfo.TableName()).
-			Select("DISTINCT usc_id, created_at").
-			Order("created_at").
+			Select("DISTINCT usc_id").
+			Order("usc_id").
 			Limit(limit).
 			Offset(offset).
-			Scan(&res).
+			Pluck("usc_id", &uscIds).
 			Error
 		if err != nil {
 			return errors.WithStack(err)
-		}
-
-		uscIds := make([]string, 0)
-		for _, v := range res {
-			uscIds = append(uscIds, v.UscId)
 		}
 
 		if len(uscIds) == 0 {
@@ -112,11 +119,15 @@ func (t SyncGraphTask) AssigningTask() error {
 				if err != nil {
 					return errors.WithStack(err)
 				}
-			}
-			// sign trigger to merging duplicate nodes
-			_, err := natsclient.TaskJs.Publish(natsclient.TopicToSyncGraphNew, []byte(signalMergeDuplicate))
-			if err != nil {
-				return errors.WithStack(err)
+				sentCounter++
+				// sign trigger to merging duplicate nodes
+				if sentCounter >= 2000 {
+					_, err := natsclient.TaskJs.Publish(natsclient.TopicToSyncGraphNew, []byte(signalMergeDuplicate))
+					if err != nil {
+						return errors.WithStack(err)
+					}
+					sentCounter = 0
+				}
 			}
 		}
 	}
@@ -210,7 +221,6 @@ func (t SyncGraphTask) SyncGraph(uscId string) error {
 		DtProd:     &dtProduct,
 		DtInfo:     &dtInfo,
 	}
-	defer MergeGraphDuplicated()
 	err = gsd.InsertGraph()
 	if err != nil {
 		return errors.WithStack(err)
@@ -448,6 +458,83 @@ func (t *GraphSyncData) syncRankList() error {
 	return nil
 }
 
-func MergeGraphDuplicated() error {
+type mergeGraphDuplicated struct {
+}
+
+func (t mergeGraphDuplicated) mergeAll() error {
+	log.Info("Start workflow: merge nodes and relationships")
+	if err := t.mergeFlow("Product", "title"); err != nil {
+		return err
+	}
+	if err := t.mergeFlow("Industry", "title"); err != nil {
+		return err
+	}
+	if err := t.mergeFlow("Certification", "title"); err != nil {
+		return err
+	}
+	if err := t.mergeFlow("RankingList", "_listId"); err != nil {
+		return err
+	}
+	if err := t.mergeFlow("Certification", "title"); err != nil {
+		return err
+	}
+	if err := t.mergeFlow("Company", "uscId"); err != nil {
+		return err
+	}
 	return nil
+}
+
+func (t mergeGraphDuplicated) mergeFlow(label string, identKey string) error {
+	valueDupes, err := t.getNodeIdentDupes(label, identKey)
+	if err != nil {
+		return err
+	}
+	for _, v := range valueDupes {
+		v, ok := v.(string)
+		if !ok {
+			return errors.Errorf("Mergeflow valueDupes type assertion error: %v", v)
+		}
+		if err := t.mergeNodes(label, identKey, v); err != nil {
+			return err
+		}
+		log.Infof("Complete merge duplicate with (:%s {%s:%s}", label, identKey, v)
+	}
+	return nil
+}
+
+func (t mergeGraphDuplicated) mergeNodes(label string, identKey string, value string) error {
+	cypherMerge :=
+		fmt.Sprintf(`MATCH (n:%s {%s: $value})  
+						WITH n order by elementId(n) desc 
+						WITH collect(n) as nodes 
+						call apoc.refactor.mergeNodes(nodes, {properties: 'discard', mergeRels: true}) 
+						YIELD node
+						return count(*) as count;`, label, identKey)
+	_, err := models.CypherWrite(context.Background(), cypherMerge, map[string]any{"value": value})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t mergeGraphDuplicated) getNodeIdentDupes(label string, identKey string) ([]any, error) {
+	cypherGetDupes :=
+		fmt.Sprintf(`WITH $identKey AS propertyKey
+						MATCH (n: %s)
+						WITH propertyKey, collect(distinct n[propertyKey]) AS values
+						UNWIND values AS value
+						MATCH (m:%s) 
+						WHERE m[propertyKey] = value
+						WITH value, collect(m) AS nodes
+						where size(nodes) > 1
+						RETURN collect(value) as dupes`, label, label)
+	record, err := models.CypherQuery(context.Background(), cypherGetDupes, map[string]any{"identKey": identKey})
+	if err != nil {
+		return []any{}, err
+	}
+	dupes, ok := record[0].Get("dupes")
+	if !ok {
+		return []any{}, errors.New("Data with Key dupes not found.")
+	}
+	return dupes.([]any), nil
 }

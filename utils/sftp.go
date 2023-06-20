@@ -24,7 +24,6 @@ func connectSSH() {
 	client, err := ssh.Dial("tcp", uri, sshConfig)
 	if err != nil {
 		log.Errorf(pkg.Red("SSH Server UNABLE to connect. " + err.Error()))
-		panic(err)
 	} else {
 		SshConn = client
 		log.Info(pkg.Green("SSH Server connected."))

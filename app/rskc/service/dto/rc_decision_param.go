@@ -220,8 +220,9 @@ type RcDecisionParamInsertReq struct {
 
 func (s *RcDecisionParamInsertReq) Generate(model *models.RcDecisionParam) {
 	if s.Id == 0 {
-		model.Model = common.Model{Id: utils.NewFlakeId()}
+		s.Id = utils.NewFlakeId()
 	}
+	model.Id = s.Id
 	model.ContentId = s.ContentId
 	model.SwSdsnbCyrs = s.SwSdsnbCyrs
 	model.GsGdct = s.GsGdct

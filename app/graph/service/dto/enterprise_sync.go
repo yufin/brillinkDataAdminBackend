@@ -3,12 +3,13 @@ package dto
 import (
 	modelsSp "go-admin/app/spider/models"
 	"go-admin/utils"
+	"strconv"
 	"time"
 )
 
 type EnterpriseInfoSyncReq struct {
 	Id                            string     `json:"id"`
-	InfoId                        int64      `json:"_infoId"`
+	InfoId                        string     `json:"_infoId"`
 	EnterpriseTitle               string     `json:"title"`
 	EnterpriseTitleEn             string     `json:"enterpriseTitleEn"`
 	BusinessRegistrationNumber    string     `json:"businessRegistrationNumber"`
@@ -38,7 +39,7 @@ type EnterpriseInfoSyncReq struct {
 
 func (s *EnterpriseInfoSyncReq) Assignment(model *modelsSp.EnterpriseInfo) {
 	s.Id = utils.NewRandomUUID()
-	s.InfoId = model.InfoId
+	s.InfoId = strconv.FormatInt(model.InfoId, 10)
 	s.EnterpriseTitle = model.EnterpriseTitle
 	s.EnterpriseTitleEn = model.EnterpriseTitleEn
 	s.BusinessRegistrationNumber = model.BusinessRegistrationNumber
@@ -68,7 +69,7 @@ func (s *EnterpriseInfoSyncReq) Assignment(model *modelsSp.EnterpriseInfo) {
 
 type EnterpriseCertificationSyncReq struct {
 	Id                     string     `json:"id"`
-	CertId                 int64      `json:"_certId"`
+	CertId                 string     `json:"_certId"`
 	UscId                  string     `json:"uscId"`
 	CertificationTitle     string     `json:"-"`
 	CertificationCode      string     `json:"certificationCode"`
@@ -84,7 +85,7 @@ type EnterpriseCertificationSyncReq struct {
 
 func (s *EnterpriseCertificationSyncReq) Assignment(model *modelsSp.EnterpriseCertification) {
 	s.Id = utils.NewRandomUUID()
-	s.CertId = model.CertId
+	s.CertId = strconv.FormatInt(model.CertId, 10)
 	s.UscId = model.UscId
 	s.CertificationTitle = model.CertificationTitle
 	s.CertificationCode = model.CertificationCode
@@ -100,7 +101,7 @@ func (s *EnterpriseCertificationSyncReq) Assignment(model *modelsSp.EnterpriseCe
 
 type RankingListSyncReq struct {
 	Id                    string    `json:"id"`
-	ListId                int64     `json:"_listId"`
+	ListId                string    `json:"_listId"`
 	ListTitle             string    `json:"title"`
 	ListType              string    `json:"listType"`
 	ListSource            string    `json:"listSource"`
@@ -113,7 +114,7 @@ type RankingListSyncReq struct {
 
 func (s *RankingListSyncReq) Assignment(model *modelsSp.EnterpriseRankingList) {
 	s.Id = utils.NewRandomUUID()
-	s.ListId = model.Id
+	s.ListId = strconv.FormatInt(model.Id, 10)
 	s.ListTitle = model.ListTitle
 	s.ListType = model.ListType
 	s.ListSource = model.ListSource
@@ -126,7 +127,7 @@ func (s *RankingListSyncReq) Assignment(model *modelsSp.EnterpriseRankingList) {
 
 type EnterpriseRankingSyncReq struct {
 	Id                     string `json:"id"`
-	RankId                 int64  `json:"_rankId"`
+	RankId                 string `json:"_rankId"`
 	UscId                  string `json:"-"`
 	RankingPosition        int    `json:"rankingPosition"`
 	RankingEnterpriseTitle string `json:"rankingEnterpriseTitle"`
@@ -134,7 +135,7 @@ type EnterpriseRankingSyncReq struct {
 
 func (s *EnterpriseRankingSyncReq) Assignment(model *modelsSp.EnterpriseRankingList) {
 	s.Id = utils.NewRandomUUID()
-	s.RankId = model.RankId
+	s.RankId = strconv.FormatInt(model.RankId, 10)
 	s.UscId = model.UscId
 	s.RankingPosition = model.RankingPosition
 	s.RankingEnterpriseTitle = model.RankingEnterpriseTitle

@@ -9,21 +9,30 @@ import (
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service/dto"
 	"go-admin/config"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"strconv"
 	"time"
 )
 
 type DecisionReqClient struct {
 }
 
-func (t DecisionReqClient) requestUrl(sceneCode string, productCode string) string {
+func (t DecisionReqClient) requestUrl() string {
 	return config.ExtConfig.Vzoom.DecisionEngine.Uri +
-		fmt.Sprintf("/decision-engine/decision/task/sync/%s/%s", sceneCode, productCode)
+		fmt.Sprintf("/decision-engine/decision/task/sync/%s/%s", t.SceneCode(), t.ProductCode())
 }
 
 func (t DecisionReqClient) requestMethod() string {
 	return "POST"
+}
+
+func (t DecisionReqClient) SceneCode() string {
+	return "SCENE_1"
+}
+
+func (t DecisionReqClient) ProductCode() string {
+	return "LH_APH_SCR"
 }
 
 func (t DecisionReqClient) request(url string, jsonPayload []byte) (int, []byte, error) {
@@ -41,7 +50,7 @@ func (t DecisionReqClient) request(url string, jsonPayload []byte) (int, []byte,
 		return 0, []byte{}, err
 	}
 	defer resp.Body.Close()
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Error("Error reading response body:", err)
 		return 0, []byte{}, err
@@ -60,8 +69,8 @@ func requestDecisionEngine(paramId int64) error {
 	}
 	var decisionReqBody dto.RcDecisionParamDecisionRequestBody
 	inputParam := dto.DecisionInputParam{
-		ApplyTime: "",
-		OrderNo:   "",
+		ApplyTime: time.Now().Format("2006-01-02"),
+		OrderNo:   strconv.FormatInt(paramId, 10),
 	}
 	decisionReqBody.Assignment(&dataParam, &inputParam)
 	bodyBytes, err := json.Marshal(decisionReqBody)
@@ -73,7 +82,7 @@ func requestDecisionEngine(paramId int64) error {
 		statusCode int
 		resp       []byte
 	)
-	statusCode, resp, err = cli.request(cli.requestUrl("", ""), bodyBytes)
+	statusCode, resp, err = cli.request(cli.requestUrl(), bodyBytes)
 	fmt.Println(statusCode, resp)
 	return nil
 }
