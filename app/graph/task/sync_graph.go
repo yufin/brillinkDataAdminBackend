@@ -34,22 +34,24 @@ func (t SyncGraphTask) Exec(arg interface{}) error {
 	}
 	atomic.StoreInt32(&running, 1)
 	defer atomic.StoreInt32(&running, 0)
+
 	md := mergeGraphDuplicated{}
 	defer func() {
-		err := md.mergeAll()
-		if err != nil {
+		if err := md.mergeAll(); err != nil {
 			log.Errorf("Defer exec mergeAll error: %v", err)
 		}
+		if err := md.connectByLabel(); err != nil {
+			log.Errorf("Defer exec connectByLabel error: %v", err)
+		}
 	}()
-
-	if err := t.AssigningTask(); err != nil {
-		return err
-	}
 
 	for {
 		msgs, err := natsclient.SubToSyncGraphNew.Fetch(1, nats.MaxWait(5*time.Second))
 		if err != nil {
 			if err == nats.ErrTimeout {
+				if err := t.AssigningTask(); err != nil {
+					return err
+				}
 				return nil
 			}
 			return errors.WithStack(err)
@@ -117,7 +119,6 @@ func (t SyncGraphTask) AssigningTask() error {
 			return errors.WithStack(err)
 		}
 		offset += limit
-
 		unSyncedIds, ok := unSynced[0].Get("unSynced")
 
 		if ok {
@@ -332,7 +333,7 @@ func (t *GraphSyncData) syncProduct() error {
 		cypherCreate := `CREATE (n:Tag:Product) SET n += $properties  
 						WITH n 
 						MATCH (c:Company{id: $companyId}) 
-						create (c)-[:HAS_TAG{id: $relId}]->(n) ;`
+						create (n)-[:ATTACH_TO {id: $relId}]->(c) ;`
 		_, err := models.CypherWrite(context.Background(), cypherCreate, m)
 		if err != nil {
 			return errors.WithStack(err)
@@ -369,7 +370,7 @@ func (t *GraphSyncData) syncIndustry() error {
 		cypherCreate := `CREATE (n:Tag:Industry) SET n += $properties  
 						WITH n 
 						MATCH (c:Company {id: $companyId}) 
-						create (c)-[:HAS_TAG{id: $relId}]->(n);`
+						create (n)-[:ATTACH_TO{id: $relId}]->(c);`
 		_, err = models.CypherWrite(context.Background(), cypherCreate, m)
 		if err != nil {
 			return errors.WithStack(err)
@@ -408,7 +409,7 @@ func (t *GraphSyncData) syncCert() error {
 		cypherCreate := `CREATE (n:Tag:Certification) SET n += $propCert  
 						WITH n 
 						MATCH (c:Company{id: $companyId}) 
-						create (c)-[r:HAS_TAG]->(n) set r += $propRel;`
+						create (n)-[r:ATTACH_TO]->(c) set r += $propRel;`
 		_, err = models.CypherWrite(context.Background(), cypherCreate, m)
 		if err != nil {
 			return errors.WithStack(err)
@@ -456,7 +457,7 @@ func (t *GraphSyncData) syncRankList() error {
 		cypherCreate := `CREATE (n:Tag:RankingList) SET n += $propList 
 					WITH n 
 					MATCH (c:Company{id: $companyId})
-					create (c)-[r:HAS_TAG]->(n) set r += $propRank;`
+					create (n)-[r:ATTACH_TO]->(c) set r += $propRank;`
 		_, err = models.CypherWrite(context.Background(), cypherCreate, m)
 		if err != nil {
 			return errors.WithStack(err)
@@ -539,9 +540,56 @@ func (t mergeGraphDuplicated) getNodeIdentDupes(label string, identKey string) (
 	if err != nil {
 		return []any{}, err
 	}
+	if len(record) == 0 {
+		return []any{}, nil
+	}
 	dupes, ok := record[0].Get("dupes")
 	if !ok {
 		return []any{}, errors.New("Data with Key dupes not found.")
 	}
 	return dupes.([]any), nil
 }
+
+func (t mergeGraphDuplicated) connectByLabel() error {
+	cypherMergeApp := `merge (n:Application{title:'标签',id: '3f543cff-5d66-44e9-805f-4d3f8c27ecd2'}) 
+					merge (c1:Classification {title:'榜单标签', id: 'bd7a1d12-79d2-41f8-b330-aa2d8a504f36'}) 
+					merge (c2:Classification {title:'行业标签', id: '45456ba5-8da7-4a6d-8fef-5daed800c794'}) 
+					merge (c3:Classification {title:'认证标签', id: 'bdb108d3-1278-480b-90d7-5a98c03240f8'}) 
+					merge (c4:Classification {title:'产品标签', id: '481d52e2-7620-4448-96a1-b6a47e66bdb9'})`
+	_, err := models.CypherWrite(context.Background(), cypherMergeApp, nil)
+	if err != nil {
+		return err
+	}
+	cypherConnProd := `match (c:Classification{title:'产品标签'})
+					match (t:Product) where not (c)--(t) 
+					create (c)-[:CLASSIFY_OF{id:randomUUID()}]->(t)`
+	_, err = models.CypherWrite(context.Background(), cypherConnProd, nil)
+	if err != nil {
+		return err
+	}
+	cypherConnInd := `match (c:Classification{title:'行业标签'})
+					match (t:Industry) where not (c)--(t) 
+					create (c)-[:CLASSIFY_OF{id:randomUUID()}]->(t)`
+	_, err = models.CypherWrite(context.Background(), cypherConnInd, nil)
+	if err != nil {
+		return err
+	}
+
+	cypherConnCert := `match (c:Classification{title:'认证标签'})
+					match (t:Certification) where not (c)--(t) 
+					create (c)-[:CLASSIFY_OF{id:randomUUID()}]->(t)`
+	_, err = models.CypherWrite(context.Background(), cypherConnCert, nil)
+	if err != nil {
+		return err
+	}
+	cypherConnRank := `match (c:Classification{title:'榜单标签'})
+					match (t:RankingList) where not (c)--(t) 
+					create (c)-[:CLASSIFY_OF{id:randomUUID()}]->(t)`
+	_, err = models.CypherWrite(context.Background(), cypherConnRank, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// todo: 同步贸易关系
