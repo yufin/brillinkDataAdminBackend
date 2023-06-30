@@ -1,20 +1,19 @@
-package test
+package common
 
 import (
 	"encoding/json"
-	"go-admin/common"
 	"testing"
 	"time"
 )
 
 type Person struct {
-	Id       int64       `json:"id"`
-	Name     string      `json:"name"`
-	Birthday common.Time `json:"birthday"`
+	Id       int64  `json:"id"`
+	Name     string `json:"name"`
+	Birthday Time   `json:"birthday"`
 }
 
 func TestTimeJson(t *testing.T) {
-	now := common.Time(time.Now())
+	now := Time(time.Now())
 	t.Log(now)
 	// birthday 输入参数注意格式
 	src := `{"id":1,"name":"go-admin","birthday":"2016-06-30 16:09:51"}`
