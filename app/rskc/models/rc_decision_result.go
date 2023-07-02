@@ -8,7 +8,7 @@ import (
 // RcDecisionResult wezoom decision engine returend result
 type RcDecisionResult struct {
 	models.Model
-	ParamId      int64               `json:"paramId" gorm:"comment:rc_decision_param" xlsx:"rc_decision_param"`
+	DepId        int64               `json:"depId" gorm:"comment:rc_decision_param" xlsx:"rc_decision_param"`
 	TaskId       string              `json:"taskId" gorm:"comment:task_id" xlsx:"task_id"`
 	FinalResult  string              `json:"finalResult" gorm:"comment:决策建议结果(REFUSE:拒绝，PASS:通过)" xlsx:"决策建议结果(REFUSE:拒绝，PASS:通过)"`
 	AhpScore     decimal.NullDecimal `json:"ahpScore" gorm:"comment:AHP分数" xlsx:"AHP分数"`

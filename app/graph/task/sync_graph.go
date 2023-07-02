@@ -8,7 +8,7 @@ import (
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/nats-io/nats.go"
 	"github.com/pkg/errors"
-	models "go-admin/app/graph/models"
+	"go-admin/app/graph/models"
 	"go-admin/app/graph/service/dto"
 	modelsSp "go-admin/app/spider/models"
 	"go-admin/pkg/natsclient"

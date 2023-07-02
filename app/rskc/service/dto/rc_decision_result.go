@@ -10,7 +10,7 @@ import (
 type RcDecisionResultGetPageReq struct {
 	dto.Pagination `search:"-"`
 
-	ParamId      int64               `form:"paramId"  search:"type:exact;column:param_id;table:rc_decision_result" comment:"rc_decision_param"`
+	DepId        int64               `form:"depId"  search:"type:exact;column:dep_id;table:rc_decision_result" comment:"rc_decision_param"`
 	TaskId       string              `form:"taskId"  search:"type:exact;column:task_id;table:rc_decision_result" comment:"task_id"`
 	FinalResult  string              `form:"finalResult"  search:"type:exact;column:final_result;table:rc_decision_result" comment:"决策建议结果(REFUSE:拒绝，PASS:通过)"`
 	AhpScore     decimal.NullDecimal `form:"ahpScore"  search:"type:exact;column:ahp_score;table:rc_decision_result" comment:"AHP分数"`
@@ -22,7 +22,7 @@ type RcDecisionResultGetPageReq struct {
 
 type RcDecisionResultPageOrder struct {
 	Id           string          `form:"idOrder"  search:"type:order;column:id;table:rc_decision_result"`
-	ParamId      string          `form:"paramIdOrder"  search:"type:order;column:param_id;table:rc_decision_result"`
+	DepId        string          `form:"depIdOrder"  search:"type:order;column:dep_id;table:rc_decision_result"`
 	TaskId       string          `form:"taskIdOrder"  search:"type:order;column:task_id;table:rc_decision_result"`
 	FinalResult  string          `form:"finalResultOrder"  search:"type:order;column:final_result;table:rc_decision_result"`
 	AhpScore     decimal.Decimal `form:"ahpScoreOrder"  search:"type:order;column:ahp_score;table:rc_decision_result"`
@@ -37,7 +37,7 @@ func (m *RcDecisionResultGetPageReq) GetNeedSearch() interface{} {
 
 type RcDecisionResultGetResp struct {
 	Id           int64               `json:"id"`           // 主键
-	ParamId      int64               `json:"paramId"`      // rc_decision_param
+	DepId        int64               `json:"depId"`        // rc_decision_param
 	TaskId       string              `json:"taskId"`       // task_id
 	FinalResult  string              `json:"finalResult"`  // 决策建议结果(REFUSE:拒绝，PASS:通过)
 	AhpScore     decimal.NullDecimal `json:"ahpScore"`     // AHP分数
@@ -51,7 +51,7 @@ func (s *RcDecisionResultGetResp) Generate(model *models.RcDecisionResult) {
 	if s.Id == 0 {
 		s.Id = model.Id
 	}
-	s.ParamId = model.ParamId
+	s.DepId = model.DepId
 	s.TaskId = model.TaskId
 	s.FinalResult = model.FinalResult
 	s.AhpScore = model.AhpScore
@@ -63,7 +63,7 @@ func (s *RcDecisionResultGetResp) Generate(model *models.RcDecisionResult) {
 
 type RcDecisionResultInsertReq struct {
 	Id           int64               `json:"-"`            // 主键
-	ParamId      int64               `json:"paramId"`      // rc_decision_param
+	DepId        int64               `json:"depId"`        // rc_decision_param
 	TaskId       string              `json:"taskId"`       // task_id
 	FinalResult  string              `json:"finalResult"`  // 决策建议结果(REFUSE:拒绝，PASS:通过)
 	AhpScore     decimal.NullDecimal `json:"ahpScore"`     // APH分数
@@ -77,7 +77,7 @@ func (s *RcDecisionResultInsertReq) Generate(model *models.RcDecisionResult) {
 	if s.Id == 0 {
 		model.Model = common.Model{Id: s.Id}
 	}
-	model.ParamId = s.ParamId
+	model.DepId = s.DepId
 	model.TaskId = s.TaskId
 	model.FinalResult = s.FinalResult
 	model.AhpScore = s.AhpScore
@@ -93,7 +93,7 @@ func (s *RcDecisionResultInsertReq) GetId() interface{} {
 
 type RcDecisionResultUpdateReq struct {
 	Id           int64               `uri:"id"`            // 主键
-	ParamId      int64               `json:"paramId"`      // rc_decision_param
+	DepId        int64               `json:"depId"`        // rc_decision_param
 	TaskId       string              `json:"taskId"`       // task_id
 	FinalResult  string              `json:"finalResult"`  // 决策建议结果(REFUSE:拒绝，PASS:通过)
 	AhpScore     decimal.NullDecimal `json:"ahpScore"`     // AHP分数
@@ -107,7 +107,7 @@ func (s *RcDecisionResultUpdateReq) Generate(model *models.RcDecisionResult) {
 	if s.Id == 0 {
 		model.Model = common.Model{Id: s.Id}
 	}
-	model.ParamId = s.ParamId
+	model.DepId = s.DepId
 	model.TaskId = s.TaskId
 	model.FinalResult = s.FinalResult
 	model.AhpScore = s.AhpScore
@@ -141,7 +141,7 @@ func (s *RcDecisionResultDeleteReq) GetId() interface{} {
 
 type RcDecisionResultExport struct {
 	Id           int64               `json:"id" gorm:"primaryKey;autoIncrement;comment:主键" xlsx:"主键"`
-	ParamId      int64               `json:"paramId" gorm:"comment:rc_decision_param" xlsx:"rc_decision_param"`
+	DepId        int64               `json:"depId" gorm:"comment:rc_decision_param" xlsx:"rc_decision_param"`
 	TaskId       string              `json:"taskId" gorm:"comment:task_id" xlsx:"task_id"`
 	FinalResult  string              `json:"finalResult" gorm:"comment:决策建议结果(REFUSE:拒绝，PASS:通过)" xlsx:"决策建议结果(REFUSE:拒绝，PASS:通过)"`
 	AhpScore     decimal.NullDecimal `json:"ahpScore" gorm:"comment:AHP分数" xlsx:"AHP分数"`

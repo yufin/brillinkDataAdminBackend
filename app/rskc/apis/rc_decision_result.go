@@ -27,7 +27,7 @@ type RcDecisionResult struct {
 // @Description 获取wezoom decision engine returend result列表
 // @Tags wezoom decision engine returend result
 // @Param id query int64 false "主键"
-// @Param paramId query int64 false "rc_decision_param"
+// @Param depId query int64 false "rc_decision_param"
 // @Param taskId query string false "task_id"
 // @Param finalResult query string false "决策建议结果(REFUSE:拒绝，PASS:通过)"
 // @Param aphScore query string false "APH分数"
@@ -213,7 +213,7 @@ func (e RcDecisionResult) Delete(c *gin.Context) {
 // @Description 导出wezoom decision engine returend result列表
 // @Tags wezoom decision engine returend result
 // @Param id query int64 false "主键"
-// @Param paramId query int64 false "rc_decision_param"
+// @Param depId query int64 false "rc_decision_param"
 // @Param taskId query string false "task_id"
 // @Param finalResult query string false "决策建议结果(REFUSE:拒绝，PASS:通过)"
 // @Param aphScore query string false "APH分数"
