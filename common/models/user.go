@@ -8,9 +8,9 @@ import (
 
 // BaseUser 密码登录基础用户
 type BaseUser struct {
-	Username     string `json:"username" gorm:"type:varchar(100);comment:用户名"`
-	Salt         string `json:"-" gorm:"type:varchar(255);comment:加盐;<-"`
-	PasswordHash string `json:"-" gorm:"type:varchar(128);comment:密码hash;<-"`
+	Username     string `json:"username" gorm:"size:100;comment:用户名"`
+	Salt         string `json:"-" gorm:"size:255;comment:加盐;<-"`
+	PasswordHash string `json:"-" gorm:"size:128;comment:密码hash;<-"`
 	Password     string `json:"password" gorm:"-"`
 }
 

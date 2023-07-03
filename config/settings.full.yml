@@ -8,8 +8,8 @@ settings:
     name: testApp
     # 端口号
     port: 8000 # 服务端口号
-    readtimeout: 1
-    writertimeout: 2
+    readtimeout: 10000
+    writertimeout: 20000
     # 数据权限功能开关
     enabledp: false
   ssl:
@@ -42,9 +42,10 @@ settings:
     source: user:password@tcp(127.0.0.1:3306)/dbname?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
     # source: sqlite3.db
     # source: host=myhost port=myport user=gorm dbname=gorm password=mypassword
-    registers:
-      - sources:
-          - user:password@tcp(127.0.0.1:3306)/dbname?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
+  databases:
+    'localhost:8888':
+      driver: mysql
+      source: user:password@tcp(127.0.0.1:3306)/dbname?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
   gen:
     # 代码生成读取的数据库名称
     dbname: dbname
