@@ -125,7 +125,7 @@ func SyncDefaultDependencyParam() error {
 				Table(tbContent.TableName()).
 				Select("id").
 				Where("usc_id = ?", uscId).
-				Order("create_at").
+				Order("created_at").
 				Pluck("id", &contentIds).
 				Error
 			if err != nil {
