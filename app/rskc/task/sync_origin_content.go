@@ -85,7 +85,6 @@ func SyncOriginJsonContent() error {
 			mutex.Lock()
 			dirInfoP := &dirInfos[index]
 			mutex.Unlock()
-
 			err := CheckIfInfoRecorded(dirInfoP, cdb)
 			if err != nil {
 				log.Errorf("CheckIfInfoRecorded Error: %s \r\n", err)

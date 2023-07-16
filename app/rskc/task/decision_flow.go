@@ -13,6 +13,7 @@ import (
 	"go-admin/app/rskc/models"
 	"go-admin/app/rskc/service/dto"
 	cModels "go-admin/common/models"
+	"go-admin/pkg/decisionclient"
 	"go-admin/pkg/natsclient"
 	"go-admin/utils"
 	"gorm.io/gorm"
@@ -24,10 +25,10 @@ import (
 var decisionRunning int32
 
 type DecisionCli interface {
-	requestUrl() string
-	requestMethod() string
-	sceneCode() string
-	productCode() string
+	RequestUrl() string
+	RequestMethod() string
+	SceneCode() string
+	ProductCode() string
 	Request(jsonPayload []byte) (int, []byte, error)
 }
 
@@ -67,19 +68,9 @@ func (t DecisionFlowTask) Exec(arg interface{}) error {
 	}
 	for _, msg := range msgs {
 		depId := int64(binary.BigEndian.Uint64(msg.Data))
-		exists, err := CheckContentIdExist(depId)
-		if err != nil {
-			return err
-		} else {
-			if !exists {
-				if err := msg.AckSync(); err != nil {
-					return err
-				}
-				break
-			}
-		}
 		log.Infof("开始请求决策引擎: depId = %d\r\n", depId)
-		if err := requestDecisionEngine(depId, DecisionReqClient{}); err != nil {
+
+		if err := requestDecisionEngine(depId, decisionclient.DecisionReqClient{}); err != nil {
 			log.Errorf("requestDecisionEngine Failed:%v \r\n", err)
 			return err
 		}
@@ -172,11 +163,11 @@ func pubIdsToRequestDecision() error {
 	db := sdk.Runtime.GetDbByKey(tbDep.TableName())
 	depIds := make([]int64, 0)
 	err := db.
-		Table(fmt.Sprintf("%s as rdd", tbDep.TableName())).
-		Select("rdd.id as dep_id").
-		Joins("LEFT JOIN rc_decision_result rdr ON rdd.id = rdr.dep_id").
-		Where("rdd.content_id IS NOT NULL AND rdr.dep_id IS NULL").
-		Pluck("content_id", &depIds).
+		Table(tbDep.TableName()).
+		Select("rc_dependency_data.id as dep_id").
+		Joins("LEFT JOIN rc_decision_result rdr ON rc_dependency_data.id = rdr.dep_id").
+		Where("rc_dependency_data.content_id IS NOT NULL AND rdr.dep_id IS NULL").
+		Pluck("dep_id", &depIds).
 		Error
 	if err != nil {
 		return err
@@ -257,7 +248,7 @@ func requestDecisionEngine(depId int64, cli DecisionCli) error {
 		return err
 	}
 	if statusCode != 200 {
-		return errors.Errorf("request statusCode: %d, err: url: %s, err: %v", statusCode, cli.requestUrl(), err)
+		return errors.Errorf("request statusCode: %d, err: url: %s, err: %v", statusCode, cli.RequestUrl(), err)
 	}
 	respCode, err = jsonparser.GetString(resp, "code")
 	if err != nil {

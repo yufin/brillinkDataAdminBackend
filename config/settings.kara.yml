@@ -69,3 +69,18 @@ settings:
         password: password
     amap:
       key:
+    minio:
+      endpoint: 192.168.31.158:9030
+      accessKey: bSDUxn0uQYn0xHfZ2mpZ
+      secretKey: cympip-rifraB-vuzra2
+      use_ssl: false
+      activate: true
+    pdf_convert:
+      gtb:
+        server: 192.168.31.158:3000
+      report:
+        server: 192.168.31.158:9030
+        path: /report/snapshot
+        username: admin
+        password: "1234"
+        oss_bucket_name: "report_snapshot"

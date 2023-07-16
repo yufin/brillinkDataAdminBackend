@@ -8,10 +8,12 @@ const (
 	TopicToProcessContentSuffix  string = "content.process.newId"
 	TopicToRequestDecisionSuffix string = "decision.newId"
 	TopicToSyncGraphSuffix       string = "graph.sync.newId"
+	TopicReportSnapshotSuffix    string = "report.snapshot.newId"
 
 	TopicContentNew           = TopicTaskRskcPrefix + TopicContentSuffix
 	TopicTradeNew             = TopicTaskRskcPrefix + TopicTradeSuffix
 	TopicContentToProcessNew  = TopicTaskRskcPrefix + TopicToProcessContentSuffix
 	TopicToRequestDecisionNew = TopicTaskRskcPrefix + TopicToRequestDecisionSuffix
 	TopicToSyncGraphNew       = TopicTaskRskcPrefix + TopicToSyncGraphSuffix
+	TopicReportSnapshot       = TopicTaskRskcPrefix + TopicReportSnapshotSuffix
 )

@@ -14,6 +14,7 @@ var (
 	SubContentProcessNew    *nats.Subscription
 	SubToRequestDecisionNew *nats.Subscription
 	SubToSyncGraphNew       *nats.Subscription
+	SubReportSnapshot       *nats.Subscription
 )
 
 type TaskStream struct {
@@ -80,6 +81,12 @@ func (e TaskStream) InitSubscription() error {
 	}
 	if SubToSyncGraphNew == nil {
 		SubToSyncGraphNew, err = TaskJs.PullSubscribe(TopicToSyncGraphNew, "sub-syncgraph-new", nats.BindStream(e.StreamName()))
+		if err != nil {
+			log.Error(pkg.Blue(fmt.Sprintf("Add Subscribe error: %v", err)))
+		}
+	}
+	if SubReportSnapshot == nil {
+		SubReportSnapshot, err = TaskJs.PullSubscribe(TopicReportSnapshot, "sub-reportsnapshot-new", nats.BindStream(e.StreamName()))
 		if err != nil {
 			log.Error(pkg.Blue(fmt.Sprintf("Add Subscribe error: %v", err)))
 		}

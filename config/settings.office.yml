@@ -2,7 +2,7 @@ settings:
   application:
     enabledp: true
     host: 0.0.0.0
-    mode: dev
+    mode: prod
     name: testApp
     port: 8888
     readtimeout: 100
@@ -28,11 +28,11 @@ settings:
           - 'rskc_trades_detail'
           - 'rskc_processed_content'
           - 'task_detail'
+          - 'rc_dependency_data'
           - 'rc_selling_sta'
           - 'rc_decision_param'
           - 'rc_decision_result'
           - 'rc_i18n_content'
-          - 'rc_dependency_data'
   gen:
     dbname: go_admin
     frontpath: ../graphAdminWebserver/src
@@ -71,3 +71,10 @@ settings:
     nats:
       uri: "nats://dev:password@192.168.44.169:4222"
       activate: true
+    minio:
+      endpoint: 192.168.44.169:9030
+      accessKey: wuUZssvlpfRvYESyaT1J
+      secretKey: IdieLkzlLD3hWlVitGyswHcnoXWdnR6z7q5qaDvv
+      use_ssl: false
+      activate: true
+    report_snapshot:

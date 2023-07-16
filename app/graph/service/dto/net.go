@@ -18,6 +18,14 @@ type Net struct {
 	Edges []Edge     `json:"edges"`
 }
 
+type Edge struct {
+	SourceId string         `json:"source"`
+	TargetId string         `json:"target"`
+	Id       string         `json:"id"`
+	Label    string         `json:"label"`
+	Data     map[string]any `json:"data"`
+}
+
 func SerializeLinkNode(neoNode neo4j.Node) LinkNode {
 	copyProps := make(map[string]any)
 	for k, v := range neoNode.Props {
@@ -55,14 +63,6 @@ func SerializeLinkNode(neoNode neo4j.Node) LinkNode {
 		Title:  title,
 		Data:   data,
 	}
-}
-
-type Edge struct {
-	SourceId string         `json:"source"`
-	TargetId string         `json:"target"`
-	Id       string         `json:"id"`
-	Label    string         `json:"label"`
-	Data     map[string]any `json:"data"`
 }
 
 // SerializeEdge warn: Returned instance of Edge Has no SourceId and TargetId

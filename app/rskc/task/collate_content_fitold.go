@@ -149,6 +149,7 @@ func collateContent(contentId int64, nameDataMap map[string]*dto.SubjoinData, ev
 					}[key]
 					return mItem[keyCompany]
 				}()
+
 				// determine if companyName is empty
 				companyName, ok := companyNameTemp.(string)
 				var subjoinData *dto.SubjoinData

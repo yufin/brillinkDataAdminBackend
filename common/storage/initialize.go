@@ -8,6 +8,7 @@
 package storage
 
 import (
+	"go-admin/pkg/minioclient"
 	"go-admin/pkg/natsclient"
 	"log"
 
@@ -57,6 +58,11 @@ func Setup() {
 	}
 
 	if err := natsclient.InitActivity(natsclient.TaskStream{}); err != nil {
-		log.Fatalf("nats impl init fail %v", err)
+		log.Fatalf("nats init TaskStream error, %v \n", err.Error())
+	}
+
+	//9. 初始化minio
+	if err := minioclient.InitMinioCli(); err != nil {
+		log.Fatalf("minio setup error, %v \n", err.Error())
 	}
 }

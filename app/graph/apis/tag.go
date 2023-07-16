@@ -299,8 +299,6 @@ func (e LabelApi) GetPathBetween(c *gin.Context) {
 // @Tags 图谱/树状图
 // @Summary 通过标签名称关键词模糊匹配标签节点
 // @Produce json
-// @Param sourceId query string false "Source label ID, default to root label ID"
-// @Param targetId query string true "Target label ID"
 // @Success 200 {object} any
 // @Failure 500 {object} string
 // @Router /dev-api/v1/graph/tree/path/label/title/fuzzyMatch [get]

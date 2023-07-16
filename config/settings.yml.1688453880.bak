@@ -1,0 +1,51 @@
+settings:
+  application:
+    enabledp: true
+    host: 0.0.0.0
+    mode: dev
+    name: testApp
+    port: 8886
+    readtimeout: 100
+    writertimeout: 200
+  database:
+    driver: mysql
+    source: root:adminpassword@tcp(10.0.203.73:3306)/brillink_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+    registers:
+      - sources:
+          - 'root:adminpassword@tcp(10.0.203.73:3306)/brillink_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
+        replicas:
+          - 'root:adminpassword@tcp(10.0.203.73:3306)/data_spider?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
+        tables:
+          - 'enterprise_wait_list'
+          - 'enterprise'
+          - 'enterprise_info'
+          - 'enterprise_certification'
+          - 'enterprise_ranking'
+          - 'ranking_list'
+  gen:
+    dbname: brillink_admin
+    frontpath: ../go-admin-ui/src
+  jwt:
+    secret: go-admin
+    timeout: 3600
+  logger:
+    # 日志存放路径
+    path: temp/logs
+    # 日志输出，file：文件，default：命令行，其他：命令行
+    stdout: '' #控制台日志，启用后，不输出到文件
+    # 日志等级, trace, debug, info, warn, error, fatal
+    level: trace
+    # 数据库日志开关
+    enableddb: true
+  queue:
+    memory:
+      poolSize: 100
+  extend:
+    graph:
+      neo4j:
+        activate: true
+        uri: neo4j://10.0.203.73:7687
+        username: neo4j
+        password: password
+    amap:
+      key: 
