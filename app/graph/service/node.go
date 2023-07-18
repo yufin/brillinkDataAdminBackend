@@ -62,6 +62,7 @@ func (s *NodeService) GetChildrenById(ctx context.Context, id string, pageSize i
 	return resp, total, nil
 }
 
+// CountChildren returns the count of children of a node By given id
 func (s *NodeService) CountChildren(ctx context.Context, cypher string, resKey string, params map[string]any) (int64, error) {
 	result, err := models.CypherQuery(ctx, cypher, params)
 	if err != nil {

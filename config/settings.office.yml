@@ -33,6 +33,8 @@ settings:
           - 'rc_decision_param'
           - 'rc_decision_result'
           - 'rc_i18n_content'
+          - 'rc_report_oss'
+          - 'oss_metadata'
   gen:
     dbname: go_admin
     frontpath: ../graphAdminWebserver/src
@@ -75,6 +77,14 @@ settings:
       endpoint: 192.168.44.169:9030
       accessKey: wuUZssvlpfRvYESyaT1J
       secretKey: IdieLkzlLD3hWlVitGyswHcnoXWdnR6z7q5qaDvv
-      use_ssl: false
+      useSsl: false
       activate: true
-    report_snapshot:
+    pdfConvert:
+      gtb:
+        server: http://192.168.44.169:3099
+      report:
+        server: http://192.168.44.150:1024
+        path: /login?redirect=/CrawlReport
+        username: admin
+        password: "1234"
+        ossBucketName: "rcreport"

@@ -16,7 +16,6 @@ import (
 	"go-admin/pkg/natsclient"
 	"go-admin/utils"
 	"net/url"
-	"strconv"
 	"sync/atomic"
 	"time"
 )
@@ -39,38 +38,40 @@ func (t ReportSnapshotTask) Exec(arg interface{}) error {
 		return err
 	}
 
-	msgs, err := natsclient.SubReportSnapshot.Fetch(1, nats.MaxWait(5*time.Second))
-	if err != nil {
-		if err == nats.ErrTimeout {
-			return nil
-		} else {
-			return err
-		}
-	}
-
 	gtb := gotenbergclient.NewGtbClient(config.ExtConfig.PdfConvert.Gtb.Server)
-	for _, msg := range msgs {
-		depId := int64(binary.BigEndian.Uint64(msg.Data))
-		if err := t.getReportSnapshot(depId, gtb, minioclient.MinioCli); err != nil {
-			log.Errorf("getReportSnapshot Failed:%v \r\n", err)
-			return err
+	for {
+		msgs, err := natsclient.SubReportSnapshot.Fetch(1, nats.MaxWait(5*time.Second))
+		if err != nil {
+			if err == nats.ErrTimeout {
+				return nil
+			} else {
+				return err
+			}
 		}
-		if err := msg.AckSync(); err != nil {
-			return err
+		for _, msg := range msgs {
+			depId := int64(binary.BigEndian.Uint64(msg.Data))
+			if err := t.getReportSnapshot(depId, gtb, minioclient.MinioCli); err != nil {
+				log.Errorf("getReportSnapshot Failed:%v \r\n", err)
+				return err
+			}
+			if err := msg.AckSync(); err != nil {
+				return err
+			}
 		}
+
 	}
-	return nil
 }
 
 func (t ReportSnapshotTask) pubId4Snapshot() error {
 	tb := models.RcReportOss{}
+	tbRdd := models.RcDependencyData{}
 	db := sdk.Runtime.GetDbByKey(tb.TableName())
 	depIds := make([]int64, 0)
 	err := db.Raw(
 		`select rdd.id as dep_id
 			from rc_dependency_data rdd
 					 left join rc_report_oss rro on rdd.id = rro.dep_id
-			where rro.id is null and rdd.deleted_at is null and rro.deleted_at is null`).
+			where rro.id is null and rdd.deleted_at is null and rro.deleted_at is null and rdd.status_code = 0;`).
 		Pluck("dep_id", &depIds).
 		Error
 	if err != nil {
@@ -83,23 +84,30 @@ func (t ReportSnapshotTask) pubId4Snapshot() error {
 		if err != nil {
 			return err
 		}
+		// update statusCode = 1
+		err = db.Model(&tbRdd).Where("id = ?", depId).Update("status_code", 1).Error
+		if err != nil {
+			return err
+		}
+
 	}
 	return nil
 }
 
 func (t ReportSnapshotTask) getReportSnapshot(depId int64, gtb gotenbergclient.GtbCli, mc minioclient.McInterface) error {
-	url2Convert := func(did int64) string {
-		rawUrl := config.ExtConfig.PdfConvert.Report.Server + config.ExtConfig.PdfConvert.Report.Path
-		u, _ := url.Parse(rawUrl)
-		params := url.Values{}
-		params.Set("u", config.ExtConfig.PdfConvert.Report.Username)
-		params.Set("p", config.ExtConfig.PdfConvert.Report.Password)
-		params.Set("depId", strconv.FormatInt(did, 10))
-		u.RawQuery = params.Encode()
-		return u.String()
-	}(depId)
-
-	resp, err := gtb.ChromiumConvert(url2Convert)
+	//http://192.168.44.150:1024/login?redirect=/CrawlReport?depId=468225900752678038&lang=zh&u=admin&p=1234
+	raw := fmt.Sprintf("%s%s?depId=%d&lang=%s&u=%s&p=%s",
+		config.ExtConfig.PdfConvert.Report.Server,
+		config.ExtConfig.PdfConvert.Report.Path,
+		depId,
+		"zh",
+		config.ExtConfig.PdfConvert.Report.Username,
+		config.ExtConfig.PdfConvert.Report.Password)
+	u, err := url.Parse(raw)
+	if err != nil {
+		return err
+	}
+	resp, err := gtb.ChromiumConvert(u.String())
 	defer func() {
 		if resp != nil {
 			resp.Body.Close()
@@ -138,7 +146,7 @@ func (t ReportSnapshotTask) getReportSnapshot(depId int64, gtb gotenbergclient.G
 		Version: 2,
 	}
 	dbDep := sdk.Runtime.GetDbByKey(repRec.TableName())
-	err = dbDep.Create(&ossRec).Error
+	err = dbDep.Create(&repRec).Error
 	if err != nil {
 		return err
 	}

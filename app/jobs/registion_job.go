@@ -18,6 +18,7 @@ func InitJob() {
 		"CollateContent":      task.CollateContentTask{},
 		"SyncGraph":           gTask.SyncGraphTask{},
 		"DecisionFlow":        task.DecisionFlowTask{},
+		"reportSnapshot":      task.ReportSnapshotTask{},
 		//"WipeMsg":            task.WipeMsgTask{},
 	}
 }
