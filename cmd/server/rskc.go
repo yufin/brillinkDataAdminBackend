@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/go-admin-team/go-admin-core/sdk"
-	"go-admin/app/rskc/router"
+	"go-admin/app/rc/router"
 )
 
 func init() {

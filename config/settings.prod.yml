@@ -3,7 +3,7 @@ settings:
     enabledp: true
     host: 0.0.0.0
     mode: prod
-    name: bl-data-admin
+    name: Brillink数据中台
     port: 8890
     readtimeout: 100
     writertimeout: 200
@@ -24,15 +24,17 @@ settings:
           - 'enterprise_ranking'
           - 'enterprise_product'
           - 'ranking_list'
-          - 'rskc_origin_content'
-          - 'rskc_trades_detail'
-          - 'rskc_processed_content'
+          - 'rc_origin_content'
+          - 'rc_trades_detail'
+          - 'rc_processed_content'
           - 'task_detail'
           - 'rc_selling_sta'
           - 'rc_decision_param'
           - 'rc_decision_result'
           - 'rc_i18n_content'
           - 'rc_dependency_data'
+          - 'rc_report_oss'
+          - 'oss_metadata'
   gen:
     dbname: bl_data_admin
     frontpath: ../graphAdminWebserver/src
@@ -71,3 +73,18 @@ settings:
     nats:
       uri: "nats://brillinkdata:MFmi9jAB@10.0.232.121:4222"
       activate: true
+    minio:
+      endpoint: 10.0.232.121:9030
+      accessKey: ys0whFZv98wtOgyXIRBS
+      secretKey: AZ6M7FVo4ZlkPvDZWAweSXIueUqqQ2ujITlvvmdq
+      useSsl: false
+      activate: true
+    pdfConvert:
+      gtb:
+        server: http://10.0.232.22:3033
+      report:
+        server: http://192.168.44.150:1024
+        path: /login?redirect=/CrawlReport
+        username: admin
+        password: "1234"
+        ossBucketName: "report-snapshot"

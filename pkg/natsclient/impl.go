@@ -25,7 +25,7 @@ func (TaskStream) StreamName() string {
 }
 
 func (TaskStream) Subjects() []string {
-	return []string{TopicTaskRskcPrefix + ">"}
+	return []string{TopicTaskRcPrefix + ">"}
 }
 
 func (e TaskStream) StreamConfig() *nats.StreamConfig {

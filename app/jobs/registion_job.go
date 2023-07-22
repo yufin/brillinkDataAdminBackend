@@ -3,7 +3,8 @@ package jobs
 import (
 	"github.com/go-admin-team/go-admin-core/logger"
 	gTask "go-admin/app/graph/task"
-	"go-admin/app/rskc/task"
+	"go-admin/app/rc/task"
+	"go-admin/app/rc/task/rdm"
 )
 
 // 需要将定义的struct 添加到字典中；
@@ -17,7 +18,7 @@ func InitJob() {
 		"VerifyContentReady":  task.VerifyContentReadyTask{},
 		"CollateContent":      task.CollateContentTask{},
 		"SyncGraph":           gTask.SyncGraphTask{},
-		"DecisionFlow":        task.DecisionFlowTask{},
+		"DecisionFlow":        rdm.AhpRdmTask{},
 		"reportSnapshot":      task.ReportSnapshotTask{},
 		//"WipeMsg":            task.WipeMsgTask{},
 	}

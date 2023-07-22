@@ -16,6 +16,7 @@ type Extend struct {
 	Nats       Nats
 	Minio      Minio
 	PdfConvert PdfConvert
+	PySidecar  PySidecar
 }
 
 type AMap struct {
@@ -77,4 +78,9 @@ type Report struct {
 
 type Gtb struct {
 	Server string
+}
+
+type PySidecar struct {
+	Uri     string
+	AhpPath string
 }

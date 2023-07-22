@@ -24,9 +24,9 @@ settings:
           - 'enterprise_ranking'
           - 'enterprise_product'
           - 'ranking_list'
-          - 'rskc_origin_content'
-          - 'rskc_trades_detail'
-          - 'rskc_processed_content'
+          - 'rc_origin_content'
+          - 'rc_trades_detail'
+          - 'rc_processed_content'
           - 'task_detail'
           - 'rc_dependency_data'
           - 'rc_selling_sta'
@@ -35,6 +35,9 @@ settings:
           - 'rc_i18n_content'
           - 'rc_report_oss'
           - 'oss_metadata'
+          - 'rc_scorecard'
+          - 'rc_scorecard_rule'
+          - 'rc_scorecard_result'
   gen:
     dbname: go_admin
     frontpath: ../graphAdminWebserver/src
@@ -81,10 +84,13 @@ settings:
       activate: true
     pdfConvert:
       gtb:
-        server: http://192.168.44.169:3099
+        server: http://192.168.44.169:3033
       report:
         server: http://192.168.44.150:1024
         path: /login?redirect=/CrawlReport
         username: admin
         password: "1234"
         ossBucketName: "rcreport"
+    pySidecar:
+      server: http://192.168.31.158:8001
+      ahpPath: /ahp

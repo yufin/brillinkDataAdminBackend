@@ -1,7 +1,7 @@
 package natsclient
 
 const (
-	TopicTaskRskcPrefix string = "task.rskc."
+	TopicTaskRcPrefix string = "task.Rc."
 
 	TopicContentSuffix           string = "content.newId"
 	TopicTradeSuffix             string = "trades.newId"
@@ -10,10 +10,10 @@ const (
 	TopicToSyncGraphSuffix       string = "graph.sync.newId"
 	TopicReportSnapshotSuffix    string = "report.snapshot.newId"
 
-	TopicContentNew           = TopicTaskRskcPrefix + TopicContentSuffix
-	TopicTradeNew             = TopicTaskRskcPrefix + TopicTradeSuffix
-	TopicContentToProcessNew  = TopicTaskRskcPrefix + TopicToProcessContentSuffix
-	TopicToRequestDecisionNew = TopicTaskRskcPrefix + TopicToRequestDecisionSuffix
-	TopicToSyncGraphNew       = TopicTaskRskcPrefix + TopicToSyncGraphSuffix
-	TopicReportSnapshot       = TopicTaskRskcPrefix + TopicReportSnapshotSuffix
+	TopicContentNew           = TopicTaskRcPrefix + TopicContentSuffix
+	TopicTradeNew             = TopicTaskRcPrefix + TopicTradeSuffix
+	TopicContentToProcessNew  = TopicTaskRcPrefix + TopicToProcessContentSuffix
+	TopicToRequestDecisionNew = TopicTaskRcPrefix + TopicToRequestDecisionSuffix
+	TopicToSyncGraphNew       = TopicTaskRcPrefix + TopicToSyncGraphSuffix
+	TopicReportSnapshot       = TopicTaskRcPrefix + TopicReportSnapshotSuffix
 )

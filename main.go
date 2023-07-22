@@ -32,9 +32,9 @@ func main() {
 // git merge upstream/main
 
 // restart task flow
-//truncate rskc_origin_content;
-//truncate rskc_processed_content;
-//truncate rskc_trades_detail;
+//truncate rc_origin_content;
+//truncate rc_processed_content;
+//truncate rc_trades_detail;
 //truncate rc_selling_sta;
 //truncate rc_decision_result;
 //truncate rc_decision_param;
