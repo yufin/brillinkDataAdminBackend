@@ -4,10 +4,9 @@ import "go-admin/common/models"
 
 type RcRdmResult struct {
 	models.Model
-	DepId int64   `json:"depId" gorm:"type:bigint;comment:;default:null;"`
-	Field string  `json:"field" gorm:"type:varchar(512);comment:;default:null;"`
-	Level int     `json:"level" gorm:"type:int;comment:;default:null;"`
-	Score float64 `json:"score" gorm:"type:decimal(32, 10);comment:;default:null;"`
+	AppType int    `json:"appType" gorm:"type:int;comment:;default:null;"`
+	DepId   int64  `json:"depId" gorm:"type:bigint;comment:;default:null;"`
+	Comment string `json:"comment" gorm:"type:text;comment:;default:null;"`
 	models.ControlBy
 	models.ModelTime
 }

@@ -15,7 +15,8 @@ import (
 )
 
 type PySidecarAhpRdm struct {
-	depId int64
+	depId   int64
+	AppType int
 }
 
 // Pipeline 流程
@@ -26,6 +27,11 @@ func (t PySidecarAhpRdm) Pipeline() error {
 	}
 
 	res, err := t.getRes(f)
+	if err != nil {
+		return err
+	}
+
+	resId, err := t.saveRes("ahp")
 	if err != nil {
 		return err
 	}
@@ -41,14 +47,29 @@ func (t PySidecarAhpRdm) Pipeline() error {
 		if err != nil {
 			return err
 		}
-		if err := t.saveResult(m, level); err != nil {
+		if err := t.saveDetail(m, level, resId); err != nil {
 			return err
 		}
 	}
 
-	// L1 process
-
 	return nil
+}
+
+func (t PySidecarAhpRdm) saveRes(comment string) (int64, error) {
+	tb := models.RcRdmResult{}
+	db := sdk.Runtime.GetDbByKey(tb.TableName())
+
+	data := models.RcRdmResult{
+		DepId:   t.depId,
+		Comment: comment,
+		AppType: t.AppType,
+	}
+	data.Id = utils.NewFlakeId()
+
+	if err := db.Create(&data).Error; err != nil {
+		return 0, err
+	}
+	return data.Id, nil
 }
 
 func (t PySidecarAhpRdm) getRes(factor map[string]any) ([]byte, error) {
@@ -75,13 +96,13 @@ func (t PySidecarAhpRdm) getRes(factor map[string]any) ([]byte, error) {
 	return res, nil
 }
 
-func (t PySidecarAhpRdm) saveResult(factor map[string]float64, level int) error {
-	tb := models.RcRdmResult{}
+func (t PySidecarAhpRdm) saveDetail(factor map[string]float64, level int, resId int64) error {
+	tb := models.RcRdmResDetail{}
 	db := sdk.Runtime.GetDbByKey(tb.TableName())
 
 	for k, v := range factor {
-		data := models.RcRdmResult{
-			DepId: t.depId,
+		data := models.RcRdmResDetail{
+			ResId: resId,
 			Field: k,
 			Level: level,
 			Score: v,

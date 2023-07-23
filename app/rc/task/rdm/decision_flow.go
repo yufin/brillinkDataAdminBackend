@@ -17,9 +17,6 @@ var decisionRunning int32
 
 type RdmPipeline interface {
 	Pipeline() error
-	saveResult(factor map[string]float64, level int) error
-	getFactors() (map[string]any, error)
-	getRes(factor map[string]any) ([]byte, error)
 }
 
 type AhpRdmTask struct {
@@ -61,7 +58,7 @@ func (t AhpRdmTask) Exec(arg interface{}) error {
 			log.Infof("开始请求决策引擎: depId = %d\r\n", depId)
 
 			var ahp RdmPipeline
-			ahp = PySidecarAhpRdm{depId: depId}
+			ahp = PySidecarAhpRdm{depId: depId, AppType: 1}
 			if err := ahp.Pipeline(); err != nil {
 				log.Errorf("PySidecarAhpRdm.Pipeline depId:%v Failed:%v \r\n", depId, err)
 				return err
@@ -291,7 +288,7 @@ func pubIdsForRdm() error {
 //	}
 //	decisionResult := models.RcDecisionResult{
 //		Model:        cModels.Model{Id: utils.NewFlakeId()},
-//		DepId:        depId,
+//		ResId:        depId,
 //		TaskId:       taskId,
 //		FinalResult:  finalResult,
 //		AhpScore:     decimal.NullDecimal{Decimal: decimal.NewFromFloat(ahpScore), Valid: true},
