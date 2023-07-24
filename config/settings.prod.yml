@@ -24,16 +24,20 @@ settings:
           - 'enterprise_ranking'
           - 'enterprise_product'
           - 'ranking_list'
+          - 'task_detail'
           - 'rc_origin_content'
           - 'rc_trades_detail'
           - 'rc_processed_content'
-          - 'task_detail'
+          - 'rc_dependency_data'
           - 'rc_selling_sta'
           - 'rc_decision_param'
           - 'rc_decision_result'
           - 'rc_i18n_content'
-          - 'rc_dependency_data'
           - 'rc_report_oss'
+          - 'rc_scorecard'
+          - 'rc_scorecard_rule'
+          - 'rc_rdm_res_detail'
+          - 'rc_rdm_result'
           - 'oss_metadata'
   gen:
     dbname: bl_data_admin
@@ -88,3 +92,6 @@ settings:
         username: admin
         password: "1234"
         ossBucketName: "report-snapshot"
+    pySidecar:
+      uri: http://10.0.232.22:8020
+      ahpPath: /sidecar/ahp

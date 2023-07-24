@@ -1,7 +1,7 @@
 package natsclient
 
 const (
-	TopicTaskRcPrefix string = "task.Rc."
+	TopicTaskRcPrefix string = "task.rc."
 
 	TopicContentSuffix           string = "content.newId"
 	TopicTradeSuffix             string = "trades.newId"

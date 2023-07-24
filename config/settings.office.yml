@@ -24,20 +24,21 @@ settings:
           - 'enterprise_ranking'
           - 'enterprise_product'
           - 'ranking_list'
+          - 'task_detail'
           - 'rc_origin_content'
           - 'rc_trades_detail'
           - 'rc_processed_content'
-          - 'task_detail'
           - 'rc_dependency_data'
           - 'rc_selling_sta'
           - 'rc_decision_param'
           - 'rc_decision_result'
           - 'rc_i18n_content'
           - 'rc_report_oss'
-          - 'oss_metadata'
           - 'rc_scorecard'
           - 'rc_scorecard_rule'
-          - 'rc_scorecard_result'
+          - 'rc_rdm_res_detail'
+          - 'rc_rdm_result'
+          - 'oss_metadata'
   gen:
     dbname: go_admin
     frontpath: ../graphAdminWebserver/src
@@ -92,5 +93,5 @@ settings:
         password: "1234"
         ossBucketName: "rcreport"
     pySidecar:
-      server: http://192.168.31.158:8001
-      ahpPath: /ahp
+      uri: http://192.168.44.169:8001
+      ahpPath: /sidecar/ahp

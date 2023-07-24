@@ -154,8 +154,8 @@ func pubIdsForRdm() error {
 	err := db.
 		Table(tbDep.TableName()).
 		Select("rc_dependency_data.id as dep_id").
-		Joins("LEFT JOIN rc_scorecard_result rcres ON rc_dependency_data.id = rcres.dep_id").
-		Where("rc_dependency_data.content_id IS NOT NULL AND rcres.dep_id IS NULL").
+		Joins("LEFT JOIN rc_rdm_result rrr ON rc_dependency_data.id = rrr.dep_id").
+		Where("rc_dependency_data.content_id IS NOT NULL AND rrr.dep_id IS NULL").
 		Pluck("dep_id", &depIds).
 		Error
 	if err != nil {

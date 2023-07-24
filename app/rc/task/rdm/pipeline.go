@@ -40,7 +40,7 @@ func (t PySidecarAhpRdm) Pipeline() error {
 		resKey := "l" + strconv.Itoa(level)
 		l1, dt, _, err := jsonparser.Get(res, resKey)
 		if dt != jsonparser.Object {
-			return errors.New("l1 is not object")
+			return errors.New("value is not object")
 		}
 		m := make(map[string]float64)
 		err = json.Unmarshal(l1, &m)
