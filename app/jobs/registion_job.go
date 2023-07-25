@@ -3,8 +3,11 @@ package jobs
 import (
 	"github.com/go-admin-team/go-admin-core/logger"
 	gTask "go-admin/app/graph/task"
-	"go-admin/app/rc/task"
+	"go-admin/app/rc/task/dataverification"
+	"go-admin/app/rc/task/pdfsnapshot"
 	"go-admin/app/rc/task/rdm"
+	"go-admin/app/rc/task/reportbuilder"
+	"go-admin/app/rc/task/syncdependency"
 )
 
 // 需要将定义的struct 添加到字典中；
@@ -12,14 +15,14 @@ import (
 func InitJob() {
 	jobList = map[string]JobsExec{
 		"ExamplesOne":         ExamplesOne{},
-		"SyncOriginContent":   task.SyncOriginContentTask{},
-		"SyncDependencyTable": task.SyncDependencyTableTask{},
-		"SyncWaitList":        task.SyncWaitListTask{},
-		"VerifyContentReady":  task.VerifyContentReadyTask{},
-		"CollateContent":      task.CollateContentTask{},
+		"SyncOriginContent":   syncdependency.SyncOriginContentTask{},
+		"SyncDependencyTable": syncdependency.DependencyTableSyncTask{},
+		"SyncWaitList":        syncdependency.SyncWaitListTask{},
+		"VerifyContentReady":  dataverification.VerifyContentReadyTask{},
+		"CollateContent":      reportbuilder.CollateContentTask{},
 		"SyncGraph":           gTask.SyncGraphTask{},
 		"DecisionFlow":        rdm.AhpRdmTask{},
-		"reportSnapshot":      task.ReportSnapshotTask{},
+		"reportSnapshot":      pdfsnapshot.ReportSnapshotTask{},
 		//"WipeMsg":            task.WipeMsgTask{},
 	}
 }

@@ -1,4 +1,4 @@
-package task
+package syncdependency
 
 import (
 	"github.com/buger/jsonparser"

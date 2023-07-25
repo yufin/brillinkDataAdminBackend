@@ -1,4 +1,4 @@
-package task
+package syncdependency
 
 import (
 	"encoding/json"
@@ -44,7 +44,10 @@ func pullTradesNew() error {
 			if err != nil {
 				return err
 			} else {
-				msg.AckSync()
+				err = msg.AckSync()
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}

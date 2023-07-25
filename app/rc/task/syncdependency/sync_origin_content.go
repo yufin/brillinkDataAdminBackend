@@ -1,4 +1,4 @@
-package task
+package syncdependency
 
 import (
 	"encoding/binary"
@@ -17,6 +17,7 @@ import (
 	"path"
 	"regexp"
 	"sync"
+	"sync/atomic"
 )
 
 const (
@@ -25,14 +26,19 @@ const (
 	ConcurrencyLimit int    = 5
 )
 
+var soctRunning int32
+
 type SyncOriginContentTask struct {
 }
 
-var mutexSoct = &sync.Mutex{}
-
 func (t SyncOriginContentTask) Exec(arg interface{}) error {
-	mutexSoct.Lock()
-	defer mutexSoct.Unlock()
+	if atomic.LoadInt32(&soctRunning) == 1 {
+		log.Info("SyncOriginContentTask任务已经在执行中，跳过本次调度")
+		return nil
+	}
+	atomic.StoreInt32(&soctRunning, 1)
+	defer atomic.StoreInt32(&soctRunning, 0)
+
 	err := SyncOriginJsonContent()
 	if err != nil {
 		log.Errorf("TASK SyncOriginJsonContent Failed:%s \r\n", err)

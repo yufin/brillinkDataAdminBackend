@@ -1,4 +1,4 @@
-package task
+package reportbuilder
 
 import (
 	"encoding/binary"
@@ -20,10 +20,6 @@ type CollateContentTask struct {
 }
 
 func (t CollateContentTask) Exec(arg interface{}) error {
-	return pullToProcessNew()
-}
-
-func pullToProcessNew() error {
 	for {
 		// get total msg count by subscriber
 		totalPending, _, err := natsclient.SubContentProcessNew.Pending()

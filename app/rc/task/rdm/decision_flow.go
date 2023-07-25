@@ -167,6 +167,12 @@ func pubIdsForRdm() error {
 	for _, depId := range depIds {
 		msg := make([]byte, 8)
 		binary.BigEndian.PutUint64(msg, uint64(depId))
+		// TODO: try this (idempotent message writes)
+		//m := nats.NewMsg(natsclient.TopicToRequestDecisionNew)
+		//m.Data = msg
+		//m.Header.Set("Nats-Msg-Id", "unique-id-123")
+		//_, err := natsclient.TaskJs.PublishMsg(m)
+
 		_, err := natsclient.TaskJs.Publish(natsclient.TopicToRequestDecisionNew, msg)
 		if err != nil {
 			return err

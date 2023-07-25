@@ -9,6 +9,7 @@ type RcProcessedContent struct {
 	models.Model
 	ContentId  int64  `json:"contentId" gorm:"comment:外键(rc_origin_content.id)" xlsx:"外键(rc_origin_content.id)"`
 	Content    string `json:"content" gorm:"comment:数据(json字符串格式)" xlsx:"数据(json字符串格式)"`
+	Version    string `json:"version" gorm:"comment:版本号" xlsx:"版本号"`
 	StatusCode int    `json:"statusCode" gorm:"comment:状态码" xlsx:"状态码"`
 	models.ModelTime
 	models.ControlBy

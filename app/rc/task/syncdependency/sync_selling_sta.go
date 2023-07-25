@@ -1,4 +1,4 @@
-package task
+package syncdependency
 
 import (
 	"encoding/json"
