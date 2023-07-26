@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+// todo:缺少contentId的校验逻辑
 var decisionRunning int32
 
 type RdmPipeline interface {
@@ -98,15 +99,16 @@ func SyncDefaultDependencyParam() error {
 			return err
 		}
 
+		var modelContentInfo models.RcOriginContentInfo
 		for _, uscId := range uscIds {
 			uscId := uscId
-			contentIds := make([]int64, 0)
+			contentInfos := make([]models.RcOriginContentInfo, 0)
 			err = dbRoc.
-				Table(tbContent.TableName()).
+				Model(&modelContentInfo).
 				Select("id").
 				Where("usc_id = ?", uscId).
 				Order("created_at").
-				Pluck("id", &contentIds).
+				Scan(&contentInfos).
 				Error
 			if err != nil {
 				return err
@@ -122,21 +124,50 @@ func SyncDefaultDependencyParam() error {
 			if err != nil {
 				return err
 			}
-			if len(rddList) > 0 {
-				for i, contentId := range contentIds {
-					if contentId != 0 {
-						if i < len(rddList) {
-							rddList[i].ContentId = contentId
-						} else {
-							copyRdd := rddList[len(rddList)-1]
-							copyRdd.ContentId = contentId
-							copyRdd.Id = utils.NewFlakeId()
-							rddList = append(rddList, copyRdd)
-						}
+
+			// get contentId which not in rddList.contentId
+			rocNotExists := make([]models.RcOriginContentInfo, 0)
+			for _, cItem := range contentInfos {
+				cid := cItem.Id
+				found := false
+				for _, rddItem := range rddList {
+					rddCid := rddItem.ContentId
+					if cid == rddCid {
+						found = true
+						break
 					}
 				}
-				err = db.Model(&rddList).Save(&rddList).Error
-				if err != nil {
+				if !found {
+					rocNotExists = append(rocNotExists, cItem)
+				}
+			}
+			// get rdd with null contentId
+			defaultRdd := rddList[len(rddList)-1]
+			if len(rocNotExists) > 0 {
+				nullContentIdsRdds := make([]models.RcDependencyData, 0)
+				toUpdateRdds := make([]models.RcDependencyData, 0)
+
+				for _, rddNullable := range rddList {
+					if rddNullable.ContentId == 0 {
+						nullContentIdsRdds = append(nullContentIdsRdds, rddNullable)
+					}
+				}
+				for i, cItem2Update := range rocNotExists {
+					if i+1 <= len(nullContentIdsRdds) {
+						//nullContentIdsRdds[i].ContentId = cItem2Update.Id
+						toUpdateRdd := nullContentIdsRdds[i]
+						toUpdateRdd.ContentId = cItem2Update.Id
+						toUpdateRdd.AttributedMonth = cItem2Update.YearMonth
+						toUpdateRdds = append(toUpdateRdds, toUpdateRdd)
+					} else {
+						toUpdateRdd := defaultRdd
+						toUpdateRdd.Id = utils.NewFlakeId()
+						toUpdateRdd.ContentId = cItem2Update.Id
+						toUpdateRdd.AttributedMonth = cItem2Update.YearMonth
+						toUpdateRdds = append(toUpdateRdds, toUpdateRdd)
+					}
+				}
+				if err := db.Model(&modelRdd).Save(&toUpdateRdds).Error; err != nil {
 					return err
 				}
 			}
@@ -155,7 +186,7 @@ func pubIdsForRdm() error {
 		Table(tbDep.TableName()).
 		Select("rc_dependency_data.id as dep_id").
 		Joins("LEFT JOIN rc_rdm_result rrr ON rc_dependency_data.id = rrr.dep_id").
-		Where("rc_dependency_data.content_id IS NOT NULL AND rrr.dep_id IS NULL").
+		Where("rc_dependency_data.content_id IS NOT NULL and rc_dependency_data.content_id IS != 0 AND rrr.dep_id IS NULL").
 		Pluck("dep_id", &depIds).
 		Error
 	if err != nil {

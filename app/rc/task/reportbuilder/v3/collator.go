@@ -6,10 +6,15 @@ import (
 	"github.com/pkg/errors"
 )
 
-type ClaRiskDecRename struct {
+type ClaRiskIndexes struct {
 }
 
-func (s *ClaRiskDecRename) Collating(content *[]byte) error {
+func (s *ClaRiskIndexes) Collating(content *[]byte, contentId int64) error {
+	
+	return nil
+}
+
+func (s *ClaRiskIndexes) CollatingWasted(content *[]byte) error {
 	paths := []string{"impExpEntReport", "riskIndexes"}
 	var idx int
 	var errCb, err error
@@ -63,6 +68,7 @@ func (s *ClaRiskDecRename) Collating(content *[]byte) error {
 	}
 
 	{
+		idx = 0
 		_, err = jsonparser.ArrayEach(c,
 			func(value []byte, dt jsonparser.ValueType, offset int, err error) {
 				if dt != jsonparser.Object {

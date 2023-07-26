@@ -32,7 +32,7 @@ func (e *RcOriginContent) GetId() interface{} {
 
 type RcOriginContentInfo struct {
 	models.Model
-	ContentId      string `json:"contentId" gorm:"comment:uuid4"`
+	//ContentId      string `json:"contentId" gorm:"comment:uuid4"`
 	UscId          string `json:"uscId" gorm:"comment:统一社会信用代码"`
 	EnterpriseName string `json:"enterpriseName" gorm:"comment:企业名称"`
 	YearMonth      string `json:"yearMonth" gorm:"comment:数据更新年月"`

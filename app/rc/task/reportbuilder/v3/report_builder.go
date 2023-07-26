@@ -1,7 +1,7 @@
 package v3
 
 type Collator interface {
-	Collating(*[]byte) error
+	Collating(content *[]byte, contentId int64) error
 }
 
 type ReportBuilderV3 struct {

@@ -87,7 +87,7 @@ settings:
       gtb:
         server: http://10.0.232.22:3033
       report:
-        server: http://192.168.44.150:1024
+        server: http://10.0.232.22:8008
         path: /login?redirect=/CrawlReport
         username: admin
         password: "1234"

@@ -9,7 +9,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func syncSellingStaFromContent(contentId int64) error {
+type sellingStaSyncProcess struct {
+}
+
+func (t sellingStaSyncProcess) Process(contentId int64) error {
 	var dataContent models.RcOriginContent
 	dbContent := sdk.Runtime.GetDbByKey(dataContent.TableName())
 	err := dbContent.Model(&dataContent).First(&dataContent, contentId).Error
@@ -28,7 +31,8 @@ func syncSellingStaFromContent(contentId int64) error {
 
 	var contentMap map[string]any
 	if err := json.Unmarshal([]byte(dataContent.Content), &contentMap); err != nil {
-		return nil
+		// return nil
+		return err
 	}
 
 	sellingStaArray := contentMap[ReportDataKey].(map[string]any)["sellingSTA"].([]any)
@@ -36,11 +40,11 @@ func syncSellingStaFromContent(contentId int64) error {
 		v := v.(map[string]any)
 		insertReq := dto.RcSellingStaInsertReq{
 			ContentId: contentId,
-			Cgje:      safeGetString(v, "CGJE"),
-			Jezb:      safeGetString(v, "JEZB"),
-			Ssspdl:    safeGetString(v, "SSSPDL"),
-			Ssspxl:    safeGetString(v, "SSSPXL"),
-			Ssspzl:    safeGetString(v, "SSSPZL"),
+			Cgje:      t.safeGetString(v, "CGJE"),
+			Jezb:      t.safeGetString(v, "JEZB"),
+			Ssspdl:    t.safeGetString(v, "SSSPDL"),
+			Ssspxl:    t.safeGetString(v, "SSSPXL"),
+			Ssspzl:    t.safeGetString(v, "SSSPZL"),
 		}
 		var insertSst models.RcSellingSta
 		insertReq.Generate(&insertSst)
@@ -51,7 +55,7 @@ func syncSellingStaFromContent(contentId int64) error {
 	return nil
 }
 
-func safeGetString(m map[string]any, key string) string {
+func (t sellingStaSyncProcess) safeGetString(m map[string]any, key string) string {
 	if v, ok := m[key]; ok {
 		return v.(string)
 	}

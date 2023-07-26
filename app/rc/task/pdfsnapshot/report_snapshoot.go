@@ -71,7 +71,7 @@ func (t ReportSnapshotTask) pubId4Snapshot() error {
 		`select rdd.id as dep_id
 			from rc_dependency_data rdd
 					 left join rc_report_oss rro on rdd.id = rro.dep_id
-			where rro.id is null and rdd.deleted_at is null and rro.deleted_at is null and rdd.status_code = 0;`).
+			where rro.id is null and rdd.deleted_at is null and rro.deleted_at is null and rdd.status_code = 1;`).
 		Pluck("dep_id", &depIds).
 		Error
 	if err != nil {
@@ -85,7 +85,7 @@ func (t ReportSnapshotTask) pubId4Snapshot() error {
 			return err
 		}
 		// update statusCode = 1
-		err = db.Model(&tbRdd).Where("id = ?", depId).Update("status_code", 1).Error
+		err = db.Model(&tbRdd).Where("id = ?", depId).Update("status_code", 2).Error
 		if err != nil {
 			return err
 		}
@@ -96,6 +96,7 @@ func (t ReportSnapshotTask) pubId4Snapshot() error {
 
 func (t ReportSnapshotTask) getReportSnapshot(depId int64, gtb gotenbergclient.GtbCli, mc minioclient.McInterface) error {
 	//http://192.168.44.150:1024/login?redirect=/CrawlReport?depId=468225900752678038&lang=zh&u=admin&p=1234
+	//http://10.0.232.22:8008/login?redirect=/CrawlReport?depId=468992917839544323&lang=zh&u=admin&p=1234
 	raw := fmt.Sprintf("%s%s?depId=%d&lang=%s&u=%s&p=%s",
 		config.ExtConfig.PdfConvert.Report.Server,
 		config.ExtConfig.PdfConvert.Report.Path,

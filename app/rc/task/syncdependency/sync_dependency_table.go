@@ -32,11 +32,19 @@ func (t DependencyTableSyncTask) Exec(arg interface{}) error {
 	atomic.StoreInt32(&dtstRunning, 1)
 	defer atomic.StoreInt32(&dtstRunning, 0)
 
-	return t.pullContentNew()
+	return t.pipeline()
 }
 
-func (t DependencyTableSyncTask) pullContentNew() error {
-	// TODO: add log at this layer
+func (t DependencyTableSyncTask) pipeline() error {
+	// set sync process for task
+	processes := []DependencySyncProcess{
+		sellingStaSyncProcess{},
+		syncTradeDetailProcess{},
+		decisionParamSyncProcess{},
+		riskIndexSyncProcess{},
+	}
+	concurrencyLimit := 3
+
 	for {
 		// get total msg count by subscriber
 		totalPending, _, err := natsclient.SubContentNew.Pending()
@@ -52,6 +60,7 @@ func (t DependencyTableSyncTask) pullContentNew() error {
 				return err
 			}
 		}
+
 		for _, msg := range msgs {
 			contentId := int64(binary.BigEndian.Uint64(msg.Data))
 
@@ -69,67 +78,79 @@ func (t DependencyTableSyncTask) pullContentNew() error {
 
 			log.Infof("开始解析并同步依赖数据: contentId = %d\r\n", contentId)
 
-			//processes := make([]DependencySyncProcess, 0)
-			// 控制并发数量
-			//var wg sync.WaitGroup
-			//limitCh := make(chan struct{}, 3)
-			//errCh := make(chan error)
-			//done := make(chan struct{})
-			//
-			//for i, _ := range processes {
-			//	limitCh <- struct{}{}
-			//	wg.Add(1)
-			//	i := i
-			//	go func(index int) {
-			//		defer wg.Done()
-			//		err := processes[i].Process(contentId)
-			//		if err != nil {
-			//			log.Errorf("sync dependencies process error: %s, contentId=%s\r\n", err, contentId)
-			//			errCh <- err
-			//		}
-			//		<-limitCh
-			//	}(i)
-			//}
-			//
-			//go func() {
-			//	wg.Wait()
-			//	close(done)
-			//}()
-
-			var err1, err2, err3 error
+			// control concurrency
 			var wg sync.WaitGroup
-			wg.Add(1)
+			limitCh := make(chan struct{}, concurrencyLimit)
+			errCh := make(chan error)
+			done := make(chan struct{})
+			for i, _ := range processes {
+				limitCh <- struct{}{}
+				wg.Add(1)
+				i := i
+				go func(index int) {
+					defer wg.Done()
+					err := processes[i].Process(contentId)
+					if err != nil {
+						log.Errorf("sync dependencies process error: %s, contentId=%s\r\n", err, contentId)
+						errCh <- err
+					}
+					<-limitCh
+				}(i)
+			}
+
 			go func() {
-				defer wg.Done()
-				syd := syncTradeDetailProcess{}
-				err1 = syd.Process(contentId)
+				wg.Wait()
+				close(done)
 			}()
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				err2 = syncSellingStaFromContent(contentId)
-			}()
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				err3 = syncDecisionParamFromContent(contentId)
-			}()
-			wg.Wait()
-			if err1 != nil {
+
+			select {
+			case <-done:
+				if err := t.markContentAsCompleteAsync(contentId); err != nil {
+					return err
+				}
+				if err := msg.AckSync(); err != nil {
+					return err
+				}
+			case err := <-errCh:
 				return err
 			}
-			if err2 != nil {
-				return err
-			}
-			if err3 != nil {
-				return err
-			}
-			if err := t.markContentAsCompleteAsync(contentId); err != nil {
-				return err
-			}
-			if err := msg.AckSync(); err != nil {
-				return err
-			}
+
+			//var err1, err2, err3 error
+			//var wg sync.WaitGroup
+			//wg.Add(1)
+			//go func() {
+			//	defer wg.Done()
+			//	syd := syncTradeDetailProcess{}
+			//	err1 = syd.Process(contentId)
+			//}()
+			//wg.Add(1)
+			//go func() {
+			//	defer wg.Done()
+			//	sss := sellingStaSyncProcess{}
+			//	err2 = sss.Process(contentId)
+			//}()
+			//wg.Add(1)
+			//go func() {
+			//	defer wg.Done()
+			//	dps := decisionParamSyncProcess{}
+			//	err3 = dps.Process(contentId)
+			//}()
+			//wg.Wait()
+			//if err1 != nil {
+			//	return err
+			//}
+			//if err2 != nil {
+			//	return err
+			//}
+			//if err3 != nil {
+			//	return err
+			//}
+			//if err := t.markContentAsCompleteAsync(contentId); err != nil {
+			//	return err
+			//}
+			//if err := msg.AckSync(); err != nil {
+			//	return err
+			//}
 		}
 	}
 }

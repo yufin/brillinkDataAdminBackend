@@ -12,7 +12,10 @@ import (
 	"strconv"
 )
 
-func syncDecisionParamFromContent(contentId int64) error {
+type decisionParamSyncProcess struct {
+}
+
+func (t decisionParamSyncProcess) Process(contentId int64) error {
 	var dataContent models.RcOriginContent
 	dbContent := sdk.Runtime.GetDbByKey(dataContent.TableName())
 	err := dbContent.Model(&dataContent).First(&dataContent, contentId).Error
@@ -34,40 +37,40 @@ func syncDecisionParamFromContent(contentId int64) error {
 	}
 	insertReq := dto.RcDecisionParamInsertReq{
 		ContentId:               contentId,
-		SwSdsnbCyrs:             safeGetIntFromMap(indexMap, "sw_sdsnb_cyrs"),
-		GsGdct:                  safeGetIntFromMap(indexMap, "gs_gdct"),
-		GsGdwdx:                 safeGetIntFromMap(indexMap, "gs_gdwdx"),
-		GsFrwdx:                 safeGetIntFromMap(indexMap, "gs_frwdx"),
-		LhCylwz:                 safeGetIntFromMap(indexMap, "lh_cylwz"),
-		LhMdPpjzl:               safeGetIntFromMap(indexMap, "lh_md_ppjzl"),
-		MdQybq:                  safeGetIntFromMap(indexMap, "md_qybq"),
-		SwCwbbYyzjzzts:          safeGetIntFromMap(indexMap, "sw_cwbb_yyzjzzts"),
-		SfFhSsqkQy:              safeGetIntFromMap(indexMap, "sf_fh_ssqk_qy"),
-		SwJcxxNsrxypj:           safeGetStringFromMap(indexMap, "sw_jcxx_nsrxypj"),
-		ZxYhsxqk:                safeGetIntFromMap(indexMap, "zx_yhsxqk"),
-		ZxDsfsxqk:               safeGetIntFromMap(indexMap, "zx_dsfsxqk"),
-		LhQylx:                  safeGetIntFromMap(indexMap, "lh_qylx"),
+		SwSdsnbCyrs:             t.safeGetIntFromMap(indexMap, "sw_sdsnb_cyrs"),
+		GsGdct:                  t.safeGetIntFromMap(indexMap, "gs_gdct"),
+		GsGdwdx:                 t.safeGetIntFromMap(indexMap, "gs_gdwdx"),
+		GsFrwdx:                 t.safeGetIntFromMap(indexMap, "gs_frwdx"),
+		LhCylwz:                 t.safeGetIntFromMap(indexMap, "lh_cylwz"),
+		LhMdPpjzl:               t.safeGetIntFromMap(indexMap, "lh_md_ppjzl"),
+		MdQybq:                  t.safeGetIntFromMap(indexMap, "md_qybq"),
+		SwCwbbYyzjzzts:          t.safeGetIntFromMap(indexMap, "sw_cwbb_yyzjzzts"),
+		SfFhSsqkQy:              t.safeGetIntFromMap(indexMap, "sf_fh_ssqk_qy"),
+		SwJcxxNsrxypj:           t.safeGetStringFromMap(indexMap, "sw_jcxx_nsrxypj"),
+		ZxYhsxqk:                t.safeGetIntFromMap(indexMap, "zx_yhsxqk"),
+		ZxDsfsxqk:               t.safeGetIntFromMap(indexMap, "zx_dsfsxqk"),
+		LhQylx:                  t.safeGetIntFromMap(indexMap, "lh_qylx"),
 		Nsrsbh:                  &dataContent.UscId,
-		SwSbNszeZzsqysds12m:     safeGetDecimalFromMap(indexMap, "sw_sb_nsze_zzsqysds_12m"),
-		SwSbNszezzlZzsqysds12mA: safeGetDecimalFromMap(indexMap, "sw_sb_nszezzl_zzsqysds_12m_a"),
-		SwSdsnbGzxjzzjezzl:      safeGetDecimalFromMap(indexMap, "sw_sdsnb_gzxjzzjezzl"),
-		SwSbzsSflhypld12m:       safeGetDecimalFromMap(indexMap, "sw_sbzs_sflhypld_12m"),
-		SwSdsnbYjfy:             safeGetDecimalFromMap(indexMap, "sw_sdsnb_yjfy"),
-		FpJxLxfy12m:             safeGetDecimalFromMap(indexMap, "fp_jx_lxfy_12m"),
-		SwCwbbSszb:              safeGetDecimalFromMap(indexMap, "sw_cwbb_sszb"),
-		FpJySychjeZb12mLh:       safeGetDecimalFromMap(indexMap, "fp_jy_sychje_zb_12m_lh"),
-		FpJxZyjyjezb12mLh:       safeGetDecimalFromMap(indexMap, "fp_jx_zyjyjezb_12m_lh"),
-		FpXxXychjeZb12mLh:       safeGetDecimalFromMap(indexMap, "fp_xx_xychje_zb_12m_lh"),
-		FpXxZyjyjezb12mLh:       safeGetDecimalFromMap(indexMap, "fp_xx_zyjyjezb_12m_lh"),
-		SwSbQbxse12m:            safeGetDecimalFromMap(indexMap, "sw_sb_qbxse_12m"),
-		SwSbQbxsezzl12m:         safeGetDecimalFromMap(indexMap, "sw_sb_qbxsezzl_12m"),
-		SwSbLsxs12m:             safeGetDecimalFromMap(indexMap, "sw_sb_lsxs_12m"),
-		SwCwbbChzztsCb:          safeGetDecimalFromMap(indexMap, "sw_cwbb_chzzts_cb"),
-		SwCwbbZcfzl:             safeGetDecimalFromMap(indexMap, "sw_cwbb_zcfzl"),
-		SwCwbbMlrzzlv:           safeGetDecimalFromMap(indexMap, "sw_cwbb_mlrzzlv"),
-		SwCwbbJlrzzlv:           safeGetDecimalFromMap(indexMap, "sw_cwbb_jlrzzlv"),
-		SwCwbbJzcszlv:           safeGetDecimalFromMap(indexMap, "sw_cwbb_jzcszlv"),
-		SwJcxxClnx:              safeGetDecimalFromMap(indexMap, "sw_jcxx_clnx"),
+		SwSbNszeZzsqysds12m:     t.safeGetDecimalFromMap(indexMap, "sw_sb_nsze_zzsqysds_12m"),
+		SwSbNszezzlZzsqysds12mA: t.safeGetDecimalFromMap(indexMap, "sw_sb_nszezzl_zzsqysds_12m_a"),
+		SwSdsnbGzxjzzjezzl:      t.safeGetDecimalFromMap(indexMap, "sw_sdsnb_gzxjzzjezzl"),
+		SwSbzsSflhypld12m:       t.safeGetDecimalFromMap(indexMap, "sw_sbzs_sflhypld_12m"),
+		SwSdsnbYjfy:             t.safeGetDecimalFromMap(indexMap, "sw_sdsnb_yjfy"),
+		FpJxLxfy12m:             t.safeGetDecimalFromMap(indexMap, "fp_jx_lxfy_12m"),
+		SwCwbbSszb:              t.safeGetDecimalFromMap(indexMap, "sw_cwbb_sszb"),
+		FpJySychjeZb12mLh:       t.safeGetDecimalFromMap(indexMap, "fp_jy_sychje_zb_12m_lh"),
+		FpJxZyjyjezb12mLh:       t.safeGetDecimalFromMap(indexMap, "fp_jx_zyjyjezb_12m_lh"),
+		FpXxXychjeZb12mLh:       t.safeGetDecimalFromMap(indexMap, "fp_xx_xychje_zb_12m_lh"),
+		FpXxZyjyjezb12mLh:       t.safeGetDecimalFromMap(indexMap, "fp_xx_zyjyjezb_12m_lh"),
+		SwSbQbxse12m:            t.safeGetDecimalFromMap(indexMap, "sw_sb_qbxse_12m"),
+		SwSbQbxsezzl12m:         t.safeGetDecimalFromMap(indexMap, "sw_sb_qbxsezzl_12m"),
+		SwSbLsxs12m:             t.safeGetDecimalFromMap(indexMap, "sw_sb_lsxs_12m"),
+		SwCwbbChzztsCb:          t.safeGetDecimalFromMap(indexMap, "sw_cwbb_chzzts_cb"),
+		SwCwbbZcfzl:             t.safeGetDecimalFromMap(indexMap, "sw_cwbb_zcfzl"),
+		SwCwbbMlrzzlv:           t.safeGetDecimalFromMap(indexMap, "sw_cwbb_mlrzzlv"),
+		SwCwbbJlrzzlv:           t.safeGetDecimalFromMap(indexMap, "sw_cwbb_jlrzzlv"),
+		SwCwbbJzcszlv:           t.safeGetDecimalFromMap(indexMap, "sw_cwbb_jzcszlv"),
+		SwJcxxClnx:              t.safeGetDecimalFromMap(indexMap, "sw_jcxx_clnx"),
 		StatusCode:              0,
 		ControlBy:               cModels.ControlBy{},
 	}
@@ -82,7 +85,7 @@ func syncDecisionParamFromContent(contentId int64) error {
 	return nil
 }
 
-func safeGetDecimalFromMap(m map[string]any, key string) decimal.NullDecimal {
+func (t decisionParamSyncProcess) safeGetDecimalFromMap(m map[string]any, key string) decimal.NullDecimal {
 	nullDecimal := decimal.NullDecimal{Valid: false}
 	if v, ok := m[key]; ok {
 		if v == nil {
@@ -100,7 +103,7 @@ func safeGetDecimalFromMap(m map[string]any, key string) decimal.NullDecimal {
 	return nullDecimal
 }
 
-func safeGetStringFromMap(m map[string]any, key string) *string {
+func (t decisionParamSyncProcess) safeGetStringFromMap(m map[string]any, key string) *string {
 	if v, ok := m[key]; ok {
 		if v == nil {
 			return nil
@@ -111,7 +114,7 @@ func safeGetStringFromMap(m map[string]any, key string) *string {
 	return nil
 }
 
-func safeGetIntFromMap(m map[string]any, key string) *int {
+func (t decisionParamSyncProcess) safeGetIntFromMap(m map[string]any, key string) *int {
 	if v, ok := m[key]; ok {
 		if v == nil {
 			return nil
