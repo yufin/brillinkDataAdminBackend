@@ -8,7 +8,6 @@ import (
 	"github.com/nats-io/nats.go"
 	"go-admin/app/rc/models"
 	"go-admin/pkg/natsclient"
-	"go-admin/utils"
 	"sync/atomic"
 	"time"
 )
@@ -31,12 +30,13 @@ func (t AhpRdmTask) Exec(arg interface{}) error {
 	atomic.StoreInt32(&decisionRunning, 1)
 	defer atomic.StoreInt32(&decisionRunning, 0)
 
-	if err := SyncDefaultDependencyParam(); err != nil {
+	dp := SyncDefaultDependencyParamProcess{}
+	if err := dp.Process(); err != nil {
 		log.Errorf("SyncDefaultDependencyParam Failed:%v \r\n", err)
 		return err
 	}
 
-	if err := pubIdsForRdm(); err != nil {
+	if err := t.pubIdsForRdm(); err != nil {
 		log.Errorf("selectWaitForRequest Failed:%v \r\n", err)
 		return err
 	}
@@ -71,114 +71,8 @@ func (t AhpRdmTask) Exec(arg interface{}) error {
 	}
 }
 
-func SyncDefaultDependencyParam() error {
-	// 自动同步 rc_dependency_data default with null contentId
-	var modelRdd models.RcDependencyData
-	db := sdk.Runtime.GetDbByKey(modelRdd.TableName())
-
-	userIds := make([]int64, 0)
-	err := db.Model(&modelRdd).
-		Distinct("create_by").
-		Pluck("create_by", &userIds).
-		Error
-	if err != nil {
-		return err
-	}
-
-	var tbContent models.RcOriginContent
-	dbRoc := sdk.Runtime.GetDbByKey(tbContent.TableName())
-	for _, userId := range userIds {
-		userId := userId
-		uscIds := make([]string, 0)
-		err := db.Model(&modelRdd).
-			Distinct("usc_id").
-			Where("create_by = ?", userId).
-			Pluck("usc_id", &uscIds).
-			Error
-		if err != nil {
-			return err
-		}
-
-		var modelContentInfo models.RcOriginContentInfo
-		for _, uscId := range uscIds {
-			uscId := uscId
-			contentInfos := make([]models.RcOriginContentInfo, 0)
-			err = dbRoc.
-				Model(&modelContentInfo).
-				Select("id").
-				Where("usc_id = ?", uscId).
-				Order("created_at").
-				Scan(&contentInfos).
-				Error
-			if err != nil {
-				return err
-			}
-			// make sure the rows query by createBy and uscId has same amount with contentIds
-			rddList := make([]models.RcDependencyData, 0)
-			err = db.Model(&modelRdd).
-				Where("usc_id = ?", uscId).
-				Where("create_by = ?", userId).
-				Order("created_at").
-				Scan(&rddList).
-				Error
-			if err != nil {
-				return err
-			}
-
-			// get contentId which not in rddList.contentId
-			rocNotExists := make([]models.RcOriginContentInfo, 0)
-			for _, cItem := range contentInfos {
-				cid := cItem.Id
-				found := false
-				for _, rddItem := range rddList {
-					rddCid := rddItem.ContentId
-					if cid == rddCid {
-						found = true
-						break
-					}
-				}
-				if !found {
-					rocNotExists = append(rocNotExists, cItem)
-				}
-			}
-			// get rdd with null contentId
-			defaultRdd := rddList[len(rddList)-1]
-			if len(rocNotExists) > 0 {
-				nullContentIdsRdds := make([]models.RcDependencyData, 0)
-				toUpdateRdds := make([]models.RcDependencyData, 0)
-
-				for _, rddNullable := range rddList {
-					if rddNullable.ContentId == 0 {
-						nullContentIdsRdds = append(nullContentIdsRdds, rddNullable)
-					}
-				}
-				for i, cItem2Update := range rocNotExists {
-					if i+1 <= len(nullContentIdsRdds) {
-						//nullContentIdsRdds[i].ContentId = cItem2Update.Id
-						toUpdateRdd := nullContentIdsRdds[i]
-						toUpdateRdd.ContentId = cItem2Update.Id
-						toUpdateRdd.AttributedMonth = cItem2Update.YearMonth
-						toUpdateRdds = append(toUpdateRdds, toUpdateRdd)
-					} else {
-						toUpdateRdd := defaultRdd
-						toUpdateRdd.Id = utils.NewFlakeId()
-						toUpdateRdd.ContentId = cItem2Update.Id
-						toUpdateRdd.AttributedMonth = cItem2Update.YearMonth
-						toUpdateRdds = append(toUpdateRdds, toUpdateRdd)
-					}
-				}
-				if err := db.Model(&modelRdd).Save(&toUpdateRdds).Error; err != nil {
-					return err
-				}
-			}
-		}
-	}
-
-	return nil
-}
-
 // pubIdsToRequestDecision query rows in dependency data where has not been requested, pub to queue.
-func pubIdsForRdm() error {
+func (AhpRdmTask) pubIdsForRdm() error {
 	var tbDep models.RcDependencyData
 	db := sdk.Runtime.GetDbByKey(tbDep.TableName())
 	depIds := make([]int64, 0)
@@ -186,7 +80,7 @@ func pubIdsForRdm() error {
 		Table(tbDep.TableName()).
 		Select("rc_dependency_data.id as dep_id").
 		Joins("LEFT JOIN rc_rdm_result rrr ON rc_dependency_data.id = rrr.dep_id").
-		Where("rc_dependency_data.content_id IS NOT NULL and rc_dependency_data.content_id IS != 0 AND rrr.dep_id IS NULL").
+		Where("rc_dependency_data.content_id IS NOT NULL and rc_dependency_data.content_id != 0 AND rrr.dep_id IS NULL").
 		Pluck("dep_id", &depIds).
 		Error
 	if err != nil {
@@ -196,15 +90,14 @@ func pubIdsForRdm() error {
 		return nil
 	}
 	for _, depId := range depIds {
-		msg := make([]byte, 8)
-		binary.BigEndian.PutUint64(msg, uint64(depId))
-		// TODO: try this (idempotent message writes)
-		//m := nats.NewMsg(natsclient.TopicToRequestDecisionNew)
-		//m.Data = msg
-		//m.Header.Set("Nats-Msg-Id", "unique-id-123")
-		//_, err := natsclient.TaskJs.PublishMsg(m)
+		data := make([]byte, 8)
+		binary.BigEndian.PutUint64(data, uint64(depId))
+		//_, err := natsclient.TaskJs.Publish(natsclient.TopicToRequestDecisionNew, msg)
+		m := nats.NewMsg(natsclient.TopicToRequestDecisionNew)
+		m.Data = data
+		m.Header.Set("Nats-Msg-Id", fmt.Sprintf("%d", depId))
+		_, err := natsclient.TaskJs.PublishMsg(m)
 
-		_, err := natsclient.TaskJs.Publish(natsclient.TopicToRequestDecisionNew, msg)
 		if err != nil {
 			return err
 		}

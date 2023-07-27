@@ -9,6 +9,7 @@ import (
 	"go-admin/app/rc/models"
 	"go-admin/config"
 	"go-admin/utils"
+	"gorm.io/gorm"
 	"io"
 	"net/http"
 	"strconv"
@@ -23,7 +24,9 @@ type PySidecarAhpRdm struct {
 func (t PySidecarAhpRdm) Pipeline() error {
 	f, err := t.getFactors()
 	if err != nil {
-		return err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
 	}
 
 	res, err := t.getRes(f)

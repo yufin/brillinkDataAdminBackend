@@ -9,12 +9,12 @@ settings:
     writertimeout: 200
   database:
     driver: mysql
-    source: root:oyyufei8@tcp(192.168.44.169:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
+    source: root:password-dev@tcp(192.168.44.169:3306)/go_admin?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms
     registers:
       - sources:
-          - 'root:oyyufei8@tcp(192.168.44.169:3306)/data_spider?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
+          - 'root:password-dev@tcp(192.168.44.169:3306)/data_spider?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
         replicas:
-          - 'root:oyyufei8@tcp(192.168.44.169:3306)/data_spider?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
+          - 'root:password-dev@tcp(192.168.44.169:3306)/data_spider?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms'
         tables:
           - 'enterprise_wait_list'
           - 'enterprise'
