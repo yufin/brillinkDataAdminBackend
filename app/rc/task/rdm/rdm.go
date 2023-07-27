@@ -101,13 +101,13 @@ func (AhpRdmTask) pubIdsForRdm() error {
 		if err != nil {
 			return err
 		}
-		err = db.Model(models.RcDependencyData{}).
-			Where("id = ?", depId).
-			Update("status_code", 1).
-			Error
-		if err != nil {
-			return err
-		}
+		//err = db.Model(models.RcDependencyData{}).
+		//	Where("id = ?", depId).
+		//	Update("status_code", 1).
+		//	Error
+		//if err != nil {
+		//	return err
+		//}
 	}
 	return nil
 }

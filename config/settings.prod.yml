@@ -90,7 +90,7 @@ settings:
         server: http://10.0.232.22:8008
         path: /login?redirect=/CrawlReport
         username: admin
-        password: "1234"
+        password: "bl@8818"
         ossBucketName: "report-snapshot"
     pySidecar:
       uri: http://10.0.232.22:8020

@@ -58,7 +58,6 @@ func (t ReportSnapshotTask) Exec(arg interface{}) error {
 				return err
 			}
 		}
-
 	}
 }
 
@@ -68,10 +67,17 @@ func (t ReportSnapshotTask) pubId4Snapshot() error {
 	db := sdk.Runtime.GetDbByKey(tb.TableName())
 	depIds := make([]int64, 0)
 	err := db.Raw(
-		`select rdd.id as dep_id
-			from rc_dependency_data rdd
-					 left join rc_report_oss rro on rdd.id = rro.dep_id
-			where rro.id is null and rdd.deleted_at is null and rro.deleted_at is null and rdd.status_code = 1;`).
+		`select distinct t.dep_id as dep_id from
+			(select rdd.id as dep_id, content_id
+						from rc_dependency_data rdd
+								 left join rc_report_oss rro on rdd.id = rro.dep_id
+						where rro.id is null
+						  and rdd.content_id is not null
+						  and rdd.content_id != 0
+						  and rdd.deleted_at is null
+						  and rro.deleted_at is null) t
+			left join rc_processed_content rpc on t.content_id =rpc.content_id
+			where rpc.id is not null;`).
 		Pluck("dep_id", &depIds).
 		Error
 	if err != nil {
