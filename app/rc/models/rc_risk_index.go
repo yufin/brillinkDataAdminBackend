@@ -4,11 +4,11 @@ import "go-admin/common/models"
 
 type RcRiskIndex struct {
 	models.Model
-	ContentId int64  `json:"content_id" gorm:"column:content_id"`
-	RiskDesc  string `json:"risk_desc" gorm:"column:risk_desc"`
-	Index     string `json:"index" gorm:"column:index"`
-	Value     string `json:"value" gorm:"column:value"`
-	Flag      string `json:"flag" gorm:"column:flag"`
+	ContentId  int64  `json:"content_id"`
+	RiskDec    string `json:"riskDec"`
+	IndexDec   string `json:"indexDec"`
+	IndexValue string `json:"indexValue"`
+	IndexFlag  string `json:"indexFlag"`
 	models.ModelTime
 	models.ControlBy
 }

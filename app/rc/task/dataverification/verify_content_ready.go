@@ -41,7 +41,7 @@ func iterContentIdtWaitForVerify() error {
 	var unprocessedIds []int64
 	err := db.Model(&models.RcOriginContent{}).
 		Joins("LEFT JOIN rc_processed_content on rc_origin_content.id = rc_processed_content.content_id").
-		Where("rc_processed_content.content_id is NULL").
+		//Where("rc_processed_content.content_id is NULL").
 		Where("rc_origin_content.status_code = 1").
 		Pluck("rc_origin_content.id", &unprocessedIds).
 		Error

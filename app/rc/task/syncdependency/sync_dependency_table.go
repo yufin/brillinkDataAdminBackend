@@ -32,7 +32,12 @@ func (t DependencyTableSyncTask) Exec(arg interface{}) error {
 	atomic.StoreInt32(&dtstRunning, 1)
 	defer atomic.StoreInt32(&dtstRunning, 0)
 
-	return t.pipeline()
+	err := t.pipeline()
+	if err != nil {
+		log.Errorf("TASK DependencyTableSyncTask Failed:%s \r\n", err)
+		return err
+	}
+	return nil
 }
 
 func (t DependencyTableSyncTask) pipeline() error {

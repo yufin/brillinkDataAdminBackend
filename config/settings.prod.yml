@@ -34,6 +34,7 @@ settings:
           - 'rc_decision_result'
           - 'rc_i18n_content'
           - 'rc_report_oss'
+          - 'rc_risk_index'
           - 'rc_scorecard'
           - 'rc_scorecard_rule'
           - 'rc_rdm_res_detail'

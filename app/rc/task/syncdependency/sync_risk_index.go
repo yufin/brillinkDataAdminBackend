@@ -39,11 +39,11 @@ func (p riskIndexSyncProcess) Process(contentId int64) error {
 	for _, v := range riskIndexes {
 		v := v.(map[string]any)
 		insertReq := models.RcRiskIndex{
-			ContentId: contentId,
-			RiskDesc:  p.safeGetString(v, "RISK_DEC"),
-			Index:     p.safeGetString(v, "INDEX_DEC"),
-			Value:     p.safeGetString(v, "INDEX_VALUE"),
-			Flag:      p.safeGetString(v, "INDEX_FLAG"),
+			ContentId:  contentId,
+			RiskDec:    p.safeGetString(v, "RISK_DEC"),
+			IndexDec:   p.safeGetString(v, "INDEX_DEC"),
+			IndexValue: p.safeGetString(v, "INDEX_VALUE"),
+			IndexFlag:  p.safeGetString(v, "INDEX_FLAG"),
 		}
 		insertReq.Id = utils.NewFlakeId()
 		if err := dbSsi.Create(&insertReq).Error; err != nil {
