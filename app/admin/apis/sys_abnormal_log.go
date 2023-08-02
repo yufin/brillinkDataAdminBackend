@@ -19,27 +19,27 @@ type SysAbnormalLog struct {
 }
 
 // GetPage 获取异常日志列表
-// @Summary 获取异常日志列表
-// @Description 获取异常日志列表
-// @Tags 异常日志
-// @Param abId query int64 false "编码"
-// @Param method query string false "请求方式"
-// @Param url query string false "请求地址"
-// @Param ip query string false "ip"
-// @Param abInfo query string false "异常信息"
-// @Param abSource query string false "异常来源"
-// @Param abFunc query string false "异常方法"
-// @Param userId query int64 false "用户id"
-// @Param userName query string false "操作人"
-// @Param headers query string false "请求头"
-// @Param body query string false "请求数据"
-// @Param resp query string false "回调数据"
-// @Param stackTrace query string false "堆栈追踪"
-// @Param pageSize query int false "页条数"
-// @Param pageIndex query int false "页码"
-// @Success 200 {object} antd.Response{data=antd.Pages{list=[]models.SysAbnormalLog}} "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-abnormal-log [get]
-// @Security Bearer
+// @Summary      获取异常日志列表
+// @Description  获取异常日志列表
+// @Tags         异常日志
+// @Param        abId        query     int64                                                         false  "编码"
+// @Param        method      query     string                                                        false  "请求方式"
+// @Param        url         query     string                                                        false  "请求地址"
+// @Param        ip          query     string                                                        false  "ip"
+// @Param        abInfo      query     string                                                        false  "异常信息"
+// @Param        abSource    query     string                                                        false  "异常来源"
+// @Param        abFunc      query     string                                                        false  "异常方法"
+// @Param        userId      query     int64                                                         false  "用户id"
+// @Param        userName    query     string                                                        false  "操作人"
+// @Param        headers     query     string                                                        false  "请求头"
+// @Param        body        query     string                                                        false  "请求数据"
+// @Param        resp        query     string                                                        false  "回调数据"
+// @Param        stackTrace  query     string                                                        false  "堆栈追踪"
+// @Param        pageSize    query     int                                                           false  "页条数"
+// @Param        pageIndex   query     int                                                           false  "页码"
+// @Success      200         {object}  antd.Response{data=antd.Pages{list=[]models.SysAbnormalLog}}  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-abnormal-log [get]
+// @Security     Bearer
 func (e SysAbnormalLog) GetPage(c *gin.Context) {
 	req := dto.SysAbnormalLogGetPageReq{}
 	s := service.SysAbnormalLog{}
@@ -68,13 +68,13 @@ func (e SysAbnormalLog) GetPage(c *gin.Context) {
 }
 
 // Get 获取异常日志
-// @Summary 获取异常日志
-// @Description 获取异常日志
-// @Tags 异常日志
-// @Param id path string false "id"
-// @Success 200 {object} antd.Response{data=models.SysAbnormalLog} "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-abnormal-log/{id} [get]
-// @Security Bearer
+// @Summary      获取异常日志
+// @Description  获取异常日志
+// @Tags         异常日志
+// @Param        id   path      string                                     false  "id"
+// @Success      200  {object}  antd.Response{data=models.SysAbnormalLog}  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-abnormal-log/{id} [get]
+// @Security     Bearer
 func (e SysAbnormalLog) Get(c *gin.Context) {
 	req := dto.SysAbnormalLogGetReq{}
 	resp := dto.SysAbnormalLogGetResp{}
@@ -102,13 +102,13 @@ func (e SysAbnormalLog) Get(c *gin.Context) {
 }
 
 // Delete 删除异常日志
-// @Summary 删除异常日志
-// @Description 删除异常日志
-// @Tags 异常日志
-// @Param ids body []int false "ids"
-// @Success 200 {object} antd.Response	"{"code": 200, "message": "删除成功"}"
-// @Router /api/v1/sys-abnormal-log [delete]
-// @Security Bearer
+// @Summary      删除异常日志
+// @Description  删除异常日志
+// @Tags         异常日志
+// @Param        ids  body      []int          false  "ids"
+// @Success      200  {object}  antd.Response  "{"code": 200, "message": "删除成功"}"
+// @Router       /api/v1/sys-abnormal-log [delete]
+// @Security     Bearer
 func (e SysAbnormalLog) Delete(c *gin.Context) {
 	s := service.SysAbnormalLog{}
 	req := dto.SysAbnormalLogDeleteReq{}

@@ -12,11 +12,11 @@ type System struct {
 }
 
 // GenerateCaptchaHandler 获取验证码
-// @Summary 获取验证码
-// @Description 获取验证码
-// @Tags 登陆
-// @Success 200 {object} antd.Response{data=string,id=string,msg=string} "{"code": 200, "data": [...]}"
-// @Router /api/v1/captcha [get]
+// @Summary      获取验证码
+// @Description  获取验证码
+// @Tags         登陆
+// @Success      200  {object}  antd.Response{data=string,id=string,msg=string}  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/captcha [get]
 func (e System) GenerateCaptchaHandler(c *gin.Context) {
 	err := e.MakeContext(c).Errors
 	if err != nil {

@@ -4823,6 +4823,9 @@
                 "name": {
                     "type": "string"
                 },
+                "nickName": {
+                    "type": "string"
+                },
                 "notifyCount": {
                     "type": "integer"
                 },
@@ -6311,7 +6314,7 @@
                     "type": "integer"
                 },
                 "isHistory": {
-                    "type": "boolean"
+                    "type": "integer"
                 },
                 "method": {
                     "type": "string"
@@ -6614,6 +6617,9 @@
                 },
                 "logId": {
                     "type": "integer"
+                },
+                "project": {
+                    "type": "string"
                 },
                 "type": {
                     "type": "string"

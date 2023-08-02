@@ -19,22 +19,22 @@ type TbCmsFriendlink struct {
 }
 
 // GetPage 获取列表
-// @Summary 获取列表
-// @Description 获取列表
+// @Summary      获取列表
+// @Description  获取列表
 // @Tags
-// @Param id query int64 false "主键编码"
-// @Param name query string false "链接名称"
-// @Param link query string false "链接地址"
-// @Param createdAt query time.Time false "创建时间"
-// @Param updatedAt query time.Time false "最后更新时间"
-// @Param deletedAt query time.Time false "删除时间"
-// @Param createBy query int64 false "创建者"
-// @Param updateBy query int64 false "更新者"
-// @Param pageSize query int false "页条数"
-// @Param pageIndex query int false "页码"
-// @Success 200 {object} antd.Response{data=antd.Pages{list=[]models.TbCmsFriendlink}} "{"code": 200, "data": [...]}"
-// @Router /api/v1/tb-cms-friendlink [get]
-// @Security Bearer
+// @Param     id         query     int64                                                          false  "主键编码"
+// @Param     name       query     string                                                         false  "链接名称"
+// @Param     link       query     string                                                         false  "链接地址"
+// @Param     createdAt  query     time.Time                                                      false  "创建时间"
+// @Param     updatedAt  query     time.Time                                                      false  "最后更新时间"
+// @Param     deletedAt  query     time.Time                                                      false  "删除时间"
+// @Param     createBy   query     int64                                                          false  "创建者"
+// @Param     updateBy   query     int64                                                          false  "更新者"
+// @Param     pageSize   query     int                                                            false  "页条数"
+// @Param     pageIndex  query     int                                                            false  "页码"
+// @Success   200        {object}  antd.Response{data=antd.Pages{list=[]models.TbCmsFriendlink}}  "{"code": 200, "data": [...]}"
+// @Router    /api/v1/tb-cms-friendlink [get]
+// @Security  Bearer
 func (e TbCmsFriendlink) GetPage(c *gin.Context) {
 	req := dto.TbCmsFriendlinkGetPageReq{}
 	s := service.TbCmsFriendlink{}
@@ -64,13 +64,13 @@ func (e TbCmsFriendlink) GetPage(c *gin.Context) {
 }
 
 // Get 获取
-// @Summary 获取
-// @Description 获取
+// @Summary      获取
+// @Description  获取
 // @Tags
-// @Param id path string false "id"
-// @Success 200 {object} antd.Response{data=models.TbCmsFriendlink} "{"code": 200, "data": [...]}"
-// @Router /api/v1/tb-cms-friendlink/{id} [get]
-// @Security Bearer
+// @Param     id   path      string                                      false  "id"
+// @Success   200  {object}  antd.Response{data=models.TbCmsFriendlink}  "{"code": 200, "data": [...]}"
+// @Router    /api/v1/tb-cms-friendlink/{id} [get]
+// @Security  Bearer
 func (e TbCmsFriendlink) Get(c *gin.Context) {
 	req := dto.TbCmsFriendlinkGetReq{}
 	resp := dto.TbCmsFriendlinkGetResp{}
@@ -98,15 +98,15 @@ func (e TbCmsFriendlink) Get(c *gin.Context) {
 }
 
 // Insert 创建
-// @Summary 创建
-// @Description 创建
+// @Summary      创建
+// @Description  创建
 // @Tags
-// @Accept application/json
-// @Product application/json
-// @Param data body dto.TbCmsFriendlinkInsertReq true "data"
-// @Success 200 {object} antd.Response	"{"code": 200, "message": "添加成功"}"
-// @Router /api/v1/tb-cms-friendlink [post]
-// @Security Bearer
+// @Accept    application/json
+// @Product   application/json
+// @Param     data  body      dto.TbCmsFriendlinkInsertReq  true  "data"
+// @Success   200   {object}  antd.Response                 "{"code": 200, "message": "添加成功"}"
+// @Router    /api/v1/tb-cms-friendlink [post]
+// @Security  Bearer
 func (e TbCmsFriendlink) Insert(c *gin.Context) {
 	req := dto.TbCmsFriendlinkInsertReq{}
 	s := service.TbCmsFriendlink{}
@@ -133,15 +133,15 @@ func (e TbCmsFriendlink) Insert(c *gin.Context) {
 }
 
 // Update 修改
-// @Summary 修改
-// @Description 修改
+// @Summary      修改
+// @Description  修改
 // @Tags
-// @Accept application/json
-// @Product application/json
-// @Param data body dto.TbCmsFriendlinkUpdateReq true "body"
-// @Success 200 {object} antd.Response	"{"code": 200, "message": "修改成功"}"
-// @Router /api/v1/tb-cms-friendlink/{id} [put]
-// @Security Bearer
+// @Accept    application/json
+// @Product   application/json
+// @Param     data  body      dto.TbCmsFriendlinkUpdateReq  true  "body"
+// @Success   200   {object}  antd.Response                 "{"code": 200, "message": "修改成功"}"
+// @Router    /api/v1/tb-cms-friendlink/{id} [put]
+// @Security  Bearer
 func (e TbCmsFriendlink) Update(c *gin.Context) {
 	req := dto.TbCmsFriendlinkUpdateReq{}
 	s := service.TbCmsFriendlink{}
@@ -167,13 +167,13 @@ func (e TbCmsFriendlink) Update(c *gin.Context) {
 }
 
 // Delete 删除
-// @Summary 删除
-// @Description 删除
+// @Summary      删除
+// @Description  删除
 // @Tags
-// @Param ids body []int false "ids"
-// @Success 200 {object} antd.Response	"{"code": 200, "message": "删除成功"}"
-// @Router /api/v1/tb-cms-friendlink [delete]
-// @Security Bearer
+// @Param     ids  body      []int          false  "ids"
+// @Success   200  {object}  antd.Response  "{"code": 200, "message": "删除成功"}"
+// @Router    /api/v1/tb-cms-friendlink [delete]
+// @Security  Bearer
 func (e TbCmsFriendlink) Delete(c *gin.Context) {
 	s := service.TbCmsFriendlink{}
 	req := dto.TbCmsFriendlinkDeleteReq{}

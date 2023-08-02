@@ -17,13 +17,13 @@ type SysMenu struct {
 }
 
 // GetPage Menu列表数据
-// @Summary Menu列表数据
-// @Description 获取JSON
-// @Tags 菜单
-// @Param menuName query string false "menuName"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/menu [get]
-// @Security Bearer
+// @Summary      Menu列表数据
+// @Description  获取JSON
+// @Tags         菜单
+// @Param        menuName  query     string         false  "menuName"
+// @Success      200       {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/menu [get]
+// @Security     Bearer
 func (e SysMenu) GetPage(c *gin.Context) {
 	s := service.SysMenu{}
 	req := dto.SysMenuGetPageReq{}
@@ -47,13 +47,13 @@ func (e SysMenu) GetPage(c *gin.Context) {
 }
 
 // Get 获取菜单详情
-// @Summary Menu详情数据
-// @Description 获取JSON
-// @Tags 菜单
-// @Param id path string false "id"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/menu/{id} [get]
-// @Security Bearer
+// @Summary      Menu详情数据
+// @Description  获取JSON
+// @Tags         菜单
+// @Param        id   path      string         false  "id"
+// @Success      200  {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/menu/{id} [get]
+// @Security     Bearer
 func (e SysMenu) Get(c *gin.Context) {
 	req := dto.SysMenuGetReq{}
 	s := new(service.SysMenu)
@@ -76,15 +76,15 @@ func (e SysMenu) Get(c *gin.Context) {
 }
 
 // Insert 创建菜单
-// @Summary 创建菜单
-// @Description 获取JSON
-// @Tags 菜单
-// @Accept  application/json
-// @Product application/json
-// @Param data body dto.SysMenuInsertReq true "data"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/menu [post]
-// @Security Bearer
+// @Summary      创建菜单
+// @Description  获取JSON
+// @Tags         菜单
+// @Accept       application/json
+// @Product      application/json
+// @Param        data  body      dto.SysMenuInsertReq  true  "data"
+// @Success      200   {object}  antd.Response         "{"code": 200, "data": [...]}"
+// @Router       /api/v1/menu [post]
+// @Security     Bearer
 func (e SysMenu) Insert(c *gin.Context) {
 	req := dto.SysMenuInsertReq{}
 	s := new(service.SysMenu)
@@ -109,16 +109,16 @@ func (e SysMenu) Insert(c *gin.Context) {
 }
 
 // Update 修改菜单
-// @Summary 修改菜单
-// @Description 获取JSON
-// @Tags 菜单
-// @Accept  application/json
-// @Product application/json
-// @Param id path int true "id"
-// @Param data body dto.SysMenuUpdateReq true "body"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/menu/{id} [put]
-// @Security Bearer
+// @Summary      修改菜单
+// @Description  获取JSON
+// @Tags         菜单
+// @Accept       application/json
+// @Product      application/json
+// @Param        id    path      int                   true  "id"
+// @Param        data  body      dto.SysMenuUpdateReq  true  "body"
+// @Success      200   {object}  antd.Response         "{"code": 200, "data": [...]}"
+// @Router       /api/v1/menu/{id} [put]
+// @Security     Bearer
 func (e SysMenu) Update(c *gin.Context) {
 	req := dto.SysMenuUpdateReq{}
 	s := new(service.SysMenu)
@@ -143,13 +143,13 @@ func (e SysMenu) Update(c *gin.Context) {
 }
 
 // Delete 删除菜单
-// @Summary 删除菜单
-// @Description 删除数据
-// @Tags 菜单
-// @Param data body dto.SysMenuDeleteReq true "body"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/menu [delete]
-// @Security Bearer
+// @Summary      删除菜单
+// @Description  删除数据
+// @Tags         菜单
+// @Param        data  body      dto.SysMenuDeleteReq  true  "body"
+// @Success      200   {object}  antd.Response         "{"code": 200, "data": [...]}"
+// @Router       /api/v1/menu [delete]
+// @Security     Bearer
 func (e SysMenu) Delete(c *gin.Context) {
 	control := new(dto.SysMenuDeleteReq)
 	s := new(service.SysMenu)
@@ -173,12 +173,12 @@ func (e SysMenu) Delete(c *gin.Context) {
 }
 
 // GetMenuRole 根据登录角色名称获取菜单列表数据（左菜单使用）
-// @Summary 根据登录角色名称获取菜单列表数据（左菜单使用）
-// @Description 获取JSON
-// @Tags 菜单
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/menurole [get]
-// @Security Bearer
+// @Summary      根据登录角色名称获取菜单列表数据（左菜单使用）
+// @Description  获取JSON
+// @Tags         菜单
+// @Success      200  {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/menurole [get]
+// @Security     Bearer
 func (e SysMenu) GetMenuRole(c *gin.Context) {
 	s := new(service.SysMenu)
 	err := e.MakeContext(c).
@@ -202,15 +202,15 @@ func (e SysMenu) GetMenuRole(c *gin.Context) {
 }
 
 // GetMenuTreeSelect 根据角色ID查询菜单下拉树结构
-// @Summary 角色修改使用的菜单列表
-// @Description 获取JSON
-// @Tags 菜单
-// @Accept  application/json
-// @Product application/json
-// @Param roleId path int true "roleId"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/menuTreeselect/{roleId} [get]
-// @Security Bearer
+// @Summary      角色修改使用的菜单列表
+// @Description  获取JSON
+// @Tags         菜单
+// @Accept       application/json
+// @Product      application/json
+// @Param        roleId  path      int            true  "roleId"
+// @Success      200     {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/menuTreeselect/{roleId} [get]
+// @Security     Bearer
 func (e SysMenu) GetMenuTreeSelect(c *gin.Context) {
 	m := service.SysMenu{}
 	r := service.SysRole{}

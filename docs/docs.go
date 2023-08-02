@@ -4832,6 +4832,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "nickName": {
+                    "type": "string"
+                },
                 "notifyCount": {
                     "type": "integer"
                 },
@@ -6320,7 +6323,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "isHistory": {
-                    "type": "boolean"
+                    "type": "integer"
                 },
                 "method": {
                     "type": "string"
@@ -6623,6 +6626,9 @@ const docTemplate = `{
                 },
                 "logId": {
                     "type": "integer"
+                },
+                "project": {
+                    "type": "string"
                 },
                 "type": {
                     "type": "string"

@@ -18,14 +18,14 @@ type SysTable struct {
 }
 
 // GetPage 分页列表数据
-// @Summary 分页列表数据
-// @Description 生成表分页列表
-// @Tags 工具 / 生成工具
-// @Param tableName query string false "tableName / 数据表名称"
-// @Param pageSize query int false "pageSize / 页条数"
-// @Param pageIndex query int false "pageIndex / 页码"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys/tables/page [get]
+// @Summary      分页列表数据
+// @Description  生成表分页列表
+// @Tags         工具 / 生成工具
+// @Param        tableName  query     string         false  "tableName / 数据表名称"
+// @Param        pageSize   query     int            false  "pageSize / 页条数"
+// @Param        pageIndex  query     int            false  "pageIndex / 页码"
+// @Success      200        {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys/tables/page [get]
 func (e SysTable) GetPage(c *gin.Context) {
 	e.Context = c
 	log := e.GetLogger()
@@ -61,13 +61,13 @@ func (e SysTable) GetPage(c *gin.Context) {
 }
 
 // Get
-// @Summary 获取配置
-// @Description 获取JSON
-// @Tags 工具 / 生成工具
-// @Param configKey path int true "configKey"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys/tables/info/{tableId} [get]
-// @Security Bearer
+// @Summary      获取配置
+// @Description  获取JSON
+// @Tags         工具 / 生成工具
+// @Param        configKey  path      int            true  "configKey"
+// @Success      200        {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys/tables/info/{tableId} [get]
+// @Security     Bearer
 func (e SysTable) Get(c *gin.Context) {
 	e.Context = c
 	log := e.GetLogger()
@@ -144,16 +144,16 @@ func (e SysTable) GetSysTablesTree(c *gin.Context) {
 }
 
 // Insert
-// @Summary 添加表结构
-// @Description 添加表结构
-// @Tags 工具 / 生成工具
-// @Accept  application/json
-// @Product application/json
-// @Param tables query string false "tableName / 数据表名称"
-// @Success 200 {string} string	"{"code": 200, "message": "添加成功"}"
-// @Success 200 {string} string	"{"code": -1, "message": "添加失败"}"
-// @Router /api/v1/sys/tables/info [post]
-// @Security Bearer
+// @Summary      添加表结构
+// @Description  添加表结构
+// @Tags         工具 / 生成工具
+// @Accept       application/json
+// @Product      application/json
+// @Param        tables  query     string  false  "tableName / 数据表名称"
+// @Success      200     {string}  string  "{"code": 200, "message": "添加成功"}"
+// @Success      200     {string}  string  "{"code": -1, "message": "添加失败"}"
+// @Router       /api/v1/sys/tables/info [post]
+// @Security     Bearer
 func (e SysTable) Insert(c *gin.Context) {
 	e.Context = c
 	log := e.GetLogger()
@@ -298,16 +298,16 @@ func genTableInit(tx *gorm.DB, tablesList []string, i int, c *gin.Context) (tool
 }
 
 // Update
-// @Summary 修改表结构
-// @Description 修改表结构
-// @Tags 工具 / 生成工具
-// @Accept  application/json
-// @Product application/json
-// @Param data body tools.SysTables true "body"
-// @Success 200 {string} string	"{"code": 200, "message": "添加成功"}"
-// @Success 200 {string} string	"{"code": -1, "message": "添加失败"}"
-// @Router /api/v1/sys/tables/info [put]
-// @Security Bearer
+// @Summary      修改表结构
+// @Description  修改表结构
+// @Tags         工具 / 生成工具
+// @Accept       application/json
+// @Product      application/json
+// @Param        data  body      tools.SysTables  true  "body"
+// @Success      200   {string}  string           "{"code": 200, "message": "添加成功"}"
+// @Success      200   {string}  string           "{"code": -1, "message": "添加失败"}"
+// @Router       /api/v1/sys/tables/info [put]
+// @Security     Bearer
 func (e SysTable) Update(c *gin.Context) {
 	var data tools.SysTables
 	err := c.Bind(&data)
@@ -333,13 +333,13 @@ func (e SysTable) Update(c *gin.Context) {
 }
 
 // Delete
-// @Summary 删除表结构
-// @Description 删除表结构
-// @Tags 工具 / 生成工具
-// @Param tableId path int true "tableId"
-// @Success 200 {string} string	"{"code": 200, "message": "删除成功"}"
-// @Success 200 {string} string	"{"code": -1, "message": "删除失败"}"
-// @Router /api/v1/sys/tables/info/{tableId} [delete]
+// @Summary      删除表结构
+// @Description  删除表结构
+// @Tags         工具 / 生成工具
+// @Param        tableId  path      int     true  "tableId"
+// @Success      200      {string}  string  "{"code": 200, "message": "删除成功"}"
+// @Success      200      {string}  string  "{"code": -1, "message": "删除失败"}"
+// @Router       /api/v1/sys/tables/info/{tableId} [delete]
 func (e SysTable) Delete(c *gin.Context) {
 	e.Context = c
 	log := e.GetLogger()
