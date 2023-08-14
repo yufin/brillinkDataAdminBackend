@@ -64,12 +64,12 @@ func GetHourDiffer(startTime, endTime string) int64 {
 }
 
 // ServerInfo 获取系统信息
-// @Summary 系统信息
-// @Description 获取JSON
-// @Tags 系统信息
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/server-monitor [get]
-// @Security Bearer
+// @Summary      系统信息
+// @Description  获取JSON
+// @Tags         系统信息
+// @Success      200  {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/server-monitor [get]
+// @Security     Bearer
 func (e ServerMonitor) ServerInfo(c *gin.Context) {
 	e.Context = c
 
@@ -120,11 +120,11 @@ func (e ServerMonitor) ServerInfo(c *gin.Context) {
 	diskDic["total"] = diskTotal / GB
 	diskDic["free"] = diskUsed / GB
 
-	mem, _ := mem.VirtualMemory()
-	memUsedMB := int(mem.Used) / GB
-	memTotalMB := int(mem.Total) / GB
-	memFreeMB := int(mem.Free) / GB
-	memUsedPercent := int(mem.UsedPercent)
+	memory, _ := mem.VirtualMemory()
+	memUsedMB := int(memory.Used) / GB
+	memTotalMB := int(memory.Total) / GB
+	memFreeMB := int(memory.Free) / GB
+	memUsedPercent := int(memory.UsedPercent)
 	memDic := make(map[string]interface{}, 0)
 	memDic["total"] = memTotalMB
 	memDic["used"] = memUsedMB

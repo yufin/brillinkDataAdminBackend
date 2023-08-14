@@ -18,20 +18,20 @@ type SysRequestLog struct {
 }
 
 // GetPage 操作日志列表
-// @Summary 操作日志列表
-// @Description 获取JSON
-// @Tags 操作日志
-// @Param title query string false "title"
-// @Param method query string false "method"
-// @Param requestMethod  query string false "requestMethod"
-// @Param operUrl query string false "operUrl"
-// @Param operIp query string false "operIp"
-// @Param status query string false "status"
-// @Param beginTime query string false "beginTime"
-// @Param endTime query string false "endTime"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-request-log [get]
-// @Security Bearer
+// @Summary      操作日志列表
+// @Description  获取JSON
+// @Tags         操作日志
+// @Param        title          query     string         false  "title"
+// @Param        method         query     string         false  "method"
+// @Param        requestMethod  query     string         false  "requestMethod"
+// @Param        operUrl        query     string         false  "operUrl"
+// @Param        operIp         query     string         false  "operIp"
+// @Param        status         query     string         false  "status"
+// @Param        beginTime      query     string         false  "beginTime"
+// @Param        endTime        query     string         false  "endTime"
+// @Success      200            {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-request-log [get]
+// @Security     Bearer
 func (e SysRequestLog) GetPage(c *gin.Context) {
 	s := service.SysRequestLog{}
 	req := new(dto.SysRequestLogGetPageReq)
@@ -59,13 +59,13 @@ func (e SysRequestLog) GetPage(c *gin.Context) {
 }
 
 // Get 操作日志通过id获取
-// @Summary 操作日志通过id获取
-// @Description 获取JSON
-// @Tags 操作日志
-// @Param id path string false "id"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-request-log/{id} [get]
-// @Security Bearer
+// @Summary      操作日志通过id获取
+// @Description  获取JSON
+// @Tags         操作日志
+// @Param        id   path      string         false  "id"
+// @Success      200  {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-request-log/{id} [get]
+// @Security     Bearer
 func (e SysRequestLog) Get(c *gin.Context) {
 	s := new(service.SysRequestLog)
 	req := dto.SysRequestLogGetReq{}
@@ -93,13 +93,13 @@ func (e SysRequestLog) Get(c *gin.Context) {
 
 // Delete 操作日志删除
 // DeleteSysMenu 操作日志删除
-// @Summary 删除操作日志
-// @Description 删除数据
-// @Tags 操作日志
-// @Param data body dto.SysRequestLogDeleteReq true "body"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-request-log [delete]
-// @Security Bearer
+// @Summary      删除操作日志
+// @Description  删除数据
+// @Tags         操作日志
+// @Param        data  body      dto.SysRequestLogDeleteReq  true  "body"
+// @Success      200   {object}  antd.Response               "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-request-log [delete]
+// @Security     Bearer
 func (e SysRequestLog) Delete(c *gin.Context) {
 	s := new(service.SysRequestLog)
 	req := dto.SysRequestLogDeleteReq{}

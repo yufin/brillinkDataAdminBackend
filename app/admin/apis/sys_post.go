@@ -16,16 +16,16 @@ type SysPost struct {
 }
 
 // GetPage
-// @Summary 岗位列表数据
-// @Description 获取JSON
-// @Tags 岗位
-// @Param postName query string false "postName"
-// @Param postCode query string false "postCode"
-// @Param postId query string false "postId"
-// @Param status query string false "status"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/post [get]
-// @Security Bearer
+// @Summary      岗位列表数据
+// @Description  获取JSON
+// @Tags         岗位
+// @Param        postName  query     string         false  "postName"
+// @Param        postCode  query     string         false  "postCode"
+// @Param        postId    query     string         false  "postId"
+// @Param        status    query     string         false  "status"
+// @Success      200       {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/post [get]
+// @Security     Bearer
 func (e SysPost) GetPage(c *gin.Context) {
 	s := service.SysPost{}
 	req := dto.SysPostGetPageReq{}
@@ -49,13 +49,13 @@ func (e SysPost) GetPage(c *gin.Context) {
 }
 
 // Get
-// @Summary 获取岗位信息
-// @Description 获取JSON
-// @Tags 岗位
-// @Param id path int true "编码"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/post/{postId} [get]
-// @Security Bearer
+// @Summary      获取岗位信息
+// @Description  获取JSON
+// @Tags         岗位
+// @Param        id   path      int            true  "编码"
+// @Success      200  {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/post/{postId} [get]
+// @Security     Bearer
 func (e SysPost) Get(c *gin.Context) {
 	s := service.SysPost{}
 	req := dto.SysPostGetReq{}
@@ -79,16 +79,16 @@ func (e SysPost) Get(c *gin.Context) {
 }
 
 // Insert
-// @Summary 添加岗位
-// @Description 获取JSON
-// @Tags 岗位
-// @Accept  application/json
-// @Product application/json
-// @Param data body dto.SysPostInsertReq true "data"
-// @Success 200 {string} string	"{"code": 200, "message": "添加成功"}"
-// @Success 200 {string} string	"{"code": -1, "message": "添加失败"}"
-// @Router /api/v1/post [post]
-// @Security Bearer
+// @Summary      添加岗位
+// @Description  获取JSON
+// @Tags         岗位
+// @Accept       application/json
+// @Product      application/json
+// @Param        data  body      dto.SysPostInsertReq  true  "data"
+// @Success      200   {string}  string                "{"code": 200, "message": "添加成功"}"
+// @Success      200   {string}  string                "{"code": -1, "message": "添加失败"}"
+// @Router       /api/v1/post [post]
+// @Security     Bearer
 func (e SysPost) Insert(c *gin.Context) {
 	s := service.SysPost{}
 	req := dto.SysPostInsertReq{}
@@ -112,15 +112,15 @@ func (e SysPost) Insert(c *gin.Context) {
 }
 
 // Update 修改岗位
-// @Summary 修改岗位
-// @Description 获取JSON
-// @Tags 岗位
-// @Accept  application/json
-// @Product application/json
-// @Param data body dto.SysPostUpdateReq true "body"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/post [put]
-// @Security Bearer
+// @Summary      修改岗位
+// @Description  获取JSON
+// @Tags         岗位
+// @Accept       application/json
+// @Product      application/json
+// @Param        data  body      dto.SysPostUpdateReq  true  "body"
+// @Success      200   {object}  antd.Response         "{"code": 200, "data": [...]}"
+// @Router       /api/v1/post [put]
+// @Security     Bearer
 func (e SysPost) Update(c *gin.Context) {
 	s := service.SysPost{}
 	req := dto.SysPostUpdateReq{}
@@ -143,14 +143,14 @@ func (e SysPost) Update(c *gin.Context) {
 }
 
 // Delete
-// @Summary 删除岗位
-// @Description 删除数据
-// @Tags 岗位
-// @Param id body dto.SysPostDeleteReq true "请求参数"
-// @Success 200 {string} string	"{"code": 200, "message": "删除成功"}"
-// @Success 500 {string} string	"{"code": 500, "message": "删除失败"}"
-// @Router /api/v1/post [delete]
-// @Security Bearer
+// @Summary      删除岗位
+// @Description  删除数据
+// @Tags         岗位
+// @Param        id   body      dto.SysPostDeleteReq  true  "请求参数"
+// @Success      200  {string}  string                "{"code": 200, "message": "删除成功"}"
+// @Success      500  {string}  string                "{"code": 500, "message": "删除失败"}"
+// @Router       /api/v1/post [delete]
+// @Security     Bearer
 func (e SysPost) Delete(c *gin.Context) {
 	s := service.SysPost{}
 	req := dto.SysPostDeleteReq{}
@@ -174,12 +174,12 @@ func (e SysPost) Delete(c *gin.Context) {
 }
 
 // GetOption
-// @Summary 职位下拉框数据
-// @Description Get JSON
-// @Tags 职位/Post
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/post-option [get]
-// @Security Bearer
+// @Summary      职位下拉框数据
+// @Description  Get JSON
+// @Tags         职位/Post
+// @Success      200  {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/post-option [get]
+// @Security     Bearer
 func (e SysPost) GetOption(c *gin.Context) {
 	s := service.SysPost{}
 	req := dto.SysPostGetPageReq{}

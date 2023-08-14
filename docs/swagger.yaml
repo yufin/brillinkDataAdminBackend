@@ -64,79 +64,6 @@ definitions:
       label:
         type: string
     type: object
-  dto.Edge:
-    properties:
-      data:
-        additionalProperties: {}
-        type: object
-      id:
-        type: string
-      label:
-        type: string
-      source:
-        type: string
-      target:
-        type: string
-    type: object
-  dto.EnterpriseWaitListInsertReq:
-    properties:
-      createBy:
-        type: integer
-      enterpriseId:
-        description: 企业uuid4
-        type: string
-      enterpriseName:
-        description: 企业名称
-        type: string
-      priority:
-        description: 优先级
-        type: integer
-      qccUrl:
-        description: qcc主体网址
-        type: string
-      source:
-        description: 来源备注
-        type: string
-      statusCode:
-        description: 数据爬取状态码
-        type: integer
-      taxIdentCode:
-        description: 纳税人识别号
-        type: string
-      updateBy:
-        type: integer
-    type: object
-  dto.EnterpriseWaitListUpdateReq:
-    properties:
-      createBy:
-        type: integer
-      enterpriseId:
-        description: 企业uuid4
-        type: string
-      enterpriseName:
-        description: 企业名称
-        type: string
-      id:
-        description: 主键id
-        type: integer
-      priority:
-        description: 优先级
-        type: integer
-      qccUrl:
-        description: qcc主体网址
-        type: string
-      source:
-        description: 来源备注
-        type: string
-      statusCode:
-        description: 数据爬取状态码
-        type: integer
-      taxIdentCode:
-        description: 纳税人识别号
-        type: string
-      updateBy:
-        type: integer
-    type: object
   dto.Geographic:
     properties:
       city:
@@ -150,31 +77,6 @@ definitions:
         type: string
       configValue:
         type: string
-    type: object
-  dto.LinkNode:
-    properties:
-      data:
-        additionalProperties: {}
-        type: object
-      id:
-        type: string
-      labels:
-        items:
-          type: string
-        type: array
-      title:
-        type: string
-    type: object
-  dto.Net:
-    properties:
-      edges:
-        items:
-          $ref: '#/definitions/dto.Edge'
-        type: array
-      nodes:
-        items:
-          $ref: '#/definitions/dto.LinkNode'
-        type: array
     type: object
   dto.PassWord:
     properties:
@@ -206,6 +108,8 @@ definitions:
       mobile:
         type: string
       name:
+        type: string
+      nickName:
         type: string
       notifyCount:
         type: integer
@@ -396,10 +300,14 @@ definitions:
     type: object
   dto.SysDictDataDeleteReq:
     properties:
+      createBy:
+        type: integer
       ids:
         items:
           type: integer
         type: array
+      updateBy:
+        type: integer
     type: object
   dto.SysDictDataGetAllResp:
     properties:
@@ -632,7 +540,7 @@ definitions:
         type: integer
       sysApi:
         items:
-          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
+          $ref: '#/definitions/models.SysApi'
         type: array
       title:
         description: 显示名称
@@ -692,7 +600,7 @@ definitions:
         type: integer
       sysApi:
         items:
-          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
+          $ref: '#/definitions/models.SysApi'
         type: array
       title:
         description: 显示名称
@@ -805,11 +713,11 @@ definitions:
         type: string
       sysDept:
         items:
-          $ref: '#/definitions/go-admin_app_admin_models.SysDept'
+          $ref: '#/definitions/models.SysDept'
         type: array
       sysMenu:
         items:
-          $ref: '#/definitions/go-admin_app_admin_models.SysMenu'
+          $ref: '#/definitions/models.SysMenu'
         type: array
       updateBy:
         type: integer
@@ -853,11 +761,11 @@ definitions:
         type: string
       sysDept:
         items:
-          $ref: '#/definitions/go-admin_app_admin_models.SysDept'
+          $ref: '#/definitions/models.SysDept'
         type: array
       sysMenu:
         items:
-          $ref: '#/definitions/go-admin_app_admin_models.SysMenu'
+          $ref: '#/definitions/models.SysMenu'
         type: array
       updateBy:
         type: integer
@@ -1125,28 +1033,6 @@ definitions:
       updateBy:
         type: integer
     type: object
-  dto.TreeNode:
-    properties:
-      children:
-        items:
-          $ref: '#/definitions/dto.TreeNode'
-        type: array
-      childrenCount:
-        type: integer
-      data:
-        additionalProperties: {}
-        type: object
-      entityId:
-        type: string
-      id:
-        type: string
-      labels:
-        items:
-          type: string
-        type: array
-      title:
-        type: string
-    type: object
   dto.UpdateStatusReq:
     properties:
       createBy:
@@ -1172,7 +1058,25 @@ definitions:
         description: 用户ID
         type: integer
     type: object
-  go-admin_app_admin_models.SysAbnormalLog:
+  handler.Login:
+    properties:
+      code:
+        type: string
+      password:
+        type: string
+      type:
+        type: string
+      username:
+        type: string
+      uuid:
+        type: string
+    required:
+    - code
+    - password
+    - username
+    - uuid
+    type: object
+  models.SysAbnormalLog:
     properties:
       abFunc:
         type: string
@@ -1209,7 +1113,7 @@ definitions:
       userName:
         type: string
     type: object
-  go-admin_app_admin_models.SysApi:
+  models.SysApi:
     properties:
       bus:
         type: string
@@ -1224,7 +1128,7 @@ definitions:
       id:
         type: integer
       isHistory:
-        type: boolean
+        type: integer
       method:
         type: string
       name:
@@ -1240,7 +1144,7 @@ definitions:
       updatedAt:
         type: string
     type: object
-  go-admin_app_admin_models.SysConfig:
+  models.SysConfig:
     properties:
       configKey:
         type: string
@@ -1269,11 +1173,11 @@ definitions:
       updatedAt:
         type: string
     type: object
-  go-admin_app_admin_models.SysDept:
+  models.SysDept:
     properties:
       children:
         items:
-          $ref: '#/definitions/go-admin_app_admin_models.SysDept'
+          $ref: '#/definitions/models.SysDept'
         type: array
       createBy:
         type: integer
@@ -1314,93 +1218,7 @@ definitions:
       updatedAt:
         type: string
     type: object
-  go-admin_app_admin_models.SysMenu:
-    properties:
-      apis:
-        items:
-          type: integer
-        type: array
-      breadcrumb:
-        type: string
-      children:
-        items:
-          $ref: '#/definitions/go-admin_app_admin_models.SysMenu'
-        type: array
-      component:
-        type: string
-      createBy:
-        type: integer
-      createdAt:
-        type: string
-      dataScope:
-        type: string
-      icon:
-        type: string
-      is_select:
-        type: boolean
-      isFrame:
-        type: string
-      menuId:
-        type: integer
-      menuName:
-        type: string
-      menuType:
-        type: string
-      noCache:
-        type: boolean
-      params:
-        type: string
-      parentId:
-        type: integer
-      path:
-        type: string
-      paths:
-        type: string
-      permission:
-        type: string
-      roleId:
-        type: integer
-      sort:
-        type: integer
-      sysApi:
-        items:
-          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
-        type: array
-      title:
-        type: string
-      updateBy:
-        type: integer
-      updatedAt:
-        type: string
-      visible:
-        type: boolean
-    type: object
-  go-admin_app_admin_models.SysOperateLog:
-    properties:
-      createBy:
-        type: integer
-      createdAt:
-        type: string
-      description:
-        type: string
-      logId:
-        type: integer
-      type:
-        type: string
-      updateAfter:
-        type: string
-      updateBefore:
-        type: string
-      updateBy:
-        type: integer
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      userName:
-        type: string
-    type: object
-  go-admin_app_jobs_models.SysJob:
+  models.SysJob:
     properties:
       args:
         description: 目标参数
@@ -1446,49 +1264,92 @@ definitions:
       updatedAt:
         type: string
     type: object
-  handler.Login:
+  models.SysMenu:
     properties:
-      code:
+      apis:
+        items:
+          type: integer
+        type: array
+      breadcrumb:
         type: string
-      password:
+      children:
+        items:
+          $ref: '#/definitions/models.SysMenu'
+        type: array
+      component:
         type: string
-      type:
+      createBy:
+        type: integer
+      createdAt:
         type: string
-      username:
+      dataScope:
         type: string
-      uuid:
+      icon:
         type: string
-    required:
-    - code
-    - password
-    - username
-    - uuid
+      is_select:
+        type: boolean
+      isFrame:
+        type: string
+      menuId:
+        type: integer
+      menuName:
+        type: string
+      menuType:
+        type: string
+      noCache:
+        type: boolean
+      params:
+        type: string
+      parentId:
+        type: integer
+      path:
+        type: string
+      paths:
+        type: string
+      permission:
+        type: string
+      roleId:
+        type: integer
+      sort:
+        type: integer
+      sysApi:
+        items:
+          $ref: '#/definitions/models.SysApi'
+        type: array
+      title:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      visible:
+        type: boolean
     type: object
-  models.EnterpriseWaitList:
+  models.SysOperateLog:
     properties:
       createBy:
         type: integer
       createdAt:
         type: string
-      enterpriseId:
+      description:
         type: string
-      enterpriseName:
-        type: string
-      id:
+      logId:
         type: integer
-      priority:
-        type: integer
-      qccUrl:
+      project:
         type: string
-      source:
+      type:
         type: string
-      statusCode:
-        type: integer
-      taxIdentCode:
+      updateAfter:
+        type: string
+      updateBefore:
         type: string
       updateBy:
         type: integer
       updatedAt:
+        type: string
+      userId:
+        type: integer
+      userName:
         type: string
     type: object
   models.TbCmsArticle:
@@ -1763,12 +1624,14 @@ definitions:
     type: object
 info:
   contact: {}
-  description: 朗链图数据权限管理系统的接口文档
+  description: |-
+    基于Gin + Vue + Element UI的前后端分离权限管理系统的接口文档
+    添加qq群: 521386980 进入技术交流群 请先star，谢谢！
   license:
     name: MIT
     url: https://github.com/go-admin-team/go-admin/blob/master/LICENSE.md
-  title: GraphAdmin
-  version: 1.0.0
+  title: go-admin API
+  version: 2.0.0
 paths:
   /api/v1/app-config:
     get:
@@ -2246,165 +2109,6 @@ paths:
       summary: 修改字典类型
       tags:
       - 字典类型
-  /api/v1/enterprise-wait-list:
-    delete:
-      description: 删除待爬取列表
-      parameters:
-      - description: ids
-        in: body
-        name: ids
-        schema:
-          items:
-            type: integer
-          type: array
-      responses:
-        "200":
-          description: '{"code": 200, "message": "删除成功"}'
-          schema:
-            $ref: '#/definitions/antd.Response'
-      security:
-      - Bearer: []
-      summary: 删除待爬取列表
-      tags:
-      - 待爬取列表
-    get:
-      description: 获取待爬取列表列表
-      parameters:
-      - description: 主键id
-        in: query
-        name: id
-        type: integer
-      - description: 企业名称
-        in: query
-        name: enterpriseName
-        type: string
-      - description: 纳税人识别号
-        in: query
-        name: taxIdentCode
-        type: string
-      - description: 优先级
-        in: query
-        name: priority
-        type: integer
-      - description: qcc主体网址
-        in: query
-        name: qccUrl
-        type: string
-      - description: 企业uuid4
-        in: query
-        name: enterpriseId
-        type: string
-      - description: 数据爬取状态码
-        in: query
-        name: statusCode
-        type: integer
-      - description: 来源备注
-        in: query
-        name: source
-        type: string
-      - description: 创建人
-        in: query
-        name: create_by
-        type: string
-      - description: 更新人
-        in: query
-        name: update_by
-        type: string
-      - description: 页条数
-        in: query
-        name: pageSize
-        type: integer
-      - description: 页码
-        in: query
-        name: pageIndex
-        type: integer
-      responses:
-        "200":
-          description: '{"code": 200, "data": [...]}'
-          schema:
-            allOf:
-            - $ref: '#/definitions/antd.Response'
-            - properties:
-                data:
-                  allOf:
-                  - $ref: '#/definitions/antd.Pages'
-                  - properties:
-                      list:
-                        items:
-                          $ref: '#/definitions/models.EnterpriseWaitList'
-                        type: array
-                    type: object
-              type: object
-      security:
-      - Bearer: []
-      summary: 获取待爬取列表列表
-      tags:
-      - 待爬取列表
-    post:
-      consumes:
-      - application/json
-      description: 创建待爬取列表
-      parameters:
-      - description: data
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/dto.EnterpriseWaitListInsertReq'
-      responses:
-        "200":
-          description: '{"code": 200, "message": "添加成功"}'
-          schema:
-            $ref: '#/definitions/antd.Response'
-      security:
-      - Bearer: []
-      summary: 创建待爬取列表
-      tags:
-      - 待爬取列表
-  /api/v1/enterprise-wait-list/{id}:
-    get:
-      description: 获取待爬取列表
-      parameters:
-      - description: id
-        in: path
-        name: id
-        type: string
-      responses:
-        "200":
-          description: '{"code": 200, "data": [...]}'
-          schema:
-            allOf:
-            - $ref: '#/definitions/antd.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.EnterpriseWaitList'
-              type: object
-      security:
-      - Bearer: []
-      summary: 获取待爬取列表
-      tags:
-      - 待爬取列表
-    put:
-      consumes:
-      - application/json
-      description: 修改待爬取列表
-      parameters:
-      - description: body
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/dto.EnterpriseWaitListUpdateReq'
-      responses:
-        "200":
-          description: '{"code": 200, "message": "修改成功"}'
-          schema:
-            $ref: '#/definitions/antd.Response'
-      security:
-      - Bearer: []
-      summary: 修改待爬取列表
-      tags:
-      - 待爬取列表
   /api/v1/getinfo:
     get:
       description: 获取JSON
@@ -3059,7 +2763,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/go-admin_app_admin_models.SysAbnormalLog'
+                          $ref: '#/definitions/models.SysAbnormalLog'
                         type: array
                     type: object
               type: object
@@ -3084,7 +2788,7 @@ paths:
             - $ref: '#/definitions/antd.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/go-admin_app_admin_models.SysAbnormalLog'
+                  $ref: '#/definitions/models.SysAbnormalLog'
               type: object
       security:
       - Bearer: []
@@ -3151,7 +2855,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
+                          $ref: '#/definitions/models.SysApi'
                         type: array
                     type: object
               type: object
@@ -3176,7 +2880,7 @@ paths:
             - $ref: '#/definitions/antd.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/go-admin_app_admin_models.SysApi'
+                  $ref: '#/definitions/models.SysApi'
               type: object
       security:
       - Bearer: []
@@ -3245,7 +2949,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
+                          $ref: '#/definitions/models.SysApi'
                         type: array
                     type: object
               type: object
@@ -3315,7 +3019,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
+                          $ref: '#/definitions/models.SysApi'
                         type: array
                     type: object
               type: object
@@ -3454,7 +3158,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/go-admin_app_jobs_models.SysJob'
+                          $ref: '#/definitions/models.SysJob'
                         type: array
                     type: object
               type: object
@@ -3520,7 +3224,7 @@ paths:
             - $ref: '#/definitions/antd.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/go-admin_app_jobs_models.SysJob'
+                  $ref: '#/definitions/models.SysJob'
               type: object
       security:
       - Bearer: []
@@ -3704,7 +3408,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/go-admin_app_admin_models.SysOperateLog'
+                          $ref: '#/definitions/models.SysOperateLog'
                         type: array
                     type: object
               type: object
@@ -3729,7 +3433,7 @@ paths:
             - $ref: '#/definitions/antd.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/go-admin_app_admin_models.SysOperateLog'
+                  $ref: '#/definitions/models.SysOperateLog'
               type: object
       security:
       - Bearer: []
@@ -4732,352 +4436,6 @@ paths:
       summary: 修改用户状态
       tags:
       - 用户
-  /dev-api/v1/graph/link/net/children:
-    get:
-      parameters:
-      - description: Node id
-        in: query
-        name: id
-        required: true
-        type: string
-      - description: Page size
-        in: query
-        name: pageSize
-        required: true
-        type: string
-      - description: Page number
-        in: query
-        name: pageNum
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.Net'
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 通过id检索节点的子节点
-      tags:
-      - 图谱/网状图
-  /dev-api/v1/graph/link/net/expand:
-    get:
-      parameters:
-      - description: Depth of expansion
-        in: query
-        name: depth
-        required: true
-        type: string
-      - description: Limit of each depth
-        in: query
-        name: limit
-        required: true
-        type: string
-      - description: Source node id
-        in: query
-        name: sourceId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.Net'
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 通过给定节点和给定延伸层数检索延伸出的关联子节点，
-      tags:
-      - 图谱/网状图
-  /dev-api/v1/graph/link/net/parents:
-    get:
-      parameters:
-      - description: Node id
-        in: query
-        name: id
-        required: true
-        type: string
-      - description: Page size
-        in: query
-        name: pageSize
-        required: true
-        type: string
-      - description: Page number
-        in: query
-        name: pageNum
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.Net'
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 通过id检索节点的父节点
-      tags:
-      - 图谱/网状图
-  /dev-api/v1/graph/link/node:
-    get:
-      parameters:
-      - description: Node id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.LinkNode'
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 通过id检索节点
-      tags:
-      - 图谱/网状图
-  /dev-api/v1/graph/link/node/root:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.LinkNode'
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 获取网状图的根节点
-      tags:
-      - 图谱/网状图
-  /dev-api/v1/graph/tree/node:
-    get:
-      parameters:
-      - description: Node ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.TreeNode'
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 通过id检索单个节点
-      tags:
-      - 图谱/树状图
-  /dev-api/v1/graph/tree/node/children:
-    get:
-      parameters:
-      - description: Node ID
-        in: query
-        name: id
-        required: true
-        type: string
-      - description: Page size
-        in: query
-        name: pageSize
-        type: integer
-      - description: Page number
-        in: query
-        name: pageNum
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/dto.TreeNode'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 检索给定节点的子节点
-      tags:
-      - 图谱/树状图
-  /dev-api/v1/graph/tree/node/company/title/autoComplete:
-    get:
-      parameters:
-      - description: Keyword to search for
-        in: query
-        name: keyWord
-        required: true
-        type: string
-      - description: Page size
-        in: query
-        name: pageSize
-        type: integer
-      - description: Page number
-        in: query
-        name: pageNum
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: object
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 通过给定的关键词检索模糊匹配的公司名称列表
-      tags:
-      - 图谱/树状图
-  /dev-api/v1/graph/tree/node/label/title/autoComplete:
-    get:
-      parameters:
-      - description: Keyword to search for
-        in: query
-        name: keyWord
-        required: true
-        type: string
-      - description: Page size
-        in: query
-        name: pageSize
-        type: integer
-      - description: Page number
-        in: query
-        name: pageNum
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: object
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 通过给定的关键词检索模糊匹配的标签名称列表
-      tags:
-      - 图谱/树状图
-  /dev-api/v1/graph/tree/node/root:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.TreeNode'
-        "204":
-          description: No Content
-          schema:
-            type: string
-      summary: 查询标签树的根节点
-      tags:
-      - 图谱/树状图
-  /dev-api/v1/graph/tree/path/between:
-    get:
-      parameters:
-      - description: Source label ID, default to root label ID
-        in: query
-        name: sourceId
-        type: string
-      - description: Target label ID
-        in: query
-        name: targetId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 获取标签数图中两个节点之间的路径
-      tags:
-      - 图谱/树状图
-  /dev-api/v1/graph/tree/path/company/title/fuzzyMatch:
-    get:
-      parameters:
-      - description: Source label ID, default to root label ID
-        in: query
-        name: sourceId
-        type: string
-      - description: Target label ID
-        in: query
-        name: targetId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 通过公司名称关键词模糊匹配公司节点
-      tags:
-      - 图谱/树状图
-  /dev-api/v1/graph/tree/path/label/title/fuzzyMatch:
-    get:
-      parameters:
-      - description: Source label ID, default to root label ID
-        in: query
-        name: sourceId
-        type: string
-      - description: Target label ID
-        in: query
-        name: targetId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: 通过标签名称关键词模糊匹配标签节点
-      tags:
-      - 图谱/树状图
   /logout:
     post:
       consumes:

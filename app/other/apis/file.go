@@ -30,16 +30,16 @@ type File struct {
 }
 
 // UploadFile 上传图片
-// @Summary 上传图片
-// @Description 获取JSON
-// @Tags 公共接口
-// @Accept multipart/form-data
-// @Param type query string true "type" (1：单图，2：多图, 3：base64图片)
-// @Param file formData file true "file"
-// @Success 200 {string} string	"{"code": 200, "message": "添加成功"}"
-// @Success 200 {string} string	"{"code": -1, "message": "添加失败"}"
-// @Router /api/v1/public/uploadFile [post]
-// @Security Bearer
+// @Summary      上传图片
+// @Description  获取JSON
+// @Tags         公共接口
+// @Accept       multipart/form-data
+// @Param        type  query     string  true  "type"  (1：单图，2：多图, 3：base64图片)
+// @Param        file  formData  file    true  "file"
+// @Success      200   {string}  string  "{"code": 200, "message": "添加成功"}"
+// @Success      200   {string}  string  "{"code": -1, "message": "添加失败"}"
+// @Router       /api/v1/public/uploadFile [post]
+// @Security     Bearer
 func (e File) UploadFile(c *gin.Context) {
 	e.MakeContext(c)
 	tag, _ := c.GetPostForm("type")

@@ -35,9 +35,6 @@ func sysBaseRouter(r *gin.RouterGroup) {
 	go ws.WebsocketManager.SendService()
 	go ws.WebsocketManager.SendAllService()
 
-	//if config.ApplicationConfig.Mode != "prod" {
-	//	r.GET("/", apis.GoAdmin)
-	//}
 	r.GET("/info", handler.Ping)
 }
 
@@ -47,9 +44,6 @@ func sysStaticFileRouter(r *gin.RouterGroup) {
 		return
 	}
 	r.Static("/static", "./static")
-	if config.ApplicationConfig.Mode != "prod" {
-		r.Static("/form-generator", "./static/form-generator")
-	}
 }
 
 func sysSwaggerRouter(r *gin.RouterGroup) {

@@ -54,19 +54,19 @@ func IdentityHandler(c *gin.Context) interface{} {
 }
 
 // Authenticator 获取token
-// @Summary 登陆
-// @Description 获取token
-// @Description LoginHandler can be used by clients to get a jwt token.
-// @Description Payload needs to be json in the form of {"username": "USERNAME", "password": "PASSWORD"}.
-// @Description Reply will be of the form {"token": "TOKEN"}.
-// @Description dev mode：It should be noted that all fields cannot be empty, and a value of 0 can be passed in addition to the account password
-// @Description 注意：开发模式：需要注意全部字段不能为空，账号密码外可以传入0值
-// @Tags 登陆
-// @Accept  application/json
-// @Product application/json
-// @Param account body Login  true "account"
-// @Success 200 {string} string "{"code": 200, "expire": "2019-08-07T12:45:48+08:00", "token": ".eyJleHAiOjE1NjUxNTMxNDgsImlkIjoiYWRtaW4iLCJvcmlnX2lhdCI6MTU2NTE0OTU0OH0.-zvzHvbg0A" }"
-// @Router /api/v1/login [post]
+// @Summary      登陆
+// @Description  获取token
+// @Description  LoginHandler can be used by clients to get a jwt token.
+// @Description  Payload needs to be json in the form of {"username": "USERNAME", "password": "PASSWORD"}.
+// @Description  Reply will be of the form {"token": "TOKEN"}.
+// @Description  dev mode：It should be noted that all fields cannot be empty, and a value of 0 can be passed in addition to the account password
+// @Description  注意：开发模式：需要注意全部字段不能为空，账号密码外可以传入0值
+// @Tags         登陆
+// @Accept       application/json
+// @Product      application/json
+// @Param        account  body      Login   true  "account"
+// @Success      200      {string}  string  "{"code": 200, "expire": "2019-08-07T12:45:48+08:00", "token": ".eyJleHAiOjE1NjUxNTMxNDgsImlkIjoiYWRtaW4iLCJvcmlnX2lhdCI6MTU2NTE0OTU0OH0.-zvzHvbg0A" }"
+// @Router       /api/v1/login [post]
 func Authenticator(c *gin.Context) (interface{}, error) {
 	log := apis.GetRequestLogger(c)
 	db, err := pkg.GetOrm(c)
@@ -150,15 +150,15 @@ func LoginLogToDB(c *gin.Context, status string, msg string, username string) {
 }
 
 // LogOut
-// @Summary 退出登录
-// @Description 获取token
+// @Summary      退出登录
+// @Description  获取token
 // LoginHandler can be used by clients to get a jwt token.
 // Reply will be of the form {"token": "TOKEN"}.
-// @Accept  application/json
-// @Product application/json
-// @Success 200 {string} string "{"code": 200, "msg": "成功退出系统" }"
-// @Router /logout [post]
-// @Security Bearer
+// @Accept       application/json
+// @Product      application/json
+// @Success      200  {string}  string  "{"code": 200, "msg": "成功退出系统" }"
+// @Router       /logout [post]
+// @Security     Bearer
 func LogOut(c *gin.Context) {
 	LoginLogToDB(c, "2", "退出成功", user.GetUserName(c))
 	c.JSON(http.StatusOK, gin.H{

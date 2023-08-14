@@ -19,18 +19,18 @@ type SysApi struct {
 }
 
 // GetPage 获取接口管理列表
-// @Summary 获取接口管理列表
-// @Description 获取接口管理列表
-// @Tags 接口管理
-// @Param name query string false "名称"
-// @Param title query string false "标题"
-// @Param path query string false "地址"
-// @Param action query string false "类型"
-// @Param pageSize query int false "页条数"
-// @Param pageIndex query int false "页码"
-// @Success 200 {object} antd.Response{data=antd.Pages{list=[]models.SysApi}} "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-api [get]
-// @Security Bearer
+// @Summary      获取接口管理列表
+// @Description  获取接口管理列表
+// @Tags         接口管理
+// @Param        name       query     string                                                false  "名称"
+// @Param        title      query     string                                                false  "标题"
+// @Param        path       query     string                                                false  "地址"
+// @Param        action     query     string                                                false  "类型"
+// @Param        pageSize   query     int                                                   false  "页条数"
+// @Param        pageIndex  query     int                                                   false  "页码"
+// @Success      200        {object}  antd.Response{data=antd.Pages{list=[]models.SysApi}}  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-api [get]
+// @Security     Bearer
 func (e SysApi) GetPage(c *gin.Context) {
 	s := service.SysApi{}
 	req := dto.SysApiGetPageReq{}
@@ -55,13 +55,13 @@ func (e SysApi) GetPage(c *gin.Context) {
 }
 
 // Get 获取接口管理
-// @Summary 获取接口管理
-// @Description 获取接口管理
-// @Tags 接口管理
-// @Param id path string false "id"
-// @Success 200 {object} antd.Response{data=models.SysApi} "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-api/{id} [get]
-// @Security Bearer
+// @Summary      获取接口管理
+// @Description  获取接口管理
+// @Tags         接口管理
+// @Param        id   path      string                             false  "id"
+// @Success      200  {object}  antd.Response{data=models.SysApi}  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-api/{id} [get]
+// @Security     Bearer
 func (e SysApi) Get(c *gin.Context) {
 	req := dto.SysApiGetReq{}
 	s := service.SysApi{}
@@ -85,15 +85,15 @@ func (e SysApi) Get(c *gin.Context) {
 }
 
 // Update 修改接口管理
-// @Summary 修改接口管理
-// @Description 修改接口管理
-// @Tags 接口管理
-// @Accept application/json
-// @Product application/json
-// @Param data body dto.SysApiUpdateReq true "body"
-// @Success 200 {object} antd.Response	"{"code": 200, "message": "修改成功"}"
-// @Router /api/v1/sys-api/{id} [put]
-// @Security Bearer
+// @Summary      修改接口管理
+// @Description  修改接口管理
+// @Tags         接口管理
+// @Accept       application/json
+// @Product      application/json
+// @Param        data  body      dto.SysApiUpdateReq  true  "body"
+// @Success      200   {object}  antd.Response        "{"code": 200, "message": "修改成功"}"
+// @Router       /api/v1/sys-api/{id} [put]
+// @Security     Bearer
 func (e SysApi) Update(c *gin.Context) {
 	req := dto.SysApiUpdateReq{}
 	s := service.SysApi{}
@@ -117,13 +117,13 @@ func (e SysApi) Update(c *gin.Context) {
 }
 
 // Delete 删除接口管理
-// @Summary 删除接口管理
-// @Description 删除接口管理
-// @Tags 接口管理
-// @Param data body dto.SysApiDeleteReq true "body"
-// @Success 200 {object} antd.Response	"{"code": 200, "message": "删除成功"}"
-// @Router /api/v1/sys-api [delete]
-// @Security Bearer
+// @Summary      删除接口管理
+// @Description  删除接口管理
+// @Tags         接口管理
+// @Param        data  body      dto.SysApiDeleteReq  true  "body"
+// @Success      200   {object}  antd.Response        "{"code": 200, "message": "删除成功"}"
+// @Router       /api/v1/sys-api [delete]
+// @Security     Bearer
 func (e SysApi) Delete(c *gin.Context) {
 	req := dto.SysApiDeleteReq{}
 	s := service.SysApi{}
@@ -146,18 +146,18 @@ func (e SysApi) Delete(c *gin.Context) {
 }
 
 // GetList 获取接口列表配置菜单接口使用
-// @Summary 获取接口列表配置菜单接口使用
-// @Description 获取接口列表配置菜单接口使用
-// @Tags 接口管理
-// @Param name query string false "名称"
-// @Param title query string false "标题"
-// @Param path query string false "地址"
-// @Param action query string false "类型"
-// @Param pageSize query int false "页条数"
-// @Param pageIndex query int false "页码"
-// @Success 200 {object} antd.Response{data=antd.Pages{list=[]models.SysApi}} "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-api/list [get]
-// @Security Bearer
+// @Summary      获取接口列表配置菜单接口使用
+// @Description  获取接口列表配置菜单接口使用
+// @Tags         接口管理
+// @Param        name       query     string                                                false  "名称"
+// @Param        title      query     string                                                false  "标题"
+// @Param        path       query     string                                                false  "地址"
+// @Param        action     query     string                                                false  "类型"
+// @Param        pageSize   query     int                                                   false  "页条数"
+// @Param        pageIndex  query     int                                                   false  "页码"
+// @Success      200        {object}  antd.Response{data=antd.Pages{list=[]models.SysApi}}  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-api/list [get]
+// @Security     Bearer
 func (e SysApi) GetList(c *gin.Context) {
 	req := dto.SysApiGetPageReq{}
 	s := service.SysApi{}

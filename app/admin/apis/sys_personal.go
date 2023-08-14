@@ -19,14 +19,14 @@ type Personal struct {
 }
 
 // CurrentUser 获取当前用户信息
-// @Summary 获取当前用户信息
-// @Description 获取JSON
-// @Tags 个人中心/UserCenter
-// @Accept  application/json
-// @Product application/json
-// @Success 200 {object} antd.Response{data=dto.Personal} "{"code": 200, "data": [...]}"
-// @Router /api/v1/user/current [get]
-// @Security Bearer
+// @Summary      获取当前用户信息
+// @Description  获取JSON
+// @Tags         个人中心/UserCenter
+// @Accept       application/json
+// @Product      application/json
+// @Success      200  {object}  antd.Response{data=dto.Personal}  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/user/current [get]
+// @Security     Bearer
 func (e Personal) CurrentUser(c *gin.Context) {
 	s := service.SysPersonal{}
 	err := e.MakeContext(c).MakeOrm().MakeService(&s.Service).Errors

@@ -17,24 +17,24 @@ type SysJob struct {
 }
 
 // GetPage 获取列表
-// @Summary 获取列表
-// @Description 获取列表
+// @Summary      获取列表
+// @Description  获取列表
 // @Tags
-// @Param jobName query string false "jobName"
-// @Param jobGroup query string false "jobGroup"
-// @Param jobType query string false "jobType"
-// @Param cronExpression query string false "cronExpression"
-// @Param invokeTarget query string false "invokeTarget"
-// @Param args query string false "args"
-// @Param misfirePolicy query int64 false "misfirePolicy"
-// @Param concurrent query string false "concurrent"
-// @Param status query string false "status"
-// @Param entryId query int64 false "entryId"
-// @Param pageSize query int false "页条数"
-// @Param pageIndex query int false "页码"
-// @Success 200 {object} antd.Response{data=antd.Pages{list=[]models.SysJob}} "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-job [get]
-// @Security Bearer
+// @Param     jobName         query     string                                                false  "jobName"
+// @Param     jobGroup        query     string                                                false  "jobGroup"
+// @Param     jobType         query     string                                                false  "jobType"
+// @Param     cronExpression  query     string                                                false  "cronExpression"
+// @Param     invokeTarget    query     string                                                false  "invokeTarget"
+// @Param     args            query     string                                                false  "args"
+// @Param     misfirePolicy   query     int64                                                 false  "misfirePolicy"
+// @Param     concurrent      query     string                                                false  "concurrent"
+// @Param     status          query     string                                                false  "status"
+// @Param     entryId         query     int64                                                 false  "entryId"
+// @Param     pageSize        query     int                                                   false  "页条数"
+// @Param     pageIndex       query     int                                                   false  "页码"
+// @Success   200             {object}  antd.Response{data=antd.Pages{list=[]models.SysJob}}  "{"code": 200, "data": [...]}"
+// @Router    /api/v1/sys-job [get]
+// @Security  Bearer
 func (e SysJob) GetPage(c *gin.Context) {
 	req := dto.SysJobGetPageReq{}
 	s := service.SysJob{}
@@ -64,13 +64,13 @@ func (e SysJob) GetPage(c *gin.Context) {
 }
 
 // Get 获取
-// @Summary 获取
-// @Description 获取
+// @Summary      获取
+// @Description  获取
 // @Tags
-// @Param id path string false "id"
-// @Success 200 {object} antd.Response{data=models.SysJob} "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-job/{id} [get]
-// @Security Bearer
+// @Param     id   path      string                             false  "id"
+// @Success   200  {object}  antd.Response{data=models.SysJob}  "{"code": 200, "data": [...]}"
+// @Router    /api/v1/sys-job/{id} [get]
+// @Security  Bearer
 func (e SysJob) Get(c *gin.Context) {
 	req := dto.SysJobGetReq{}
 	s := service.SysJob{}
@@ -97,15 +97,15 @@ func (e SysJob) Get(c *gin.Context) {
 }
 
 // Insert 创建
-// @Summary 创建
-// @Description 创建
+// @Summary      创建
+// @Description  创建
 // @Tags
-// @Accept application/json
-// @Product application/json
-// @Param data body dto.SysJobInsertReq true "data"
-// @Success 200 {object} antd.Response	"{"code": 200, "message": "添加成功"}"
-// @Router /api/v1/sys-job [post]
-// @Security Bearer
+// @Accept    application/json
+// @Product   application/json
+// @Param     data  body      dto.SysJobInsertReq  true  "data"
+// @Success   200   {object}  antd.Response        "{"code": 200, "message": "添加成功"}"
+// @Router    /api/v1/sys-job [post]
+// @Security  Bearer
 func (e SysJob) Insert(c *gin.Context) {
 	req := dto.SysJobInsertReq{}
 	s := service.SysJob{}
@@ -132,15 +132,15 @@ func (e SysJob) Insert(c *gin.Context) {
 }
 
 // Update 修改
-// @Summary 修改
-// @Description 修改
+// @Summary      修改
+// @Description  修改
 // @Tags
-// @Accept application/json
-// @Product application/json
-// @Param data body dto.SysJobUpdateReq true "body"
-// @Success 200 {object} antd.Response	"{"code": 200, "message": "修改成功"}"
-// @Router /api/v1/sys-job/{id} [put]
-// @Security Bearer
+// @Accept    application/json
+// @Product   application/json
+// @Param     data  body      dto.SysJobUpdateReq  true  "body"
+// @Success   200   {object}  antd.Response        "{"code": 200, "message": "修改成功"}"
+// @Router    /api/v1/sys-job/{id} [put]
+// @Security  Bearer
 func (e SysJob) Update(c *gin.Context) {
 	req := dto.SysJobUpdateReq{}
 	s := service.SysJob{}
@@ -166,13 +166,13 @@ func (e SysJob) Update(c *gin.Context) {
 }
 
 // Delete 删除
-// @Summary 删除
-// @Description 删除
+// @Summary      删除
+// @Description  删除
 // @Tags
-// @Param ids body []int false "ids"
-// @Success 200 {object} antd.Response	"{"code": 200, "message": "删除成功"}"
-// @Router /api/v1/sys-job/{id} [delete]
-// @Security Bearer
+// @Param     ids  body      []int          false  "ids"
+// @Success   200  {object}  antd.Response  "{"code": 200, "message": "删除成功"}"
+// @Router    /api/v1/sys-job/{id} [delete]
+// @Security  Bearer
 func (e SysJob) Delete(c *gin.Context) {
 	s := service.SysJob{}
 	req := dto.SysJobDeleteReq{}

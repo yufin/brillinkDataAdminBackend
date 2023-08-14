@@ -10,14 +10,14 @@ import (
 )
 
 // GetDBColumnList 分页列表数据
-// @Summary 分页列表数据 / page list data
-// @Description 数据库表列分页列表 / database table column page list
-// @Tags 工具 / 生成工具
-// @Param tableName query string false "tableName / 数据表名称"
-// @Param pageSize query int false "pageSize / 页条数"
-// @Param pageIndex query int false "pageIndex / 页码"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/db/columns/page [get]
+// @Summary      分页列表数据 / page list data
+// @Description  数据库表列分页列表 / database table column page list
+// @Tags         工具 / 生成工具
+// @Param        tableName  query     string         false  "tableName / 数据表名称"
+// @Param        pageSize   query     int            false  "pageSize / 页条数"
+// @Param        pageIndex  query     int            false  "pageIndex / 页码"
+// @Success      200        {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/db/columns/page [get]
 func (e *Gen) GetDBColumnList(c *gin.Context) {
 	e.Context = c
 	log := e.GetLogger()

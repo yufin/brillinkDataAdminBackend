@@ -7,7 +7,7 @@ settings:
     # 服务名称
     name: testApp
     # 端口号
-    port: 8000 # 服务端口号
+    port: 8888 # 服务端口号
     readtimeout: 10000
     writertimeout: 20000
     # 数据权限功能开关

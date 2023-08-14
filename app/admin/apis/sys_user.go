@@ -25,13 +25,13 @@ type SysUser struct {
 }
 
 // GetPage
-// @Summary 列表用户信息数据
-// @Description 获取JSON
-// @Tags 用户
-// @Param username query string false "username"
-// @Success 200 {string} {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-user [get]
-// @Security Bearer
+// @Summary      列表用户信息数据
+// @Description  获取JSON
+// @Tags         用户
+// @Param        username  query     string    false          "username"
+// @Success      200       {string}  {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-user [get]
+// @Security     Bearer
 func (e SysUser) GetPage(c *gin.Context) {
 	s := service.SysUser{}
 	req := dto.SysUserGetPageReq{}
@@ -60,13 +60,13 @@ func (e SysUser) GetPage(c *gin.Context) {
 }
 
 // Get
-// @Summary 获取用户
-// @Description 获取JSON
-// @Tags 用户
-// @Param userId path int true "用户编码"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-user/{userId} [get]
-// @Security Bearer
+// @Summary      获取用户
+// @Description  获取JSON
+// @Tags         用户
+// @Param        userId  path      int            true  "用户编码"
+// @Success      200     {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-user/{userId} [get]
+// @Security     Bearer
 func (e SysUser) Get(c *gin.Context) {
 	s := service.SysUser{}
 	req := dto.SysUserById{}
@@ -93,15 +93,15 @@ func (e SysUser) Get(c *gin.Context) {
 }
 
 // Insert
-// @Summary 创建用户
-// @Description 获取JSON
-// @Tags 用户
-// @Accept  application/json
-// @Product application/json
-// @Param data body dto.SysUserInsertReq true "用户数据"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-user [post]
-// @Security Bearer
+// @Summary      创建用户
+// @Description  获取JSON
+// @Tags         用户
+// @Accept       application/json
+// @Product      application/json
+// @Param        data  body      dto.SysUserInsertReq  true  "用户数据"
+// @Success      200   {object}  antd.Response         "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-user [post]
+// @Security     Bearer
 func (e SysUser) Insert(c *gin.Context) {
 	s := service.SysUser{}
 	req := dto.SysUserInsertReq{}
@@ -130,15 +130,15 @@ func (e SysUser) Insert(c *gin.Context) {
 }
 
 // Update
-// @Summary 修改用户数据
-// @Description 获取JSON
-// @Tags 用户
-// @Accept  application/json
-// @Product application/json
-// @Param data body dto.SysUserUpdateReq true "body"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-user/{userId} [put]
-// @Security Bearer
+// @Summary      修改用户数据
+// @Description  获取JSON
+// @Tags         用户
+// @Accept       application/json
+// @Product      application/json
+// @Param        data  body      dto.SysUserUpdateReq  true  "body"
+// @Success      200   {object}  antd.Response         "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-user/{userId} [put]
+// @Security     Bearer
 func (e SysUser) Update(c *gin.Context) {
 	s := service.SysUser{}
 	req := dto.SysUserUpdateReq{}
@@ -167,13 +167,13 @@ func (e SysUser) Update(c *gin.Context) {
 }
 
 // Delete
-// @Summary 删除用户数据
-// @Description 删除数据
-// @Tags 用户
-// @Param userId path int true "userId"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-user/{userId} [delete]
-// @Security Bearer
+// @Summary      删除用户数据
+// @Description  删除数据
+// @Tags         用户
+// @Param        userId  path      int            true  "userId"
+// @Success      200     {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/sys-user/{userId} [delete]
+// @Security     Bearer
 func (e SysUser) Delete(c *gin.Context) {
 	s := service.SysUser{}
 	req := dto.SysUserById{}
@@ -202,14 +202,14 @@ func (e SysUser) Delete(c *gin.Context) {
 }
 
 // InsetAvatar
-// @Summary 修改头像
-// @Description 获取JSON
-// @Tags 个人中心
-// @Accept multipart/form-data
-// @Param file formData file true "file"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/user/avatar [post]
-// @Security Bearer
+// @Summary      修改头像
+// @Description  获取JSON
+// @Tags         个人中心
+// @Accept       multipart/form-data
+// @Param        file  formData  file           true  "file"
+// @Success      200   {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/user/avatar [post]
+// @Security     Bearer
 func (e SysUser) InsetAvatar(c *gin.Context) {
 	s := service.SysUser{}
 	req := dto.UpdateSysUserAvatarReq{}
@@ -248,15 +248,15 @@ func (e SysUser) InsetAvatar(c *gin.Context) {
 }
 
 // UpdateStatus 修改用户状态
-// @Summary 修改用户状态
-// @Description 获取JSON
-// @Tags 用户
-// @Accept  application/json
-// @Product application/json
-// @Param data body dto.UpdateSysUserStatusReq true "body"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/user/status [put]
-// @Security Bearer
+// @Summary      修改用户状态
+// @Description  获取JSON
+// @Tags         用户
+// @Accept       application/json
+// @Product      application/json
+// @Param        data  body      dto.UpdateSysUserStatusReq  true  "body"
+// @Success      200   {object}  antd.Response               "{"code": 200, "data": [...]}"
+// @Router       /api/v1/user/status [put]
+// @Security     Bearer
 func (e SysUser) UpdateStatus(c *gin.Context) {
 	s := service.SysUser{}
 	req := dto.UpdateSysUserStatusReq{}
@@ -284,15 +284,15 @@ func (e SysUser) UpdateStatus(c *gin.Context) {
 }
 
 // ResetPwd 重置用户密码
-// @Summary 重置用户密码
-// @Description 获取JSON
-// @Tags 用户
-// @Accept  application/json
-// @Product application/json
-// @Param data body dto.ResetSysUserPwdReq true "body"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/user/pwd/reset [put]
-// @Security Bearer
+// @Summary      重置用户密码
+// @Description  获取JSON
+// @Tags         用户
+// @Accept       application/json
+// @Product      application/json
+// @Param        data  body      dto.ResetSysUserPwdReq  true  "body"
+// @Success      200   {object}  antd.Response           "{"code": 200, "data": [...]}"
+// @Router       /api/v1/user/pwd/reset [put]
+// @Security     Bearer
 func (e SysUser) ResetPwd(c *gin.Context) {
 	s := service.SysUser{}
 	req := dto.ResetSysUserPwdReq{}
@@ -319,15 +319,15 @@ func (e SysUser) ResetPwd(c *gin.Context) {
 }
 
 // UpdatePwd
-// @Summary 修改密码
-// @Description 获取JSON
-// @Tags 用户
-// @Accept  application/json
-// @Product application/json
-// @Param data body dto.PassWord true "body"
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/user/pwd/set [put]
-// @Security Bearer
+// @Summary      修改密码
+// @Description  获取JSON
+// @Tags         用户
+// @Accept       application/json
+// @Product      application/json
+// @Param        data  body      dto.PassWord   true  "body"
+// @Success      200   {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/user/pwd/set [put]
+// @Security     Bearer
 func (e SysUser) UpdatePwd(c *gin.Context) {
 	s := service.SysUser{}
 	req := dto.UpdateSysUserPwdReq{}
@@ -352,12 +352,12 @@ func (e SysUser) UpdatePwd(c *gin.Context) {
 }
 
 // GetProfile
-// @Summary 获取个人中心数据
-// @Description 获取JSON
-// @Tags 个人中心
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/user/profile [get]
-// @Security Bearer
+// @Summary      获取个人中心数据
+// @Description  获取JSON
+// @Tags         个人中心
+// @Success      200  {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/user/profile [get]
+// @Security     Bearer
 func (e SysUser) GetProfile(c *gin.Context) {
 	s := service.SysUser{}
 	req := dto.SysUserById{}
@@ -388,12 +388,12 @@ func (e SysUser) GetProfile(c *gin.Context) {
 }
 
 // GetInfo
-// @Summary 获取个人信息
-// @Description 获取JSON
-// @Tags 个人中心
-// @Success 200 {object} antd.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/getinfo [get]
-// @Security Bearer
+// @Summary      获取个人信息
+// @Description  获取JSON
+// @Tags         个人中心
+// @Success      200  {object}  antd.Response  "{"code": 200, "data": [...]}"
+// @Router       /api/v1/getinfo [get]
+// @Security     Bearer
 func (e SysUser) GetInfo(c *gin.Context) {
 	req := dto.SysUserById{}
 	s := service.SysUser{}
