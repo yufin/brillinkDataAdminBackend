@@ -18,14 +18,14 @@ type SyncDefaultDependencyParamProcess struct {
 }
 
 func (a SyncDefaultDependencyParamProcess) Process() error {
-	// 自动同步 rc_dependency_data default with null contentId
+	// auto sync rc_dependency_data default with null contentId
 	var modelRdd models.RcDependencyData
 	db := sdk.Runtime.GetDbByKey(modelRdd.TableName())
 
-	createdBylist := make([]int64, 0)
+	createdByList := make([]int64, 0)
 	err := db.Model(&modelRdd).
 		Distinct("create_by").
-		Pluck("create_by", &createdBylist).
+		Pluck("create_by", &createdByList).
 		Error
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func (a SyncDefaultDependencyParamProcess) Process() error {
 
 	//var tbContent models.RcOriginContent
 	//dbRoc := sdk.Runtime.GetDbByKey(tbContent.TableName())
-	for _, createdBy := range createdBylist {
+	for _, createdBy := range createdByList {
 		uscIds := make([]string, 0)
 		err := db.Model(&models.RcDependencyData{}).
 			Distinct("usc_id").

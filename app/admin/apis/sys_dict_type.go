@@ -83,7 +83,7 @@ func (e SysDictType) Get(c *gin.Context) {
 	e.OK(object)
 }
 
-//Insert 字典类型创建
+// Insert 字典类型创建
 // @Summary 添加字典类型
 // @Description 获取JSON
 // @Tags 字典类型

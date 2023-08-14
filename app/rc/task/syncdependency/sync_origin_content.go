@@ -48,7 +48,6 @@ func (t SyncOriginContentTask) Exec(arg interface{}) error {
 
 // SyncOriginJsonContent 同步微众企业风控数据json数据至数据库
 func SyncOriginJsonContent() error {
-	// todo: 添加content校验逻辑,未通过校验不入库
 	// 1. 获取sftp连接
 	sftpClientP, err := cUtils.GetSftpClient()
 	if err != nil {

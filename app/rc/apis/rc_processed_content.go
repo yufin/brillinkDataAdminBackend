@@ -4,8 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg"
 	"github.com/google/uuid"
+	v3 "go-admin/app/rc/task/reportbuilder/v3"
 	"go-admin/common"
 	"os"
+	"strconv"
 
 	"go-admin/app/rc/models"
 	"go-admin/app/rc/service"
@@ -20,6 +22,36 @@ import (
 
 type RcProcessedContent struct {
 	apis.Api
+}
+
+func (e RcProcessedContent) ReportBuilderTest(c *gin.Context) {
+	contentIdStr := c.Query("contentId")
+	contentId, err := strconv.ParseInt(contentIdStr, 10, 64)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "ReportBuilderTestRcProcessedContentFail", err))
+		return
+	}
+
+	s := service.RcProcessedContent{}
+	err = e.MakeContext(c).
+		MakeOrm().
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "ReportBuilderTestRcProcessedContentFail", err))
+		return
+	}
+
+	builder := v3.ReportBuilderV34Test{}
+	res, err := builder.DynamicProcess(contentId)
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "ReportBuilderTestRcProcessedContentFail", err))
+		return
+	}
+	e.OK(res)
 }
 
 // GetPage 获取报文处理列表

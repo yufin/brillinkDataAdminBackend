@@ -27,7 +27,7 @@ func (p riskIndexSyncProcess) Process(contentId int64) error {
 
 	var dtSsi models.RcRiskIndex
 	dbSsi := sdk.Runtime.GetDbByKey(dtSsi.TableName())
-	if err := dbSsi.Where("content_id = ?", contentId).Delete(&models.RcRiskIndex{}).Error; err != nil {
+	if err := dbSsi.Unscoped().Where("content_id = ?", contentId).Delete(&models.RcRiskIndex{}).Error; err != nil {
 		return err
 	}
 

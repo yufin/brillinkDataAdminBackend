@@ -5,7 +5,7 @@ import (
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/pkg/errors"
 	"go-admin/app/rc/models"
-	"go-admin/app/rc/service/dto"
+	"go-admin/utils"
 	"gorm.io/gorm"
 )
 
@@ -25,20 +25,20 @@ func (t sellingStaSyncProcess) Process(contentId int64) error {
 
 	var tbSst models.RcSellingSta
 	dbSst := sdk.Runtime.GetDbByKey(tbSst.TableName())
-	if err := dbSst.Where("content_id = ?", contentId).Delete(&models.RcSellingSta{}).Error; err != nil {
-		return err
+	if err := dbSst.Unscoped().Where("content_id = ?", contentId).Delete(&models.RcSellingSta{}).Error; err != nil {
+		return errors.Wrapf(err, "delete rc_selling_sta error at sellingStaSyncProcess.Process, contentId: %d", contentId)
 	}
 
 	var contentMap map[string]any
 	if err := json.Unmarshal([]byte(dataContent.Content), &contentMap); err != nil {
 		// return nil
-		return err
+		return errors.Wrapf(err, "unmarshal content error at sellingStaSyncProcess.Process, contentId: %d", contentId)
 	}
 
 	sellingStaArray := contentMap[ReportDataKey].(map[string]any)["sellingSTA"].([]any)
 	for _, v := range sellingStaArray {
 		v := v.(map[string]any)
-		insertReq := dto.RcSellingStaInsertReq{
+		insertReq := models.RcSellingSta{
 			ContentId: contentId,
 			Cgje:      t.safeGetString(v, "CGJE"),
 			Jezb:      t.safeGetString(v, "JEZB"),
@@ -46,9 +46,8 @@ func (t sellingStaSyncProcess) Process(contentId int64) error {
 			Ssspxl:    t.safeGetString(v, "SSSPXL"),
 			Ssspzl:    t.safeGetString(v, "SSSPZL"),
 		}
-		var insertSst models.RcSellingSta
-		insertReq.Generate(&insertSst)
-		if err := dbSst.Create(&insertSst).Error; err != nil {
+		insertReq.Id = utils.NewFlakeId()
+		if err := dbSst.Create(&insertReq).Error; err != nil {
 			return err
 		}
 	}

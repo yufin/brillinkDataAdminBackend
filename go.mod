@@ -24,6 +24,7 @@ require (
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.0.108
 	github.com/jinzhu/now v1.1.5
 	github.com/mattn/go-isatty v0.0.17
+	github.com/minio/minio-go/v7 v7.0.60
 	github.com/mssola/user_agent v0.5.2
 	github.com/nats-io/nats.go v1.25.0
 	github.com/neo4j/neo4j-go-driver/v5 v5.6.0
@@ -120,7 +121,6 @@ require (
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/microsoft/go-mssqldb v0.21.0 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/minio-go/v7 v7.0.60 // indirect
 	github.com/minio/sha256-simd v1.0.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect

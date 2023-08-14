@@ -69,7 +69,7 @@ settings:
         password: bl@neo4j
     vzoom:
       sftp:
-        host: 120.132.117.50
+        host: 119.147.91.52
         port: '8155'
         username: lhgyl
         password: lhgyl2022

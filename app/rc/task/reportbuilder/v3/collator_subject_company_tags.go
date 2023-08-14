@@ -16,6 +16,11 @@ type ClaSubjCompanyTag struct {
 	contentId int64
 }
 
+func (s *ClaSubjCompanyTag) SetContent(content *[]byte, contentId int64) {
+	s.content = content
+	s.contentId = contentId
+}
+
 func (s *ClaSubjCompanyTag) Collating() error {
 	modelRoc := models.RcOriginContent{}
 	dbRoc := sdk.Runtime.GetDbByKey(modelRoc.TableName())
@@ -30,7 +35,13 @@ func (s *ClaSubjCompanyTag) Collating() error {
 	if err != nil {
 		return err
 	}
-	*s.content, err = jsonparser.Set(*s.content, subjTagsBytes, "impExpEntReport", "subjectCompanyTags")
+	tempC, err := jsonparser.Set(*s.content, subjTagsBytes, "impExpEntReport", "subjectCompanyTags")
+	if err != nil {
+		return errors.Wrapf(err, "collateSubjectCompanyTags error, contentId: %d", s.contentId)
+	}
+
+	*s.content = tempC
+
 	return nil
 }
 
@@ -63,7 +74,7 @@ func (s *ClaSubjCompanyTag) collateSubjectEnterpriseProductProportion() (*[]Prod
 	var tbSst models.RcSellingSta
 	dbSst := sdk.Runtime.GetDbByKey(tbSst.TableName())
 	props := make([]ProductProportion, 0)
-	err := dbSst.Raw(
+	err := dbSst.Table(tbSst.TableName()).Raw(
 		`select SUBSTRING_INDEX(SUBSTRING_INDEX(ssspxl, '*', 2), '*', -1) as category,
 				   concat(sum(cast(Replace(jezb, '%', '') as DECIMAL(10, 2))), '%') as proportion,
 				   group_concat(
@@ -72,7 +83,8 @@ func (s *ClaSubjCompanyTag) collateSubjectEnterpriseProductProportion() (*[]Prod
 			from rc_selling_sta
 			where content_id = ?
 			  and SSSPDL not in ('合计', '其他')
-			group by category;`, s.contentId).
+			group by category
+			ORDER BY  REPLACE(proportion,"%","")+0 desc;`, s.contentId).
 		Scan(&props).Error
 	if err != nil {
 		return nil, err

@@ -25,6 +25,14 @@ func (t decisionParamSyncProcess) Process(contentId int64) error {
 		}
 		return err
 	}
+
+	// delete
+	var tbRdp models.RcDecisionParam
+	dbRdp := sdk.Runtime.GetDbByKey(tbRdp.TableName())
+	if err := dbRdp.Where("content_id = ?", contentId).Delete(&models.RcDecisionParam{}).Error; err != nil {
+		return errors.Wrapf(err, "delete rc_decision_param error at decisionParamSyncProcess.Process, contentId: %d", contentId)
+	}
+
 	indexMap := make(map[string]any)
 	contentBytes := []byte(dataContent.Content)
 	offset, err := jsonparser.ArrayEach(contentBytes, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {

@@ -7,6 +7,10 @@ import (
 	"go-admin/utils"
 )
 
+type IdsReq struct {
+	Ids []int64 `json:"ids"`
+}
+
 type RcOriginContentGetPageReq struct {
 	dto.Pagination `search:"-"`
 	UscId          string `form:"uscId"  search:"type:exact;column:usc_id;table:rc_origin_content" comment:"统一社会信用代码"`

@@ -23,6 +23,7 @@ settings:
           - 'enterprise_certification'
           - 'enterprise_ranking'
           - 'enterprise_product'
+          - 'enterprise_shareholder_wait_list'
           - 'ranking_list'
           - 'task_detail'
           - 'rc_origin_content'
@@ -39,6 +40,9 @@ settings:
           - 'rc_scorecard_rule'
           - 'rc_rdm_res_detail'
           - 'rc_rdm_result'
+          - 'rc_monthly_sales'
+          - 'rc_monthly_purchase'
+          - 'rc_revenue_detail'
           - 'oss_metadata'
   gen:
     dbname: go_admin
@@ -69,7 +73,8 @@ settings:
         password: password
     vzoom:
       sftp:
-        host: 120.132.117.50
+        host: 119.147.91.52
+#        host: 120.132.117.50
         port: '8155'
         username: lhgyl
         password: lhgyl2022

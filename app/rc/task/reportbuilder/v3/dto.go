@@ -32,6 +32,7 @@ type CompanyInfoDetail struct {
 	EstablishDate  string `json:"establishedDate"`
 	EnterpriseType string `json:"enterpriseType"`
 	CapitalPaidIn  string `json:"capitalPaidIn"`
+	HomePage       string `json:"homePage"`
 }
 
 func (e *CompanyInfoDetail) GenMap() *map[string]any {

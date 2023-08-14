@@ -20,6 +20,8 @@ type DependencyTableSyncTask struct {
 
 var dtstRunning int32
 
+//var RwDependencySync sync.RWMutex
+
 type DependencySyncProcess interface {
 	Process(contentId int64) error
 }
@@ -32,6 +34,8 @@ func (t DependencyTableSyncTask) Exec(arg interface{}) error {
 	atomic.StoreInt32(&dtstRunning, 1)
 	defer atomic.StoreInt32(&dtstRunning, 0)
 
+	//RwDependencySync.Lock()
+	//defer RwDependencySync.Unlock()
 	err := t.pipeline()
 	if err != nil {
 		log.Errorf("TASK DependencyTableSyncTask Failed:%s \r\n", err)
@@ -47,6 +51,10 @@ func (t DependencyTableSyncTask) pipeline() error {
 		syncTradeDetailProcess{},
 		decisionParamSyncProcess{},
 		riskIndexSyncProcess{},
+		monthlyPurchaseSyncProcess{},
+		monthlySalesSyncProcess{},
+		dmShareholderSyncProcess{},
+		revenueDetailSyncProcess{},
 	}
 	concurrencyLimit := 3
 
@@ -59,10 +67,10 @@ func (t DependencyTableSyncTask) pipeline() error {
 
 		msgs, err := natsclient.SubContentNew.Fetch(1, nats.MaxWait(5*time.Second))
 		if err != nil {
-			if err == nats.ErrTimeout {
+			if errors.Is(err, nats.ErrTimeout) {
 				return nil
 			} else {
-				return err
+				return errors.Wrap(err, "fetch msg error at DependencyTableSyncTask.pipeline")
 			}
 		}
 
@@ -71,16 +79,15 @@ func (t DependencyTableSyncTask) pipeline() error {
 
 			exists, err := t.CheckContentIdExist(contentId)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "check contentId exist error at DependencyTableSyncTask.pipeline")
 			} else {
 				if !exists {
 					if err := msg.AckSync(); err != nil {
-						return err
+						return errors.Wrap(err, "ack msg error at DependencyTableSyncTask.pipeline")
 					}
-					break
+					continue
 				}
 			}
-
 			log.Infof("开始解析并同步依赖数据: contentId = %d\r\n", contentId)
 
 			// control concurrency
@@ -97,7 +104,7 @@ func (t DependencyTableSyncTask) pipeline() error {
 					err := processes[i].Process(contentId)
 					if err != nil {
 						log.Errorf("sync dependencies process error: %s, contentId=%s\r\n", err, contentId)
-						errCh <- err
+						errCh <- errors.Wrapf(err, "sync dependencies process error: %s, contentId=%s\r\n", err, contentId)
 					}
 					<-limitCh
 				}(i)
@@ -120,42 +127,6 @@ func (t DependencyTableSyncTask) pipeline() error {
 				return err
 			}
 
-			//var err1, err2, err3 error
-			//var wg sync.WaitGroup
-			//wg.Add(1)
-			//go func() {
-			//	defer wg.Done()
-			//	syd := syncTradeDetailProcess{}
-			//	err1 = syd.Process(contentId)
-			//}()
-			//wg.Add(1)
-			//go func() {
-			//	defer wg.Done()
-			//	sss := sellingStaSyncProcess{}
-			//	err2 = sss.Process(contentId)
-			//}()
-			//wg.Add(1)
-			//go func() {
-			//	defer wg.Done()
-			//	dps := decisionParamSyncProcess{}
-			//	err3 = dps.Process(contentId)
-			//}()
-			//wg.Wait()
-			//if err1 != nil {
-			//	return err
-			//}
-			//if err2 != nil {
-			//	return err
-			//}
-			//if err3 != nil {
-			//	return err
-			//}
-			//if err := t.markContentAsCompleteAsync(contentId); err != nil {
-			//	return err
-			//}
-			//if err := msg.AckSync(); err != nil {
-			//	return err
-			//}
 		}
 	}
 }

@@ -1,20 +1,71 @@
 package apis
 
 import (
+	"encoding/binary"
 	"github.com/gin-gonic/gin"
+	"github.com/go-admin-team/go-admin-core/sdk"
 	"go-admin/app/rc/models"
 	"go-admin/app/rc/service"
 	"go-admin/app/rc/service/dto"
-
 	"go-admin/common/actions"
 	"go-admin/common/apis"
 	"go-admin/common/exception"
 	"go-admin/common/jwtauth/user"
 	_ "go-admin/common/response/antd"
+	"go-admin/pkg/natsclient"
 )
 
 type RcOriginContent struct {
 	apis.Api
+}
+
+// RePubNewContentId 刷新依赖表
+func (e RcOriginContent) RePubNewContentId(c *gin.Context) {
+	//contentIdsStr := c.QueryArray("contentId")
+	contentIds := dto.IdsReq{}
+	//for _, contentIdStr := range contentIdsStr {
+	//	contentId, err := strconv.ParseInt(contentIdStr, 10, 64)
+	//	if err != nil {
+	//		e.Logger.Error(err)
+	//		panic(exception.WithMsg(50000, "RePubNewContentIdRcOriginContentFail", err))
+	//		return
+	//	}
+	//	contentIds = append(contentIds, contentId)
+	//}
+
+	s := service.RcOriginContent{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&contentIds).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		panic(exception.WithMsg(50000, "GetPageRcOriginContentFail", err))
+		return
+	}
+
+	modelRoc := models.RcOriginContent{}
+	db := sdk.Runtime.GetDbByKey(modelRoc.TableName())
+
+	for _, contentId := range contentIds.Ids {
+		msg := make([]byte, 8)
+		binary.BigEndian.PutUint64(msg, uint64(contentId))
+		_, err := natsclient.TaskJs.Publish(natsclient.TopicContentNew, msg)
+		if err != nil {
+			e.Logger.Error(err)
+			panic(exception.WithMsg(50000, "RePubNewContentIdRcOriginContentFail", err))
+			return
+		}
+		err = db.Model(&models.RcOriginContent{}).Where("id = ?", contentId).Update("status_code", 0).Error
+		if err != nil {
+			e.Logger.Error(err)
+			panic(exception.WithMsg(50000, "RePubNewContentIdRcOriginContentFail", err))
+			return
+		}
+	}
+
+	e.OK(contentIds)
 }
 
 // GetPage 获取微众json存储列表

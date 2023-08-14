@@ -28,7 +28,7 @@ const (
 	OperateDelete Operate = "删除"
 )
 
-//SetContextOperateLog 设置上下文中操作日志信息
+// SetContextOperateLog 设置上下文中操作日志信息
 func SetContextOperateLog(c *gin.Context, typeX Operate, desc, before, after, project string) {
 	mp := make(map[string]interface{}, 0)
 	mp["type"] = typeX

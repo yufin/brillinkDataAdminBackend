@@ -7,6 +7,7 @@ import (
 	"go-admin/app/rc/task/pdfsnapshot"
 	"go-admin/app/rc/task/rdm"
 	"go-admin/app/rc/task/reportbuilder"
+	v3 "go-admin/app/rc/task/reportbuilder/v3"
 	"go-admin/app/rc/task/syncdependency"
 )
 
@@ -23,6 +24,7 @@ func InitJob() {
 		"SyncGraph":           gTask.SyncGraphTask{},
 		"DecisionFlow":        rdm.AhpRdmTask{},
 		"reportSnapshot":      pdfsnapshot.ReportSnapshotTask{},
+		"v3test":              v3.ReportBuilderV34Test{},
 		//"WipeMsg":            task.WipeMsgTask{},
 	}
 }

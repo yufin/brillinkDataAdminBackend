@@ -10,12 +10,13 @@ import (
 
 func init() {
 	routerCheckRole = append(routerCheckRole, registerRcProcessedContentRouter)
+	routerNoCheckRole = append(routerNoCheckRole, registerRcProcessedContentRouterNoAuth)
 }
 
 // registerRcProcessedContentRouter
 func registerRcProcessedContentRouter(v1 *gin.RouterGroup, authMiddleware *jwtauth.GinJWTMiddleware) {
 	api := apis.RcProcessedContent{}
-	r := v1.Group("/rc-processed-content").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
+	r := v1.Group("/rc/processed-content").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
 		r.GET("", api.GetPage)
 		r.GET("/export", api.Export)
@@ -23,5 +24,13 @@ func registerRcProcessedContentRouter(v1 *gin.RouterGroup, authMiddleware *jwtau
 		r.POST("", api.Insert)
 		r.PUT("/:id", api.Update)
 		r.DELETE("", api.Delete)
+	}
+}
+
+func registerRcProcessedContentRouterNoAuth(v1 *gin.RouterGroup) {
+	api := apis.RcProcessedContent{}
+	r := v1.Group("/rc/processed-content")
+	{
+		r.GET("/report-builder-test", api.ReportBuilderTest)
 	}
 }

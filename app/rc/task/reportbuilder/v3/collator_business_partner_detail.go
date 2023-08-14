@@ -6,7 +6,6 @@ import (
 	"github.com/pkg/errors"
 	"go-admin/app/rc/models"
 	eModels "go-admin/app/spider/models"
-	"go-admin/utils"
 	"gorm.io/gorm"
 	"strings"
 	"time"
@@ -25,12 +24,17 @@ type CommodityPropResult struct {
 	MajorityRatio  float64
 }
 
-type ClaBusinessPartnerData struct {
+type ClaBusinessPartnerDetail struct {
 	content   *[]byte
 	contentId int64
 }
 
-func (c *ClaBusinessPartnerData) Collating() error {
+func (s *ClaBusinessPartnerDetail) SetContent(content *[]byte, contentId int64) {
+	s.content = content
+	s.contentId = contentId
+}
+
+func (c *ClaBusinessPartnerDetail) Collating() error {
 	// query tradesDetail by contentId with distinct name
 	var tbTrades models.RcTradesDetail
 	dbTrades := sdk.Runtime.GetDbByKey(tbTrades.TableName())
@@ -77,17 +81,10 @@ func (c *ClaBusinessPartnerData) Collating() error {
 	return nil
 }
 
-func (c *ClaBusinessPartnerData) collateContent(contentId int64, nameDataMap map[string]*SubjoinData, evalTime time.Time) error {
-	// TODO: modify data at content instead of insert 2 db
+func (c *ClaBusinessPartnerDetail) collateContent(contentId int64, nameDataMap map[string]*SubjoinData, evalTime time.Time) error {
 	// iter content and add data to
-	var data models.RcOriginContent
-	db := sdk.Runtime.GetDbByKey(data.TableName())
-	err := db.Model(&models.RcOriginContent{}).First(&data, contentId).Error
-	if err != nil {
-		return err
-	}
 	var contentMap map[string]any
-	err = json.Unmarshal([]byte(data.Content), &contentMap)
+	err := json.Unmarshal(*c.content, &contentMap)
 	if err != nil {
 		return err
 	}
@@ -176,23 +173,25 @@ func (c *ClaBusinessPartnerData) collateContent(contentId int64, nameDataMap map
 	if err != nil {
 		return err
 	}
-	// insert processed content into db
-	var tbProc models.RcProcessedContent
-	dbProc := sdk.Runtime.GetDbByKey(tbProc.TableName())
-	insertReq := models.RcProcessedContent{
-		ContentId:  contentId,
-		Content:    string(csb),
-		StatusCode: 1,
-	}
-	insertReq.Id = utils.NewFlakeId()
 
-	if err := dbProc.Model(&models.RcProcessedContent{}).Create(&insertReq).Error; err != nil {
-		return err
-	}
+	*c.content = csb
+	// insert processed content into db
+	//var tbProc models.RcProcessedContent
+	//dbProc := sdk.Runtime.GetDbByKey(tbProc.TableName())
+	//insertReq := models.RcProcessedContent{
+	//	ContentId:  contentId,
+	//	Content:    string(csb),
+	//	StatusCode: 1,
+	//}
+	//insertReq.Id = utils.NewFlakeId()
+	//
+	//if err := dbProc.Model(&models.RcProcessedContent{}).Create(&insertReq).Error; err != nil {
+	//	return err
+	//}
 	return nil
 }
 
-func (c *ClaBusinessPartnerData) calculateCommodityProportion(contentId int64, detailType int) (*[]CommodityPropResult, error) {
+func (c *ClaBusinessPartnerDetail) calculateCommodityProportion(contentId int64, detailType int) (*[]CommodityPropResult, error) {
 	tb := models.RcTradesDetail{}
 	db := sdk.Runtime.GetDbByKey(tb.TableName())
 	var result []CommodityPropResult
@@ -216,7 +215,7 @@ func (c *ClaBusinessPartnerData) calculateCommodityProportion(contentId int64, d
 	return &result, nil
 }
 
-func (c *ClaBusinessPartnerData) collateSubJoinData(uscId string, evalTime time.Time) (*SubjoinData, error) {
+func (c *ClaBusinessPartnerDetail) collateSubJoinData(uscId string, evalTime time.Time) (*SubjoinData, error) {
 	cidP, err := c.collateCompanyInfoDetail(uscId)
 	if err != nil {
 		return nil, err
@@ -250,7 +249,7 @@ func (c *ClaBusinessPartnerData) collateSubJoinData(uscId string, evalTime time.
 	return &sd, nil
 }
 
-func (c *ClaBusinessPartnerData) collateProductTags(uscId string) (*[]string, error) {
+func (c *ClaBusinessPartnerDetail) collateProductTags(uscId string) (*[]string, error) {
 	var data eModels.EnterpriseProduct
 	db := sdk.Runtime.GetDbByKey(data.TableName())
 	err := db.Model(&eModels.EnterpriseProduct{}).
@@ -276,7 +275,7 @@ func (c *ClaBusinessPartnerData) collateProductTags(uscId string) (*[]string, er
 	return &result, nil
 }
 
-func (c *ClaBusinessPartnerData) collateIndustryTags(uscId string) (*[]string, error) {
+func (c *ClaBusinessPartnerDetail) collateIndustryTags(uscId string) (*[]string, error) {
 	var data eModels.EnterpriseIndustry
 	db := sdk.Runtime.GetDbByKey(data.TableName())
 	err := db.Model(&data).
@@ -301,7 +300,7 @@ func (c *ClaBusinessPartnerData) collateIndustryTags(uscId string) (*[]string, e
 	return &result, nil
 }
 
-func (c *ClaBusinessPartnerData) collateCompanyInfoDetail(uscId string) (*CompanyInfoDetail, error) {
+func (c *ClaBusinessPartnerDetail) collateCompanyInfoDetail(uscId string) (*CompanyInfoDetail, error) {
 	var data eModels.EnterpriseInfo
 	db := sdk.Runtime.GetDbByKey(data.TableName())
 	err := db.Model(&eModels.EnterpriseInfo{}).
@@ -323,10 +322,11 @@ func (c *ClaBusinessPartnerData) collateCompanyInfoDetail(uscId string) (*Compan
 		EstablishDate:  estDate,
 		EnterpriseType: data.EnterpriseType,
 		CapitalPaidIn:  data.PaidInCapital,
+		HomePage:       data.UrlHomepage,
 	}, nil
 }
 
-func (c *ClaBusinessPartnerData) collateRankingTagDetail(uscId string, evalTime time.Time) (*[]RankingTagDetail, error) {
+func (c *ClaBusinessPartnerDetail) collateRankingTagDetail(uscId string, evalTime time.Time) (*[]RankingTagDetail, error) {
 	var tb eModels.EnterpriseRanking
 	db := sdk.Runtime.GetDbByKey(tb.TableName())
 	data := make([]RankingTagDetail, 0)
@@ -353,7 +353,7 @@ func (c *ClaBusinessPartnerData) collateRankingTagDetail(uscId string, evalTime 
 	return &data, nil
 }
 
-func (c *ClaBusinessPartnerData) collateAuthorizedTagDetail(uscId string, evalTime time.Time) (*[]AuthorizedTagDetail, error) {
+func (c *ClaBusinessPartnerDetail) collateAuthorizedTagDetail(uscId string, evalTime time.Time) (*[]AuthorizedTagDetail, error) {
 	var tb eModels.EnterpriseCertification
 	db := sdk.Runtime.GetDbByKey(tb.TableName())
 	data := make([]eModels.EnterpriseCertification, 0)
@@ -387,7 +387,7 @@ func (c *ClaBusinessPartnerData) collateAuthorizedTagDetail(uscId string, evalTi
 }
 
 // collateSubjectCompanyTags collate subject company tags
-func (c *ClaBusinessPartnerData) collateSubjectCompanyTags(uscId string, contentId int64, evalTime time.Time) (*SubjectCompanyTags, error) {
+func (c *ClaBusinessPartnerDetail) collateSubjectCompanyTags(uscId string, contentId int64, evalTime time.Time) (*SubjectCompanyTags, error) {
 	it, err := c.collateIndustryTags(uscId)
 	if err != nil {
 		return nil, err
@@ -412,7 +412,7 @@ func (c *ClaBusinessPartnerData) collateSubjectCompanyTags(uscId string, content
 	}, nil
 }
 
-func (c *ClaBusinessPartnerData) collateSubjectEnterpriseProductProportion(contentId int64) (*[]ProductProportion, error) {
+func (c *ClaBusinessPartnerDetail) collateSubjectEnterpriseProductProportion(contentId int64) (*[]ProductProportion, error) {
 	var tbSst models.RcSellingSta
 	dbSst := sdk.Runtime.GetDbByKey(tbSst.TableName())
 	props := make([]ProductProportion, 0)

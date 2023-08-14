@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"fmt"
 	"github.com/buger/jsonparser"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"go-admin/app/rc/models"
@@ -30,9 +31,15 @@ func (s *ClaBusinessInfo) Collating() error {
 		return err
 	}
 
-	*s.content, err = jsonparser.Set(*s.content, []byte(modelInfo.PaidInCapital), "impExpEntReport", "businessInfo", "capitalPaidIn")
+	tempC, err := jsonparser.Set(*s.content, []byte(fmt.Sprintf(`"%s"`, modelInfo.PaidInCapital)), "impExpEntReport", "businessInfo", "capitalPaidIn")
 	if err != nil {
 		return err
 	}
+	*s.content = tempC
 	return nil
+}
+
+func (s *ClaBusinessInfo) SetContent(content *[]byte, contentId int64) {
+	s.content = content
+	s.contentId = contentId
 }

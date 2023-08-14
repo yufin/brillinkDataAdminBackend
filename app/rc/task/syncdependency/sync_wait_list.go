@@ -2,6 +2,7 @@ package syncdependency
 
 import (
 	"encoding/json"
+	log "github.com/go-admin-team/go-admin-core/logger"
 	"github.com/go-admin-team/go-admin-core/sdk"
 	"github.com/nats-io/nats.go"
 	"github.com/pkg/errors"
@@ -9,38 +10,43 @@ import (
 	sDto "go-admin/app/spider/service/dto"
 	"go-admin/pkg/natsclient"
 	"gorm.io/gorm"
-	"sync"
+	"sync/atomic"
 	"time"
 )
+
+var syncWaitListRunning int32
 
 type SyncWaitListTask struct {
 }
 
-var mutexEwl = &sync.Mutex{}
-
 func (t SyncWaitListTask) Exec(arg interface{}) error {
-	mutexEwl.Lock()
-	defer mutexEwl.Unlock()
-	return pullTradesNew()
+	if atomic.LoadInt32(&syncWaitListRunning) == 1 {
+		log.Info("SyncWaitListTask任务已经在执行中，跳过本次调度")
+		return nil
+	}
+	atomic.StoreInt32(&syncWaitListRunning, 1)
+	defer atomic.StoreInt32(&syncWaitListRunning, 0)
+
+	return t.Process()
 }
 
-func pullTradesNew() error {
+func (t SyncWaitListTask) Process() error {
 	// TODO: add log at this layer
 	for {
 		msgs, err := natsclient.SubTradeNew.Fetch(1, nats.MaxWait(5*time.Second))
 		if err != nil {
-			if err == nats.ErrTimeout {
+			if errors.Is(err, nats.ErrTimeout) {
 				return nil
 			} else {
 				return err
 			}
 		}
 		for _, msg := range msgs {
-			m, err := parseEnterpriseIdentMsg(msg)
+			m, err := t.parseEnterpriseIdentMsg(msg)
 			if err != nil {
 				return err
 			}
-			err = syncWaitListFromMsg(m)
+			err = t.syncWaitListFromMsg(m)
 			if err != nil {
 				return err
 			} else {
@@ -53,7 +59,7 @@ func pullTradesNew() error {
 	}
 }
 
-func parseEnterpriseIdentMsg(msg *nats.Msg) (map[string]string, error) {
+func (t SyncWaitListTask) parseEnterpriseIdentMsg(msg *nats.Msg) (map[string]string, error) {
 	var m map[string]string
 	err := json.Unmarshal(msg.Data, &m)
 	if err != nil {
@@ -70,7 +76,7 @@ func parseEnterpriseIdentMsg(msg *nats.Msg) (map[string]string, error) {
 	return m, nil
 }
 
-func syncWaitListFromMsg(enterpriseIdentMap map[string]string) error {
+func (t SyncWaitListTask) syncWaitListFromMsg(enterpriseIdentMap map[string]string) error {
 
 	enterpriseName := enterpriseIdentMap["enterprise_name"]
 	uscIdInput := enterpriseIdentMap["usc_id"]

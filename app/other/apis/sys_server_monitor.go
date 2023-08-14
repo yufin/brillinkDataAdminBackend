@@ -49,7 +49,7 @@ type ServerMonitor struct {
 	api.Api
 }
 
-//获取相差时间
+// 获取相差时间
 func GetHourDiffer(startTime, endTime string) int64 {
 	var hour int64
 	t1, err := time.ParseInLocation("2006-01-02 15:04:05", startTime, time.Local)
