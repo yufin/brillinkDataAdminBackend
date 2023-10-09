@@ -8,8 +8,6 @@
 package storage
 
 import (
-	"go-admin/pkg/minioclient"
-	"go-admin/pkg/natsclient"
 	"log"
 
 	"github.com/go-admin-team/go-admin-core/sdk"
@@ -52,17 +50,4 @@ func Setup() {
 		sdk.Runtime.SetLockerAdapter(lockerAdapter)
 	}
 
-	//8. 初始化nats
-	if err := natsclient.InitNatsConn(); err != nil {
-		log.Fatalf("nats setup error, %s\n", err.Error())
-	}
-
-	if err := natsclient.InitActivity(natsclient.TaskStream{}); err != nil {
-		log.Fatalf("nats init TaskStream error, %v \n", err.Error())
-	}
-
-	//9. 初始化minio
-	if err := minioclient.InitMinioCli(); err != nil {
-		log.Fatalf("minio setup error, %v \n", err.Error())
-	}
 }

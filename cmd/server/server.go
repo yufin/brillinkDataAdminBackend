@@ -7,7 +7,6 @@ import (
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service"
 	"go-admin/common/logger"
-	"go-admin/pkg/natsclient"
 	"log"
 	"net/http"
 	"os"
@@ -151,17 +150,6 @@ func run() error {
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	fmt.Printf("%s Shutting down Server ... \r\n", pkg.GetCurrentTimeStr())
-
-	// customized: 添加关闭neo4j方法
-	if database.Neo4jDriverP != nil {
-		if err := (*database.Neo4jDriverP).Close(ctx); err != nil {
-			log.Println(pkg.Red(fmt.Sprintf("Neo4j Driver Close error, %v \n", err)))
-		}
-	}
-	// Close Nats Conn
-	if err := natsclient.CloseActivity(natsclient.TaskStream{}); err != nil {
-		log.Println(pkg.Red(fmt.Sprintf("natsclient CloseActivity error, %v\n", err.Error())))
-	}
 
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal("Server Shutdown:", err)

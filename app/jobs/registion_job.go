@@ -2,29 +2,13 @@ package jobs
 
 import (
 	"github.com/go-admin-team/go-admin-core/logger"
-	gTask "go-admin/app/graph/task"
-	"go-admin/app/rc/task/dataverification"
-	"go-admin/app/rc/task/pdfsnapshot"
-	"go-admin/app/rc/task/rdm"
-	"go-admin/app/rc/task/reportbuilder"
-	v3 "go-admin/app/rc/task/reportbuilder/v3"
-	"go-admin/app/rc/task/syncdependency"
 )
 
 // 需要将定义的struct 添加到字典中；
 // 字典 key 可以配置到 自动任务 调用目标 中；
 func InitJob() {
 	jobList = map[string]JobsExec{
-		"ExamplesOne":         ExamplesOne{},
-		"SyncOriginContent":   syncdependency.SyncOriginContentTask{},
-		"SyncDependencyTable": syncdependency.DependencyTableSyncTask{},
-		"SyncWaitList":        syncdependency.SyncWaitListTask{},
-		"VerifyContentReady":  dataverification.VerifyContentReadyTask{},
-		"CollateContent":      reportbuilder.CollateContentTask{},
-		"SyncGraph":           gTask.SyncGraphTask{},
-		"DecisionFlow":        rdm.AhpRdmTask{},
-		"reportSnapshot":      pdfsnapshot.ReportSnapshotTask{},
-		"v3test":              v3.ReportBuilderV34Test{},
+		"ExamplesOne": ExamplesOne{},
 		//"WipeMsg":            task.WipeMsgTask{},
 	}
 }

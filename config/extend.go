@@ -10,13 +10,13 @@ var ExtConfig Extend
 //
 // 使用方法： config.ExtConfig......即可！！
 type Extend struct {
-	AMap       AMap // 这里配置对应配置文件的结构即可
-	Graph      Graph
-	Vzoom      Vzoom
-	Nats       Nats
-	Minio      Minio
-	PdfConvert PdfConvert
-	PySidecar  PySidecar
+	AMap AMap // 这里配置对应配置文件的结构即可
+	//Graph      Graph
+	//Vzoom      Vzoom
+	//Nats       Nats
+	//Minio      Minio
+	//PdfConvert PdfConvert
+	//PySidecar  PySidecar
 }
 
 type AMap struct {
